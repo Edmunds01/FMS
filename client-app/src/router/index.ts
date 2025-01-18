@@ -15,12 +15,17 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/LoginView.vue'),
+    component: () => import('../views/auth/LoginView.vue'),
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('../views/auth/RegisterView.vue'),
   },
 ]
 
 for (const route of routes) {
-  if (route.name !== 'login') {
+  if (route.name !== 'login' && route.name !== 'register') {
     route.meta = {
       requiresAuth: true,
     }

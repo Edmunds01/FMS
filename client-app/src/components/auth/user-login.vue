@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { login } from '@/api/auth'
+import { login } from '@/api/login'
 
 const username = ref('')
 const password = ref('')
@@ -21,6 +21,8 @@ const handleLogin = async () => {
 </script>
 
 <template>
+  <title>Ieiet</title>
+
   <div class="login">
     <div class="border p-4 w-25">
       <h1 class="border-bottom">Ieiet</h1>
@@ -54,7 +56,7 @@ const handleLogin = async () => {
         <div class="row">
           <div class="col-3"></div>
           <button type="submit" class="btn btn-primary col">Ieiet</button>
-          <button type="button" class="btn btn-primary ms-2 col">Registrēties</button>
+          <a type="button" href="register" class="btn btn-primary ms-2 col">Registrēties</a>
         </div>
       </form>
     </div>

@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using web_api.Dtos;
+using web_api.Repository;
 
 namespace web_api.Controllers
 {
@@ -12,14 +13,16 @@ namespace web_api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly UserRepository _userRepostory;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, UserRepository userRepostory)
         {
             _configuration = configuration;
+            _userRepostory = userRepostory;
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDto loginDto)
+        public IActionResult Login([FromBody] LoginRegisterDto loginDto)
         {
             // Validate the user (In a real app, query the database)
             if (loginDto.Username == "testuser" && loginDto.Password == "password")
@@ -31,6 +34,25 @@ namespace web_api.Controllers
             return Unauthorized("Invalid username or password");
         }
 
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] LoginRegisterDto loginDto)
+        {
+            // TODO: Add data validation
+
+            if (_userRepostory.GetUser(loginDto.Username) != null)
+                return Conflict("User with this email already exists");
+
+            _userRepostory.AddUser(new Models.User
+            {
+                Email = loginDto.Username,
+                PasswordHash = Helper.PasswordHelper.GenerateVarbinary64FromPassword(loginDto.Password)
+            });
+
+            var token = GenerateJwtToken(loginDto.Username);
+
+            return Ok(new { Token = token });
+        }
+
         private string GenerateJwtToken(string username)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
@@ -38,7 +60,7 @@ namespace web_api.Controllers
 
             var claims = new[]
             {
-            new Claim(ClaimTypes.Name, username)
+                new Claim(ClaimTypes.Name, username)
             };
 
             var token = new JwtSecurityToken(
