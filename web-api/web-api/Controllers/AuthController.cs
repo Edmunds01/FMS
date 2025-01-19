@@ -24,8 +24,9 @@ namespace web_api.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRegisterDto loginDto)
         {
-            // Validate the user (In a real app, query the database)
-            if (loginDto.Username == "testuser" && loginDto.Password == "password")
+            var user = _userRepostory.GetUser(loginDto.Username);
+
+            if (user != null && Helper.PasswordHelper.ComparePasswords(user.PasswordHash, loginDto.Password))
             {
                 var token = GenerateJwtToken(loginDto.Username);
                 return Ok(new { Token = token });

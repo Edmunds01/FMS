@@ -11,12 +11,25 @@ namespace web_api.Helper
             {
                 var passwordBytes = Encoding.UTF8.GetBytes(password);
 
+                return sha256.ComputeHash(passwordBytes);
+            }
+        }
+
+        public static bool ComparePasswords(byte[] passwordHash, string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var passwordBytes = Encoding.UTF8.GetBytes(password);
+
                 var hashBytes = sha256.ComputeHash(passwordBytes);
 
-                var varbinary64 = new byte[64];
-                Buffer.BlockCopy(hashBytes, 0, varbinary64, 0, hashBytes.Length);
+                for (var i = 0; i < passwordHash.Length; i++)
+                {
+                    if (passwordHash[i] != hashBytes[i])
+                        return false;
+                }
 
-                return varbinary64;
+                return true;
             }
         }
     }
