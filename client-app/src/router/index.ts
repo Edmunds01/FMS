@@ -27,12 +27,12 @@ for (const route of routes) {
 }
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: routes,
 })
 
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('token') ?? "some-token-value"
   console.log('to', to)
   console.log('from', from)
   if (to.meta.requiresAuth && !token) {
