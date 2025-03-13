@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import DateSelect from '../components/date-select.vue';
+
+const startDate = new Date();
+const endDate = new Date(2026, 9, 18);
+</script>
 
 <template>
   <div class="dashboard-container">
@@ -9,10 +14,12 @@
     </div>
     <div class="main-content">
       <div class="date-select">
-        <h2>Date Select</h2>
+        <DateSelect :start-date="startDate" :end-date="endDate" />
       </div>
       <div class="transactions">
-        <div class="expense">Expense</div>
+        <div class="expense">
+          <div>Expense</div>
+        </div>
         <div class="income">Income</div>
         <div class="stats">Stats</div>
       </div>
@@ -39,7 +46,7 @@
 }
 
 .date-select {
-  height: 10%;
+  height: 7%;
   background-color: #cfe9c7;
 }
 

@@ -21,9 +21,9 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <title>Ieiet</title>
-
   <div class="login">
+    <title>Ieiet</title>
+
     <div class="border p-4 w-25">
       <h1 class="border-bottom">Ieiet</h1>
       <form @submit.prevent="handleLogin" class="container">

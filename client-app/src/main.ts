@@ -8,15 +8,15 @@ import router from './router'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import FaIcon from './components/global/fa-icon.vue'
 
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faXmark, faCalendar } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faXmark)
+library.add(faXmark, faCalendar)
 
 const app = createApp(App)
 
-app.component('font-awesome-icon', FontAwesomeIcon)
+app.component('faIcon', FaIcon)
 
 app.use(router)
 
