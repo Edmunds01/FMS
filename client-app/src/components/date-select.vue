@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { format } from 'date-fns';
 import { lv } from 'date-fns/locale';
-import VueDatePicker from '@vuepic/vue-datepicker';
+import VueDatePicker, { type RangeConfig } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import { ref } from 'vue';
 
@@ -19,12 +19,16 @@ function formatDate(dateRange: Date[]) {
 
   return `${formatLatvianDate(startDate)} - ${formatLatvianDate(endDate)}`;
 }
+
+const rangeConfig: RangeConfig = {
+  maxRange: 366
+};
 </script>
 
 <template>
   <div class="date-container">
-    <vue-date-picker v-model="date" locale="lv" range multi-calendars :enable-time-picker="false" :format="formatDate"
-      style="width: 50%;" />
+    <vue-date-picker v-model="date" locale="lv" multi-calendars :enable-time-picker="false" :format="formatDate"
+      style="width: auto; background-color: black;" :range="rangeConfig" :clearable="false"/>
   </div>
 </template>
 
@@ -34,5 +38,11 @@ function formatDate(dateRange: Date[]) {
   align-items: center;
   display: flex;
   height: 100%;
+}
+</style>
+
+<style>
+.dp__input {
+  border-radius: 0px;
 }
 </style>

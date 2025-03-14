@@ -6,68 +6,60 @@ const endDate = new Date(2026, 9, 18);
 </script>
 
 <template>
-  <div class="dashboard-container">
-    <title>Dashboard</title>
-
-    <div class="accounts">
-      <h2>Accounts</h2>
-    </div>
-    <div class="main-content">
-      <div class="date-select">
-        <DateSelect :start-date="startDate" :end-date="endDate" />
+  <div class="container-fluid vh-100 text-center">
+    <div class="row vh-100">
+      <div class="col-2">
+        Account
       </div>
-      <div class="transactions">
-        <div class="expense">
-          <div>Expense</div>
+      <div class="col">
+        <div class="container-fluid vh-100 text-center">
+          <div class="row h-10">
+            <div class="col p-0">
+              <DateSelect :startDate="startDate" :endDate="endDate" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-3">
+              Expenses
+            </div>
+            <div class="col-3">
+              Income
+            </div>
+            <div class="col">
+              Stats
+            </div>
+          </div>
         </div>
-        <div class="income">Income</div>
-        <div class="stats">Stats</div>
       </div>
     </div>
+
   </div>
+
 </template>
 
 <style scoped>
-.dashboard-container {
-  display: flex;
-  height: 100vh;
+.h-10 {
+  height: 10%;
 }
 
-.accounts {
-  width: 15%;
-  height: 100%;
-  background-color: #b9d2fa;
+/* Custom styles (if needed) */
+.bg-primary {
+  background-color: #b9d2fa !important;
 }
 
-.main-content {
-  width: 85%;
-  display: flex;
-  flex-direction: column;
+.bg-success {
+  background-color: #cfe9c7 !important;
 }
 
-.date-select {
-  height: 7%;
-  background-color: #cfe9c7;
+.bg-info {
+  background-color: #e0f7fa !important;
 }
 
-.transactions {
-  display: flex;
-  flex-grow: 1;
-  background-color: #f0f0f0;
+.bg-warning {
+  background-color: #ffecb3 !important;
 }
 
-.income {
-  width: 30%;
-  background-color: #e0f7fa;
-}
-
-.expense {
-  width: 30%;
-  background-color: #ffecb3;
-}
-
-.stats {
-  width: 40%;
-  background-color: #c8e6c9;
+.bg-success {
+  background-color: #c8e6c9 !important;
 }
 </style>
