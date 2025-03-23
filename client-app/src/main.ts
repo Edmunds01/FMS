@@ -1,6 +1,7 @@
 import * as bootstrap from 'bootstrap'
 
 import './assets/main.css'
+import './utils/format'
 
 import { createApp } from 'vue'
 import App from './App.vue'

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import DateSelect from '../components/date-select.vue';
+import Accounts from './dashboard/accounts.vue';
 
 const startDate = new Date();
 const endDate = new Date(2026, 9, 18);
@@ -9,7 +10,7 @@ const endDate = new Date(2026, 9, 18);
   <div class="container-fluid vh-100 text-center">
     <div class="row vh-100">
       <div class="col-2">
-        Account
+        <Accounts />
       </div>
       <div class="col">
         <div class="container-fluid vh-100 text-center">
