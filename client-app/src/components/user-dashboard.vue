@@ -9,24 +9,24 @@ const endDate = new Date(2026, 9, 18);
 <template>
   <div class="container-fluid vh-100 text-center">
     <div class="row vh-100">
-      <div class="col-2">
+      <div class="col-2 p-0 border-end">
         <Accounts />
       </div>
-      <div class="col">
+      <div class="col p-0">
         <div class="container-fluid vh-100 text-center">
           <div class="row h-10">
             <div class="col p-0">
               <DateSelect :startDate="startDate" :endDate="endDate" />
             </div>
           </div>
-          <div class="row">
-            <div class="col-3">
+          <div class="row vh-100">
+            <div class="col-3 p-0">
               Expenses
             </div>
-            <div class="col-3">
+            <div class="col-3 p-0">
               Income
             </div>
-            <div class="col">
+            <div class="col p-0">
               Stats
             </div>
           </div>
