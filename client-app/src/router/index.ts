@@ -32,7 +32,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token') ?? "some-token-value"
+  const token = localStorage.getItem('token') ?? 'some-token-value'
   console.log('to', to)
   console.log('from', from)
   if (to.meta.requiresAuth && !token) {

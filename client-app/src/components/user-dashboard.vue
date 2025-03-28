@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import DateSelect from '../components/date-select.vue';
-import Accounts from './dashboard/accounts.vue';
-import Transactions from './dashboard/transactions.vue';
+import DateSelect from '../components/date-select.vue'
+import Accounts from './dashboard/accounts.vue'
+import Transactions from './dashboard/transactions.vue'
 
-const startDate = new Date();
-const endDate = new Date(2026, 9, 18);
+const startDate = new Date()
+const endDate = new Date(2026, 9, 18)
 </script>
 
 <template>
@@ -27,16 +27,12 @@ const endDate = new Date(2026, 9, 18);
             <div class="col-3 p-0">
               <Transactions transactionType="Ienākumi" />
             </div>
-            <div class="col p-0">
-              Stats
-            </div>
+            <div class="col p-0">Stats</div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
-
 </template>
 
 <style scoped>

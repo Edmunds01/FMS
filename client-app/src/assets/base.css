@@ -32,13 +32,13 @@ body {
 }
 
 button {
-  all: unset; 
+  all: unset;
   display: inline-block;
-  cursor: pointer; 
+  cursor: pointer;
 }
 
 .first-row-height {
-  height: 5rem; 
+  height: 5rem;
 }
 
 .second-row-height {

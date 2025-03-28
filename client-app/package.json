@@ -10,8 +10,6 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
-    "lint": "eslint . --fix",
-    "format": "prettier --write src/",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "format": "prettier .  --write"
   },
@@ -40,6 +38,7 @@
     "eslint-plugin-vue": "^9.33.0",
     "npm-run-all2": "^7.0.2",
     "prettier": "3.5.3",
+    "sass-embedded": "^1.86.0",
     "typescript": "~5.6.3",
     "vite": "^6.0.5",
     "vite-plugin-vue-devtools": "^7.6.8",

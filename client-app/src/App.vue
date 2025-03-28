@@ -8,7 +8,7 @@ import { RouterView } from 'vue-router'
 
 <style>
 :root {
-/* bootstrap */
+  /* bootstrap */
   --bs-body-font-size: 1rem;
 }
 
