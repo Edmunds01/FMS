@@ -1,4 +1,4 @@
-import apiClient from './axios';
+import apiClient from "./axios";
 
 interface RegisterRequest {
   username: string;
@@ -6,6 +6,6 @@ interface RegisterRequest {
 }
 
 export const register = async (credentials: RegisterRequest): Promise<string> => {
-  const response = await apiClient.post('/auth/register', credentials);
+  const response = await apiClient.post("/auth/register", credentials);
   return response.data.Token;
 };

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FaIcon from '../global/fa-icon.vue';
+import FaIcon from "../global/fa-icon.vue";
 
 defineProps<{
   amount: number;
