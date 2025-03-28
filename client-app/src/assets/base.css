@@ -25,9 +25,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root {
+  --bs-border-color: rgb(129, 127, 127) !important;
+  --bs-border-style: solid !important;
+  --bs-border-width: 1.7px !important;
+}
+
 button {
   all: unset; 
   display: inline-block;
   cursor: pointer; 
 }
 
+.first-row-height {
+  height: 5rem; 
+}
+
+.second-row-height {
+  height: 4rem;
+}

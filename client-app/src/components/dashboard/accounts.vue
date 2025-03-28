@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 var accounts = [{
     name: "KontName",
     balance: 100.1
@@ -51,11 +52,11 @@ var total = accounts.reduce((acc, account) => acc + account.balance, 0);
 
 <template>
     <div class="account-div p-0">
-        <div class="row no-gutters border border-end-0">
-            <div class="col text-center first-row full-center-text fs-1">Konti</div>
+        <div class="row no-gutters border border-end-0 first-row-height">
+            <div class="col text-center full-center-text fs-1">Konti</div>
         </div>
-        <div class="row no-gutters border-start border-bottom">
-            <div class="col text-center">
+        <div class="row no-gutters border-start border-bottom second-row-height">
+            <div class="col text-center fs-5">
                 <div>Kopā</div>
                 <div>{{ total.toEurFormat() }}</div>
             </div>
@@ -75,20 +76,14 @@ var total = accounts.reduce((acc, account) => acc + account.balance, 0);
     </div>
 </template>
 
-<style>
-:root {
-    --bs-border-color: rgb(129, 127, 127);
-    --bs-border-style: solid;
-    --bs-border-width: 1.7px;
-}
-</style>
+
+
+<style></style>
 
 <style scoped>
 .account-div {
     max-height: 100vh;
-    /* Adjust the height as needed */
     overflow-y: auto;
-    /* Enables vertical scrolling if needed */
 }
 
 .no-gutters {
