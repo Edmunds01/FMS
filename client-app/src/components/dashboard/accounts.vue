@@ -76,10 +76,6 @@ var total = accounts.reduce((acc, account) => acc + account.balance, 0);
     </div>
 </template>
 
-
-
-<style></style>
-
 <style scoped>
 .account-div {
     max-height: 100vh;

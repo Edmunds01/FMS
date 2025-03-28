@@ -14,7 +14,7 @@ const endDate = new Date(2026, 9, 18);
         <Accounts />
       </div>
       <div class="col p-0">
-        <div class="container-fluid vh-100 text-center">
+        <div class="container-fluid text-center">
           <div class="row first-row-height">
             <div class="col p-0 border-bottom">
               <DateSelect :startDate="startDate" :endDate="endDate" />
