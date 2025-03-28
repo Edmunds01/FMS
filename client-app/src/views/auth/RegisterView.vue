@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import UserRegister from '@/components/auth/user-register.vue'
+import UserRegister from '@/components/auth/user-register.vue';
 </script>
 
 <template>

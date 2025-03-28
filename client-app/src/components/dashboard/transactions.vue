@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import TransactionCategoryButton from './transaction-category-button.vue'
+import { ref } from 'vue';
+import TransactionCategoryButton from './transaction-category-button.vue';
 
-type TransactionType = 'Izdevumi' | 'Ienākumi'
+type TransactionType = 'Izdevumi' | 'Ienākumi';
 defineProps<{
-  transactionType: TransactionType
-}>()
+  transactionType: TransactionType;
+}>();
 
-const foo = ref(4)
+const foo = ref(4);
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const foo = ref(4)
             class="test-class user-select-none"
             @click="
               () => {
-                foo++
+                foo++;
               }
             "
           />

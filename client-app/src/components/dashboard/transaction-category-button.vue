@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import FaIcon from '../global/fa-icon.vue'
+import FaIcon from '../global/fa-icon.vue';
 
 defineProps<{
-  amount: number
-  category: string
-  icon: string
-}>()
+  amount: number;
+  category: string;
+  icon: string;
+}>();
 </script>
 
 <template>
   <div class="category-button text-center">
     <div class="amount">{{ amount }}€</div>
     <div class="icon-container">
-      <FaIcon iconName="calendar" />
+      <FaIcon icon-name="calendar" />
     </div>
     <div class="category-name">{{ category }}</div>
   </div>

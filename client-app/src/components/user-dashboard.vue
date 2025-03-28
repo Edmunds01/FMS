@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import DateSelect from '../components/date-select.vue'
-import Accounts from './dashboard/accounts.vue'
-import Transactions from './dashboard/transactions.vue'
+import DateSelect from '../components/date-select.vue';
+import Accounts from './dashboard/accounts.vue';
+import Transactions from './dashboard/transactions.vue';
 
-const startDate = new Date()
-const endDate = new Date(2026, 9, 18)
+const startDate = new Date();
+const endDate = new Date(2026, 9, 18);
 </script>
 
 <template>
@@ -17,7 +17,7 @@ const endDate = new Date(2026, 9, 18)
         <div class="container-fluid text-center">
           <div class="row first-row-height">
             <div class="col p-0 border-bottom">
-              <DateSelect :startDate="startDate" :endDate="endDate" />
+              <DateSelect :endDate="endDate" />
             </div>
           </div>
           <div class="row vh-100">

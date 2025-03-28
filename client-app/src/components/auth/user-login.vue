@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { login } from '@/api/login'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue';
+import { login } from '@/api/login';
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
+const router = useRouter();
 
-const username = ref('')
-const password = ref('')
+const username = ref('');
+const password = ref('');
 
 const handleLogin = async () => {
   try {
-    const token = await login({ username: username.value, password: password.value })
-    localStorage.setItem('token', token)
-    router.push('/')
+    const token = await login({ username: username.value, password: password.value });
+    localStorage.setItem('token', token);
+    router.push('/');
   } catch (error) {
-    username.value = ''
-    password.value = ''
+    username.value = '';
+    password.value = '';
   }
-}
+};
 </script>
 
 <template>

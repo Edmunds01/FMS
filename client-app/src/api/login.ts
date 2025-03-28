@@ -1,11 +1,11 @@
-import apiClient from './axios'
+import apiClient from './axios';
 
 interface LoginRequest {
-  username: string
-  password: string
+  username: string;
+  password: string;
 }
 
 export const login = async (credentials: LoginRequest): Promise<string> => {
-  const response = await apiClient.post('/auth/login', credentials)
-  return response.data.Token
-}
+  const response = await apiClient.post('/auth/login', credentials);
+  return response.data.Token;
+};

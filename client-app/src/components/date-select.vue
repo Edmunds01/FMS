@@ -1,32 +1,32 @@
 <script setup lang="ts">
-import { format } from 'date-fns'
-import { lv } from 'date-fns/locale'
-import VueDatePicker, { type RangeConfig } from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
-import { ref } from 'vue'
+import { format } from 'date-fns';
+import { lv } from 'date-fns/locale';
+import VueDatePicker, { type RangeConfig } from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+import { ref } from 'vue';
 
 const props = defineProps<{
-  startDate: Date
-  endDate: Date
-}>()
+  startDate: Date;
+  endDate: Date;
+}>();
 
-const date = ref([props.startDate, props.endDate])
+const date = ref([props.startDate, props.endDate]);
 const formatLatvianDate = (date: Date) =>
   format(date, 'd. LLLL', { locale: lv }).replace(
     /(\d+\.\s*)([a-z])/,
     (_, p1, p2) => p1 + p2.toUpperCase(),
-  )
+  );
 
 function formatDate(dateRange: Date[]) {
-  const startDate = dateRange[0]
-  const endDate = dateRange[1]
+  const startDate = dateRange[0];
+  const endDate = dateRange[1];
 
-  return `${formatLatvianDate(startDate)} - ${formatLatvianDate(endDate)}`
+  return `${formatLatvianDate(startDate)} - ${formatLatvianDate(endDate)}`;
 }
 
 const rangeConfig: RangeConfig = {
   maxRange: 366,
-}
+};
 </script>
 
 <template>

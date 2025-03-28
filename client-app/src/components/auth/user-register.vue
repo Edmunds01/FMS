@@ -2,66 +2,66 @@
 // TODO: Add unsuccessful register alert
 // TODO: Change redirection link
 
-import { ref } from 'vue'
-import { register } from '@/api/register'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue';
+import { register } from '@/api/register';
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
+const router = useRouter();
 
-const passwordError = ref('')
-const confirmPasswordError = ref('')
+const passwordError = ref('');
+const confirmPasswordError = ref('');
 
-const username = ref('')
-const password = ref('')
-const confirmPassword = ref('')
+const username = ref('');
+const password = ref('');
+const confirmPassword = ref('');
 
 const validatePassword = () => {
-  const minLength = 10
-  const hasNumber = /\d/
-  const hasUpperCase = /[A-Z]/
-  const hasLowerCase = /[a-z]/
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/
+  const minLength = 10;
+  const hasNumber = /\d/;
+  const hasUpperCase = /[A-Z]/;
+  const hasLowerCase = /[a-z]/;
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
 
   if (password.value.length < minLength) {
-    passwordError.value = `PParolei jābūt vismaz ${minLength} simbolu garam.`
+    passwordError.value = `PParolei jābūt vismaz ${minLength} simbolu garam.`;
   } else if (!hasNumber.test(password.value) && !hasSpecialChar.test(password.value)) {
-    passwordError.value = 'Parolei jābūt vismaz vienam ciparam vai speciālam simbolam.'
+    passwordError.value = 'Parolei jābūt vismaz vienam ciparam vai speciālam simbolam.';
   } else if (!hasUpperCase.test(password.value)) {
-    passwordError.value = 'Parolei jābūt vismaz vienam lielajam burtam.'
+    passwordError.value = 'Parolei jābūt vismaz vienam lielajam burtam.';
   } else if (!hasLowerCase.test(password.value)) {
-    passwordError.value = 'Parolei jābūt vismaz vienam mazajam burtam.'
+    passwordError.value = 'Parolei jābūt vismaz vienam mazajam burtam.';
   } else {
-    passwordError.value = ''
+    passwordError.value = '';
   }
-}
+};
 
 const validateConfirmPassword = () => {
   if (confirmPassword.value !== password.value) {
-    confirmPasswordError.value = 'Paroles nesakrīt.'
+    confirmPasswordError.value = 'Paroles nesakrīt.';
   } else {
-    confirmPasswordError.value = ''
+    confirmPasswordError.value = '';
   }
-}
+};
 
 const validateForm = async () => {
-  validatePassword()
-  validateConfirmPassword()
+  validatePassword();
+  validateConfirmPassword();
   if (!passwordError.value && !confirmPasswordError.value) {
-    await handleRegister()
+    await handleRegister();
   }
-}
+};
 
 const handleRegister = async () => {
   try {
-    const token = await register({ username: username.value, password: password.value })
-    localStorage.setItem('token', token)
-    router.push('/login')
+    const token = await register({ username: username.value, password: password.value });
+    localStorage.setItem('token', token);
+    router.push('/login');
   } catch (error) {
-    username.value = ''
-    password.value = ''
-    confirmPassword.value = ''
+    username.value = '';
+    password.value = '';
+    confirmPassword.value = '';
   }
-}
+};
 </script>
 
 <template>

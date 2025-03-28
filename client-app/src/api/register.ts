@@ -1,11 +1,11 @@
-import apiClient from './axios'
+import apiClient from './axios';
 
 interface RegisterRequest {
-  username: string
-  password: string
+  username: string;
+  password: string;
 }
 
 export const register = async (credentials: RegisterRequest): Promise<string> => {
-  const response = await apiClient.post('/auth/register', credentials)
-  return response.data.Token
-}
+  const response = await apiClient.post('/auth/register', credentials);
+  return response.data.Token;
+};

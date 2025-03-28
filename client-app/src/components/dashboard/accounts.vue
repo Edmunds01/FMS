@@ -1,52 +1,52 @@
 <script setup lang="ts">
 const accounts = [
   {
-    name: 'KontName',
+    name: "KontName",
     balance: 100.1,
   },
   {
-    name: 'KontName2',
+    name: "KontName2",
     balance: 200.14,
   },
   {
-    name: 'KontName3 really long name',
+    name: "KontName3 really long name",
     balance: 300.15,
   },
   {
-    name: 'KontName4',
+    name: "KontName4",
     balance: 400.16,
   },
   {
-    name: 'KontName5',
+    name: "KontName5",
     balance: 500.17,
   },
   {
-    name: 'KontName6',
+    name: "KontName6",
     balance: 600.18,
   },
   {
-    name: 'KontName7',
+    name: "KontName7",
     balance: 700.19,
   },
   {
-    name: 'KontName8',
+    name: "KontName8",
     balance: 800.2,
   },
   {
-    name: 'KontName9',
+    name: "KontName9",
     balance: 900.21,
   },
-]
+];
 
 function handleClick(account: { name: string; balance: number }) {
-  alert(account.name)
+  alert(account.name);
 }
 
 function createNewAccount() {
-  alert('Create new account')
+  alert("Create new account");
 }
 
-const total = accounts.reduce((acc, account) => acc + account.balance, 0)
+const total = accounts.reduce((acc, account) => acc + account.balance, 0);
 </script>
 
 <template>
@@ -65,13 +65,15 @@ const total = accounts.reduce((acc, account) => acc + account.balance, 0)
       :key="account.name"
       class="row no-gutters border border-end-0 border-top-0 dashed-bottom-border"
     >
-      <button @click="handleClick(account)" class="col">
-        <div class="full-center-text text-ellipsis" :title="account.name">{{ account.name }}</div>
+      <button class="col" @click="handleClick(account)">
+        <div class="full-center-text text-ellipsis" :title="account.name">
+          {{ account.name }}
+        </div>
         <div class="full-center-text">{{ account.balance.toEurFormat() }}</div>
       </button>
     </div>
     <div class="row no-gutters border border-end-0 border-top-0">
-      <button @click="createNewAccount()" class="col text-center">
+      <button class="col text-center" @click="createNewAccount()">
         <div>+ Pievienot</div>
       </button>
     </div>
@@ -89,7 +91,7 @@ const total = accounts.reduce((acc, account) => acc + account.balance, 0)
   margin-left: 0;
 
   > .col,
-  > [class*='col-'] {
+  > [class*="col-"] {
     padding-right: 0;
     padding-left: 0;
   }

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-type IconName = 'calendar' | 'xmark'
+type IconName = 'calendar' | 'xmark';
 
 const props = defineProps<{
-  iconName: IconName
-}>()
+  iconName: IconName;
+}>();
 </script>
 
 <template>
