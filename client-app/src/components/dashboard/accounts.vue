@@ -1,5 +1,5 @@
 <script setup lang="ts">
-var accounts = [
+const accounts = [
   {
     name: 'KontName',
     balance: 100.1,
@@ -46,7 +46,7 @@ function createNewAccount() {
   alert('Create new account')
 }
 
-var total = accounts.reduce((acc, account) => acc + account.balance, 0)
+const total = accounts.reduce((acc, account) => acc + account.balance, 0)
 </script>
 
 <template>
