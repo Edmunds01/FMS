@@ -1,37 +1,31 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import TransactionCategoryButton from "./transaction-category-button.vue";
+import type { Category } from "@/api/categories";
 
 type TransactionType = "Izdevumi" | "Ienākumi";
 defineProps<{
   transactionType: TransactionType;
+  transactionSum: number;
+  categories: Category[];
 }>();
-
-const foo = ref(4);
 </script>
 
 <template>
   <div class="container-fluid transaction-container">
     <div class="row sticky-header second-row-height border-bottom border-end text-center">
       <div class="col text-center full-center-text fs-5">
-        {{ transactionType }}
+        <div>{{ transactionType }}</div>
+        <div>{{ transactionSum.toEurFormat() }}</div>
       </div>
     </div>
     <div class="row flex-grow-1 border-end">
       <div class="col">
         <div class="transaction-list d-flex flex-wrap">
           <TransactionCategoryButton
-            v-for="i in foo"
-            :key="i"
-            :amount="20 * i"
-            :category="'test' + i"
-            icon="faCalendar"
-            class="test-class user-select-none"
-            @click="
-              () => {
-                foo++;
-              }
-            "
+            v-for="category in categories"
+            :key="category.id"
+            :category="category"
+            class="category-width user-select-none"
           />
         </div>
       </div>
@@ -66,8 +60,28 @@ const foo = ref(4);
   gap: 10px;
 }
 
-.test-class {
-  flex: 0 0 calc(33.33% - 10px);
+.category-width {
   margin-bottom: 10px;
+  flex: 0 0 calc(100% - 10px);
+
+  @media (min-width: 1200px) {
+    flex: 0 0 calc(100% / 2 - 10px);
+  }
+
+  @media (min-width: 1500px) {
+    flex: 0 0 calc(100% / 3 - 10px);
+  }
+
+  @media (min-width: 1920px) {
+    flex: 0 0 calc(100% / 4 - 10px);
+  }
+
+  @media (min-width: 2560px) {
+    flex: 0 0 calc(100% / 5 - 10px);
+  }
+
+  @media (min-width: 3840px) {
+    flex: 0 0 calc(100% / 6 - 10px);
+  }
 }
 </style>

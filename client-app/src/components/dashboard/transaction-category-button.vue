@@ -1,20 +1,19 @@
 <script setup lang="ts">
+import type { Category } from "@/api/categories";
 import FaIcon from "../global/fa-icon.vue";
 
 defineProps<{
-  amount: number;
-  category: string;
-  icon: string;
+  category: Category;
 }>();
 </script>
 
 <template>
   <div class="category-button text-center">
-    <div class="amount">{{ amount }}€</div>
+    <div class="amount">{{ category.sum.toEurFormat() }}</div>
     <div class="icon-container">
-      <FaIcon icon-name="calendar" />
+      <FaIcon :icon-name="category.icon" />
     </div>
-    <div class="category-name">{{ category }}</div>
+    <div class="category-name">{{ category.name }}</div>
   </div>
 </template>
 

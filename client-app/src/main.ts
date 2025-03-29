@@ -11,13 +11,13 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 
 import FaIcon from "./components/global/fa-icon.vue";
 
-import { faXmark, faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { fas } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faXmark, faCalendar);
+library.add(fas);
 
 const app = createApp(App);
 
-app.component("faIcon", FaIcon);
+app.component("FaIcon", FaIcon);
 
 app.use(router);
 

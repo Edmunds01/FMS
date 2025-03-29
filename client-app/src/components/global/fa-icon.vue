@@ -1,7 +1,20 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-type IconName = "calendar" | "xmark";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const icons = [
+  "calendar",
+  "xmark",
+  "wand-magic",
+  "envelope",
+  "tree",
+  "gear",
+  "paperclip",
+  "pen",
+  "cart-shopping",
+] as const;
+
+export type IconName = (typeof icons)[number];
 
 const props = defineProps<{
   iconName: IconName;

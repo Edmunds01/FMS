@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { categories } from "@/api/categories";
 import DateSelect from "../components/date-select.vue";
 import Accounts from "./dashboard/accounts.vue";
 import Transactions from "./dashboard/transactions.vue";
 
 const startDate = new Date();
 const endDate = new Date(2026, 9, 18);
+
+const expense = categories.filter((category) => category.type === "expense");
+const income = categories.filter((category) => category.type === "income");
 </script>
 
 <template>
@@ -22,10 +26,18 @@ const endDate = new Date(2026, 9, 18);
           </div>
           <div class="row vh-100">
             <div class="col-3 p-0">
-              <Transactions transaction-type="Izdevumi" />
+              <Transactions
+                transaction-type="Izdevumi"
+                :transaction-sum="200"
+                :categories="expense"
+              />
             </div>
             <div class="col-3 p-0">
-              <Transactions transaction-type="Ienākumi" />
+              <Transactions
+                transaction-type="Ienākumi"
+                :transaction-sum="200"
+                :categories="income"
+              />
             </div>
             <div class="col p-0">Stats</div>
           </div>
