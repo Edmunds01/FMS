@@ -1,8 +1,14 @@
 import type { IconName } from "@/components/global/fa-icon.vue";
 
+export type CategoryType = "expense" | "income";
+
+export function MapCategoryType(category: CategoryType): string {
+  return category === "expense" ? "Izdevumi" : "Ienākumi";
+}
+
 export type Category = {
   name: string;
-  type: "expense" | "income";
+  type: CategoryType;
   icon: IconName;
   sum: number;
   id: string;

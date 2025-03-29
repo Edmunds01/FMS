@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import TransactionCategoryButton from "./transaction-category-button.vue";
-import type { Category } from "@/api/categories";
+import TransactionCategoryButton from "./category-buttons/transaction-category-button.vue";
+import AddTransactionCategoryButton from "./category-buttons/add-transaction-category-button.vue";
+import { MapCategoryType, type Category, type CategoryType } from "@/api/categories";
 
-type TransactionType = "Izdevumi" | "Ienākumi";
 defineProps<{
-  transactionType: TransactionType;
+  transactionType: CategoryType;
   transactionSum: number;
   categories: Category[];
 }>();
@@ -14,7 +14,7 @@ defineProps<{
   <div class="container-fluid transaction-container">
     <div class="row sticky-header second-row-height border-bottom border-end text-center">
       <div class="col text-center full-center-text fs-5">
-        <div>{{ transactionType }}</div>
+        <div>{{ MapCategoryType(transactionType) }}</div>
         <div>{{ transactionSum.toEurFormat() }}</div>
       </div>
     </div>
@@ -25,6 +25,10 @@ defineProps<{
             v-for="category in categories"
             :key="category.id"
             :category="category"
+            class="category-width user-select-none"
+          />
+          <AddTransactionCategoryButton
+            :type="transactionType"
             class="category-width user-select-none"
           />
         </div>

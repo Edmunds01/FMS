@@ -1,23 +1,3 @@
-<script setup lang="ts">
-import type { Category } from "@/api/categories";
-import FaIcon from "../global/fa-icon.vue";
-
-defineProps<{
-  category: Category;
-}>();
-</script>
-
-<template>
-  <div class="category-button text-center">
-    <div class="amount">{{ category.sum.toEurFormat() }}</div>
-    <div class="icon-container">
-      <FaIcon :icon-name="category.icon" />
-    </div>
-    <div class="category-name">{{ category.name }}</div>
-  </div>
-</template>
-
-<style scoped>
 .category-button {
   display: flex;
   flex-direction: column;
@@ -54,4 +34,3 @@ defineProps<{
   font-size: 0.9rem;
   color: #555;
 }
-</style>

@@ -27,17 +27,13 @@ const income = categories.filter((category) => category.type === "income");
           <div class="row vh-100">
             <div class="col-3 p-0">
               <Transactions
-                transaction-type="Izdevumi"
+                transaction-type="expense"
                 :transaction-sum="200"
                 :categories="expense"
               />
             </div>
             <div class="col-3 p-0">
-              <Transactions
-                transaction-type="Ienākumi"
-                :transaction-sum="200"
-                :categories="income"
-              />
+              <Transactions transaction-type="income" :transaction-sum="200" :categories="income" />
             </div>
             <div class="col p-0">Stats</div>
           </div>
