@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import TransactionCategoryButton from './transaction-category-button.vue';
+import { ref } from "vue";
+import TransactionCategoryButton from "./transaction-category-button.vue";
 
-type TransactionType = 'Izdevumi' | 'Ienākumi';
+type TransactionType = "Izdevumi" | "Ienākumi";
 defineProps<{
   transactionType: TransactionType;
 }>();

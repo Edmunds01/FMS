@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { format } from 'date-fns';
-import { lv } from 'date-fns/locale';
-import VueDatePicker, { type RangeConfig } from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
-import { ref } from 'vue';
+import { format } from "date-fns";
+import { lv } from "date-fns/locale";
+import VueDatePicker, { type RangeConfig } from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+import { ref } from "vue";
 
 const props = defineProps<{
   startDate: Date;
@@ -12,7 +12,7 @@ const props = defineProps<{
 
 const date = ref([props.startDate, props.endDate]);
 const formatLatvianDate = (date: Date) =>
-  format(date, 'd. LLLL', { locale: lv }).replace(
+  format(date, "d. LLLL", { locale: lv }).replace(
     /(\d+\.\s*)([a-z])/,
     (_, p1, p2) => p1 + p2.toUpperCase(),
   );
