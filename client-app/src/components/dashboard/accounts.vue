@@ -37,7 +37,7 @@ const total = accounts.reduce((acc, account) => acc + account.balance, 0);
           <div class="full-center-text">{{ account.balance.toEurFormat() }}</div>
         </div>
         <div class="icon full-center-text">
-          <FaIcon :icon-name="account.icon" size="lg" class="" />
+          <FaIcon :icon-name="account.icon" size="lg" />
         </div>
       </button>
     </div>
