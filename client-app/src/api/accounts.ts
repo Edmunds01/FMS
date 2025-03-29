@@ -18,7 +18,7 @@ export const accounts: Account[] = [
     icon: "sack-dollar",
   },
   {
-    name: "KontName3 really long name",
+    name: "KontName3 long name",
     balance: 300.15,
     icon: "money-bill",
   },
@@ -48,7 +48,8 @@ export const accounts: Account[] = [
     icon: "envelope",
   },
   {
-    name: "KontName9",
+    name: "KontName9 really really long name for testing purpo",
+    // name: "KontName9 really",
     balance: 900.21,
     icon: "tree",
   },

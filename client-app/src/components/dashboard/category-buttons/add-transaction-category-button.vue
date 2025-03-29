@@ -9,6 +9,7 @@ defineProps<{
 
 <template>
   <div class="category-button text-center">
+    <div class="amount">&nbsp;</div>
     <div class="icon-container">
       <FaIcon :icon-name="'plus'" size="xl" />
     </div>
@@ -20,7 +21,6 @@ defineProps<{
 @import "./style.scss";
 
 .category-button {
-  margin-top: 0.75rem;
   opacity: 0.5;
 }
 </style>

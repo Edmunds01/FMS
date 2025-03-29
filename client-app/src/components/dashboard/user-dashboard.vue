@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { categories } from "@/api/categories";
-import DateSelect from "../components/date-select.vue";
-import Accounts from "./dashboard/accounts.vue";
-import Transactions from "./dashboard/transactions.vue";
+import DateSelect from "./date-select.vue";
+import Accounts from "./accounts/accounts.vue";
+import Transactions from "./transactions.vue";
 
 const startDate = new Date();
 const endDate = new Date(2026, 9, 18);
@@ -14,7 +14,7 @@ const income = categories.filter((category) => category.type === "income");
 <template>
   <div class="container-fluid vh-100 text-center">
     <div class="row vh-100">
-      <div class="col-2 p-0 border-end">
+      <div class="col-2 p-0 border-end bf-neutral">
         <Accounts />
       </div>
       <div class="col p-0">
@@ -25,14 +25,14 @@ const income = categories.filter((category) => category.type === "income");
             </div>
           </div>
           <div class="row vh-100">
-            <div class="col-3 p-0">
+            <div class="col-3 p-0 bg-expense">
               <Transactions
                 transaction-type="expense"
                 :transaction-sum="200"
                 :categories="expense"
               />
             </div>
-            <div class="col-3 p-0">
+            <div class="col-3 p-0 bg-income">
               <Transactions transaction-type="income" :transaction-sum="200" :categories="income" />
             </div>
             <div class="col p-0">Stats</div>
@@ -44,23 +44,15 @@ const income = categories.filter((category) => category.type === "income");
 </template>
 
 <style scoped>
-.bg-primary {
-  background-color: #b9d2fa !important;
+.bg-income {
+  background-color: #ecf5ea !important;
 }
 
-.bg-success {
-  background-color: #cfe9c7 !important;
+.bg-expense {
+  background-color: #f8e9e9 !important;
 }
 
-.bg-info {
-  background-color: #e0f7fa !important;
-}
-
-.bg-warning {
-  background-color: #ffecb3 !important;
-}
-
-.bg-success {
-  background-color: #c8e6c9 !important;
+.bf-neutral {
+  background-color: #e4eef7 !important;
 }
 </style>

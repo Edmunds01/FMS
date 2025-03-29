@@ -1,16 +1,42 @@
 <script setup lang="ts">
 import { accounts } from "@/api/accounts";
-import FaIcon from "../global/fa-icon.vue";
+import FaIcon from "@/components/global/fa-icon.vue";
+import Modal from "bootstrap/js/dist/modal";
+import { onMounted, onUnmounted, ref } from "vue";
+import NewAccountCreationModal from "./new-account-creation-modal.vue";
+import AccountEditModal from "./Account-edit-modal.vue";
 
-function handleClick(account: { name: string; balance: number }) {
-  alert(account.name);
+function addAccount(modelId: "accountModal" | "accountEditModal") {
+  const modal = document.getElementById(modelId);
+  if (modal) {
+    const modalInstance = Modal.getInstance(modal) ?? new Modal(modal);
+    if (modalInstance) {
+      modalInstance.show();
+    }
+  }
 }
 
-function createNewAccount() {
-  alert("Create new account");
+const screenWidth = ref(window.innerWidth);
+
+function trimName(name: string) {
+  const maxLength = screenWidth.value > 1200 ? 17 : screenWidth.value > 768 ? 12 : 5;
+
+  return name.length > maxLength ? name.slice(0, maxLength) + "..." : name;
 }
 
 const total = accounts.reduce((acc, account) => acc + account.balance, 0);
+
+function updateScreenWidth() {
+  screenWidth.value = window.innerWidth;
+}
+
+onMounted(() => {
+  window.addEventListener("resize", updateScreenWidth);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", updateScreenWidth);
+});
 </script>
 
 <template>
@@ -29,10 +55,10 @@ const total = accounts.reduce((acc, account) => acc + account.balance, 0);
       :key="account.name"
       class="row no-gutters border border-end-0 border-top-0 dashed-bottom-border"
     >
-      <button class="col d-flex" @click="handleClick(account)">
+      <button class="col d-flex" @click="addAccount('accountEditModal')">
         <div class="account-details">
-          <div class="full-center-text text-ellipsis" :title="account.name">
-            {{ account.name }}
+          <div class="full-center-text text-ellipsis fs-5" :title="account.name">
+            {{ trimName(account.name) }}
           </div>
           <div class="full-center-text">{{ account.balance.toEurFormat() }}</div>
         </div>
@@ -42,21 +68,42 @@ const total = accounts.reduce((acc, account) => acc + account.balance, 0);
       </button>
     </div>
     <div class="row no-gutters border border-end-0 border-top-0">
-      <button class="col text-center" @click="createNewAccount()">
+      <button class="col text-center add-account" @click="addAccount('accountModal')">
         <div>+ Pievienot</div>
       </button>
     </div>
+    <NewAccountCreationModal />
+    <AccountEditModal />
   </div>
 </template>
 
 <style scoped>
+.btn-primary {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+}
+
 .account-div {
   max-height: 100vh;
   overflow-y: auto;
 }
 
+.account-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
 .account-details {
   flex: 1;
+  margin-left: 3rem;
 }
 
 .no-gutters {

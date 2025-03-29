@@ -49,7 +49,6 @@ defineProps<{
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: white;
   flex-shrink: 0;
 }
 

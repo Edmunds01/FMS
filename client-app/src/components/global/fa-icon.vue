@@ -1,8 +1,5 @@
-<script setup lang="ts">
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const icons = [
+<script lang="ts">
+export const icons = [
   "calendar",
   "xmark",
   "wand-magic",
@@ -18,6 +15,10 @@ const icons = [
   "sack-dollar",
   "money-bills",
 ] as const;
+</script>
+
+<script setup lang="ts">
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 export type IconName = (typeof icons)[number];
 type IconSize =
@@ -39,13 +40,13 @@ type IconSize =
   | "10x";
 
 const props = defineProps<{
-  iconName: IconName;
+  iconName?: IconName | null;
   size?: IconSize;
 }>();
 </script>
 
 <template>
-  <font-awesome-icon :icon="'fa-solid fa-' + props.iconName" :size="size" />
+  <font-awesome-icon v-if="iconName" :icon="'fa-solid fa-' + props.iconName" :size="size" />
 </template>
 
 <style scoped></style>
