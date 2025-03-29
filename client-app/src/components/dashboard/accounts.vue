@@ -1,42 +1,6 @@
 <script setup lang="ts">
-const accounts = [
-  {
-    name: "KontName",
-    balance: 100.1,
-  },
-  {
-    name: "KontName2",
-    balance: 200.14,
-  },
-  {
-    name: "KontName3 really long name",
-    balance: 300.15,
-  },
-  {
-    name: "KontName4",
-    balance: 400.16,
-  },
-  {
-    name: "KontName5",
-    balance: 500.17,
-  },
-  {
-    name: "KontName6",
-    balance: 600.18,
-  },
-  {
-    name: "KontName7",
-    balance: 700.19,
-  },
-  {
-    name: "KontName8",
-    balance: 800.2,
-  },
-  {
-    name: "KontName9",
-    balance: 900.21,
-  },
-];
+import { accounts } from "@/api/accounts";
+import FaIcon from "../global/fa-icon.vue";
 
 function handleClick(account: { name: string; balance: number }) {
   alert(account.name);
@@ -65,11 +29,16 @@ const total = accounts.reduce((acc, account) => acc + account.balance, 0);
       :key="account.name"
       class="row no-gutters border border-end-0 border-top-0 dashed-bottom-border"
     >
-      <button class="col" @click="handleClick(account)">
-        <div class="full-center-text text-ellipsis" :title="account.name">
-          {{ account.name }}
+      <button class="col d-flex" @click="handleClick(account)">
+        <div class="account-details">
+          <div class="full-center-text text-ellipsis" :title="account.name">
+            {{ account.name }}
+          </div>
+          <div class="full-center-text">{{ account.balance.toEurFormat() }}</div>
         </div>
-        <div class="full-center-text">{{ account.balance.toEurFormat() }}</div>
+        <div class="icon full-center-text">
+          <FaIcon :icon-name="account.icon" size="lg" class="" />
+        </div>
       </button>
     </div>
     <div class="row no-gutters border border-end-0 border-top-0">
@@ -84,6 +53,10 @@ const total = accounts.reduce((acc, account) => acc + account.balance, 0);
 .account-div {
   max-height: 100vh;
   overflow-y: auto;
+}
+
+.account-details {
+  flex: 1;
 }
 
 .no-gutters {
@@ -113,5 +86,12 @@ const total = accounts.reduce((acc, account) => acc + account.balance, 0);
   text-overflow: ellipsis;
   padding: 0 5px;
   text-align: left !important;
+}
+
+.icon {
+  flex: 0 0 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

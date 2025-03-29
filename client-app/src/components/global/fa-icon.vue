@@ -13,6 +13,10 @@ const icons = [
   "pen",
   "cart-shopping",
   "plus",
+  "credit-card",
+  "money-bill",
+  "sack-dollar",
+  "money-bills",
 ] as const;
 
 export type IconName = (typeof icons)[number];
