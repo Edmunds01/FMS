@@ -9,13 +9,13 @@ using web_api.Repository;
 namespace web_api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly UserRepository _userRepostory;
+        private readonly IUserRepository _userRepostory;
 
-        public AuthController(IConfiguration configuration, UserRepository userRepostory)
+        public AuthController(IConfiguration configuration, IUserRepository userRepostory)
         {
             _configuration = configuration;
             _userRepostory = userRepostory;

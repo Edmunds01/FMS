@@ -14,9 +14,9 @@ namespace web_api.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly UserRepository _userRepostory;
+        private readonly IUserRepository _userRepostory;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, UserRepository userRepostory)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IUserRepository userRepostory)
         {
             _logger = logger;
             _userRepostory = userRepostory;

@@ -5,6 +5,7 @@ using web_api.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using web_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,9 +50,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
     };
 });
-var test = builder.Configuration["Jwt:Issuer"];
 
-builder.Services.AddScoped<UserRepository>();
+RegisterReoisitoriesAndServices(builder.Services);
 
 var app = builder.Build();
 
@@ -74,3 +74,12 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+void RegisterReoisitoriesAndServices(IServiceCollection services)
+{
+    services.AddScoped<IUserRepository, UserRepository>();
+    services.AddScoped<IAccountRepository, AccountRepository>();
+    services.AddScoped<ITransactionRepository, TransactionRepository>();
+
+    builder.Services.AddScoped<IAccountService, AccountService>();
+}

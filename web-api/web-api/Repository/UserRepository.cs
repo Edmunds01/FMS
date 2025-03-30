@@ -2,7 +2,7 @@
 
 namespace web_api.Repository
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly FMSContext _context;
 
