@@ -5,6 +5,10 @@ using web_api.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using web_api.Services;
+using Microsoft.AspNetCore.Builder;
+using System.Diagnostics;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +17,32 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 builder.Services.AddDbContext<FMSContext>(options =>
 {
@@ -48,10 +77,21 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
     };
-});
-var test = builder.Configuration["Jwt:Issuer"];
 
-builder.Services.AddScoped<UserRepository>();
+    options.Events = new JwtBearerEvents
+    {
+        OnChallenge = context =>
+        {
+            context.HandleResponse();
+            context.Response.StatusCode = 401;
+            context.Response.ContentType = "application/json";
+            var result = System.Text.Json.JsonSerializer.Serialize(new { message = "You are not authorized" });
+            return context.Response.WriteAsync(result);
+        }
+    };
+});
+
+RegisterRepositoriesAndServices(builder.Services);
 
 var app = builder.Build();
 
@@ -64,7 +104,10 @@ app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    });
 }
 
 app.UseHttpsRedirection();
@@ -73,4 +116,37 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+// TODO: Prob add as a project reference
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+Task.Run(async () =>
+{
+    await Task.Delay(1000);
+    var process = new Process
+    {
+        StartInfo = new ProcessStartInfo
+        {
+            FileName = "dotnet",
+            Arguments = "run --project ../../api-client-generator https://localhost:5000/swagger/v1/swagger.json ../../client-app/src/api/auto-generated-client.ts",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        }
+    };
+
+    process.Start();
+});
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+
+await app.RunAsync();
+
+
+void RegisterRepositoriesAndServices(IServiceCollection services)
+{
+    services.AddScoped<IUserRepository, UserRepository>();
+    services.AddScoped<IAccountRepository, AccountRepository>();
+    services.AddScoped<ITransactionRepository, TransactionRepository>();
+
+    services.AddScoped<IAccountService, AccountService>();
+}

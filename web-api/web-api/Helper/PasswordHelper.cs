@@ -26,7 +26,9 @@ namespace web_api.Helper
                 for (var i = 0; i < passwordHash.Length; i++)
                 {
                     if (passwordHash[i] != hashBytes[i])
+                    {
                         return false;
+                    }
                 }
 
                 return true;

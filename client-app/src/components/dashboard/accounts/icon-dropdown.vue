@@ -3,7 +3,7 @@ import FaIcon, { type IconName } from "@/components/global/fa-icon.vue";
 import { icons as iconNames } from "@/components/global/fa-icon.vue";
 
 defineProps<{
-  iconName: IconName;
+  iconName: IconName | string;
 }>();
 
 defineEmits<{

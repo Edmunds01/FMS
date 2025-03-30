@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { type Account } from "@/api/accounts";
 import ModalWindow from "@/components/global/modal-window.vue";
 import IconDropdown from "./icon-dropdown.vue";
 import { ref } from "vue";
 import FaIcon from "@/components/global/fa-icon.vue";
+import type { Account } from "@/api/auto-generated-client";
 
 const props = defineProps<{
   account: Account;
@@ -22,14 +22,11 @@ defineEmits<{
     <template #body>
       <div class="d-flex align-items-center">
         <IconDropdown
-          :icon-name="editAccount.icon"
+          :icon-name="editAccount.icon!"
           @select-icon="(icon) => (editAccount.icon = icon)"
         />
         <div class="row flex-grow-1">
-          <div
-            v-if="!isEditMode"
-            class="col d-flex align-items-center justify-content-center"
-          >
+          <div v-if="!isEditMode" class="col d-flex align-items-center justify-content-center">
             <div class="p-0 me-5">{{ editAccount.name }}</div>
             <button class="p-0" @click="isEditMode = true">
               <FaIcon icon-name="pen" size="lg" />

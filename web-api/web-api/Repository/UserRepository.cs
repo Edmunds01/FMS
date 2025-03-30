@@ -2,7 +2,7 @@
 
 namespace web_api.Repository
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly FMSContext _context;
 
@@ -11,10 +11,12 @@ namespace web_api.Repository
             _context = context;
         }
 
-        public void AddUser(User user)
+        public async Task<User> AddUserAsync(User user)
         {
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            return user;
         }
 
         public User? GetUser(string email)

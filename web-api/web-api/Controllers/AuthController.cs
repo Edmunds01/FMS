@@ -4,64 +4,65 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using web_api.Dtos;
+using web_api.Models;
 using web_api.Repository;
 
 namespace web_api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly UserRepository _userRepostory;
+        private readonly IUserRepository _userRepository;
 
-        public AuthController(IConfiguration configuration, UserRepository userRepostory)
+        public AuthController(IConfiguration configuration, IUserRepository userRepository)
         {
             _configuration = configuration;
-            _userRepostory = userRepostory;
+            _userRepository = userRepository;
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRegisterDto loginDto)
+        public ActionResult<TokenResponse> Login([FromBody] LoginRegisterDto loginDto)
         {
-            var user = _userRepostory.GetUser(loginDto.Username);
+            var user = _userRepository.GetUser(loginDto.Username);
 
             if (user != null && Helper.PasswordHelper.ComparePasswords(user.PasswordHash, loginDto.Password))
             {
-                var token = GenerateJwtToken(loginDto.Username);
-                return Ok(new { Token = token });
+                return Ok(new TokenResponse() { Token = GenerateJwtToken(user) });
             }
 
             return Unauthorized("Invalid username or password");
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] LoginRegisterDto loginDto)
+        public async Task<ActionResult<TokenResponse>> Register([FromBody] LoginRegisterDto loginDto)
         {
             // TODO: Add data validation
 
-            if (_userRepostory.GetUser(loginDto.Username) != null)
+            if (_userRepository.GetUser(loginDto.Username) != null)
+            {
                 return Conflict("User with this email already exists");
+            }
 
-            _userRepostory.AddUser(new Models.User
+            var user = await _userRepository.AddUserAsync(new User
             {
                 Email = loginDto.Username,
                 PasswordHash = Helper.PasswordHelper.GenerateVarbinary64FromPassword(loginDto.Password)
             });
 
-            var token = GenerateJwtToken(loginDto.Username);
-
-            return Ok(new { Token = token });
+            return Ok(new TokenResponse() { Token = GenerateJwtToken(user) });
         }
 
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, username)
+                new Claim("email", user.Email),
+                new Claim("userId", user.UserId.ToString()),
             };
 
             var token = new JwtSecurityToken(
