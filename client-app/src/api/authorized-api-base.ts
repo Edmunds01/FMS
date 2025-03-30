@@ -19,7 +19,6 @@ export class AuthorizedApiBase {
   }
 
   protected transformOptions = (options: RequestInit): Promise<RequestInit> => {
-    console.log("transformOptions");
     options.headers = {
       ...options.headers,
       Authorization: this.config.getAuthorization() ?? "",
