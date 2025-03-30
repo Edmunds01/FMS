@@ -14,18 +14,18 @@ namespace web_api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly IUserRepository _userRepostory;
+        private readonly IUserRepository _userRepository;
 
-        public AuthController(IConfiguration configuration, IUserRepository userRepostory)
+        public AuthController(IConfiguration configuration, IUserRepository userRepository)
         {
             _configuration = configuration;
-            _userRepostory = userRepostory;
+            _userRepository = userRepository;
         }
 
         [HttpPost("login")]
         public ActionResult<TokenResponse> Login([FromBody] LoginRegisterDto loginDto)
         {
-            var user = _userRepostory.GetUser(loginDto.Username);
+            var user = _userRepository.GetUser(loginDto.Username);
 
             if (user != null && Helper.PasswordHelper.ComparePasswords(user.PasswordHash, loginDto.Password))
             {
@@ -40,12 +40,12 @@ namespace web_api.Controllers
         {
             // TODO: Add data validation
 
-            if (_userRepostory.GetUser(loginDto.Username) != null)
+            if (_userRepository.GetUser(loginDto.Username) != null)
             {
                 return Conflict("User with this email already exists");
             }
 
-            var user = await _userRepostory.AddUserAsync(new User
+            var user = await _userRepository.AddUserAsync(new User
             {
                 Email = loginDto.Username,
                 PasswordHash = Helper.PasswordHelper.GenerateVarbinary64FromPassword(loginDto.Password)

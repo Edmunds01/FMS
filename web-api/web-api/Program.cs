@@ -91,7 +91,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-RegisterReoisitoriesAndServices(builder.Services);
+RegisterRepositoriesAndServices(builder.Services);
 
 var app = builder.Build();
 
@@ -142,7 +142,7 @@ Task.Run(async () =>
 await app.RunAsync();
 
 
-void RegisterReoisitoriesAndServices(IServiceCollection services)
+void RegisterRepositoriesAndServices(IServiceCollection services)
 {
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IAccountRepository, AccountRepository>();
