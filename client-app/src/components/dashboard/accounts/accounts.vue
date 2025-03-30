@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { accounts, type Account } from "@/api/accounts";
 import FaIcon from "@/components/global/fa-icon.vue";
 import Modal from "bootstrap/js/dist/modal";
 import { onMounted, onUnmounted, ref } from "vue";
 import NewAccountCreationModal from "./new-account-creation-modal.vue";
 import AccountEditModal from "./account-edit-modal.vue";
+import { api, type Account } from "@/api/auto-generated-client";
 
 const selectedAccount = ref<Account | null>(null);
+const accounts = ref<Account[]>([]);
+
+onMounted(async () => {
+  accounts.value = await api.accounts();
+});
 
 function openAccountModal(modelId: "accountModal" | "accountEditModal", account?: Account) {
   if (account) {
@@ -38,7 +43,7 @@ function trimName(name: string) {
   return name.length > maxLength ? name.slice(0, maxLength) + "..." : name;
 }
 
-const total = accounts.reduce((acc, account) => acc + account.balance, 0);
+const total = accounts.value.reduce((acc, account) => acc + account.balance, 0);
 
 function updateScreenWidth() {
   screenWidth.value = window.innerWidth;
@@ -73,7 +78,7 @@ onUnmounted(() => {
       <button class="col d-flex" @click="openAccountModal('accountEditModal', account)">
         <div class="account-details">
           <div class="full-center-text text-ellipsis fs-5" :title="account.name">
-            {{ trimName(account.name) }}
+            {{ trimName(account.name ?? "") }}
           </div>
           <div class="full-center-text">{{ account.balance.toEurFormat() }}</div>
         </div>

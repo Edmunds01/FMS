@@ -4,6 +4,6 @@ namespace web_api.Repository;
 
 public interface IUserRepository
 {
-    void AddUser(User user);
+    Task<User> AddUserAsync(User user);
     User? GetUser(string email);
 }

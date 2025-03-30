@@ -8,12 +8,15 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
-export class Client {
+import { AuthorizedApiBase, IConfig } from "./authorized-api-base";
+
+export class Client extends AuthorizedApiBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+    constructor(configuration: IConfig, baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super(configuration);
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
     }
@@ -32,7 +35,9 @@ export class Client {
             }
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
             return this.processAccounts(_response);
         });
     }
@@ -58,7 +63,7 @@ export class Client {
      * @param body (optional) 
      * @return Success
      */
-    login(body: LoginRegisterDto | undefined): Promise<void> {
+    login(body: LoginRegisterDto | undefined): Promise<TokenResponse> {
         let url_ = this.baseUrl + "/api/auth/login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -69,34 +74,39 @@ export class Client {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Accept": "text/plain"
             }
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
             return this.processLogin(_response);
         });
     }
 
-    protected processLogin(response: Response): Promise<void> {
+    protected processLogin(response: Response): Promise<TokenResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
-            return;
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TokenResponse;
+            return result200;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<TokenResponse>(null as any);
     }
 
     /**
      * @param body (optional) 
      * @return Success
      */
-    register(body: LoginRegisterDto | undefined): Promise<void> {
+    register(body: LoginRegisterDto | undefined): Promise<TokenResponse> {
         let url_ = this.baseUrl + "/api/auth/register";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -107,27 +117,32 @@ export class Client {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Accept": "text/plain"
             }
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
             return this.processRegister(_response);
         });
     }
 
-    protected processRegister(response: Response): Promise<void> {
+    protected processRegister(response: Response): Promise<TokenResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
-            return;
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TokenResponse;
+            return result200;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<TokenResponse>(null as any);
     }
 
     /**
@@ -144,7 +159,9 @@ export class Client {
             }
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
             return this.processGetWeatherForecast(_response);
         });
     }
@@ -168,19 +185,19 @@ export class Client {
 }
 
 export interface Account {
-    accountId?: number;
-    name?: string | undefined;
-    icon?: string | undefined;
-    balance?: number;
+    accountId: number;
+    name: string | undefined;
+    icon: string | undefined;
+    balance: number;
 }
 
 export interface DateOnly {
-    year?: number;
-    month?: number;
-    day?: number;
-    dayOfWeek?: DayOfWeek;
-    readonly dayOfYear?: number;
-    readonly dayNumber?: number;
+    year: number;
+    month: number;
+    day: number;
+    dayOfWeek: DayOfWeek;
+    readonly dayOfYear: number;
+    readonly dayNumber: number;
 }
 
 export enum DayOfWeek {
@@ -194,15 +211,19 @@ export enum DayOfWeek {
 }
 
 export interface LoginRegisterDto {
-    username?: string | undefined;
-    password?: string | undefined;
+    username: string | undefined;
+    password: string | undefined;
+}
+
+export interface TokenResponse {
+    token: string | undefined;
 }
 
 export interface WeatherForecast {
-    date?: DateOnly;
-    temperatureC?: number;
-    readonly temperatureF?: number;
-    summary?: string | undefined;
+    date: DateOnly;
+    temperatureC: number;
+    readonly temperatureF: number;
+    summary: string | undefined;
 }
 
 export class ApiException extends Error {
@@ -236,4 +257,16 @@ function throwException(message: string, status: number, response: string, heade
         throw new ApiException(message, status, response, headers, null);
 }
 
-export const api = new Client("https://localhost:5000");
+const config: IConfig = {
+    getAuthorization: () => {
+        return "Bearer " + localStorage.getItem("token");
+    }
+}
+export const api = new Client(config, "https://localhost:5000");
+
+const token = await api.login({
+    username: "string",
+    password: "string"
+});
+
+localStorage.setItem("token", token.token!);

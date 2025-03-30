@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using web_api.Models;
 using web_api.Repository;
 
@@ -23,7 +24,7 @@ namespace web_api.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<IEnumerable<WeatherForecast>> Get()
         {
             var password = "YourSecurePassword123!";
             var varbinary64 = Helper.PasswordHelper.GenerateVarbinary64FromPassword(password);
@@ -34,7 +35,7 @@ namespace web_api.Controllers
                 PasswordHash = varbinary64
             };
 
-            _userRepostory.AddUser(user);
+            await _userRepostory.AddUserAsync(user);
 
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

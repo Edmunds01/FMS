@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using web_api.Dtos;
+using web_api.Models;
 using web_api.Repository;
 
 namespace web_api.Controllers
@@ -22,21 +23,20 @@ namespace web_api.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRegisterDto loginDto)
+        public ActionResult<TokenResponse> Login([FromBody] LoginRegisterDto loginDto)
         {
             var user = _userRepostory.GetUser(loginDto.Username);
 
             if (user != null && Helper.PasswordHelper.ComparePasswords(user.PasswordHash, loginDto.Password))
             {
-                var token = GenerateJwtToken(loginDto.Username);
-                return Ok(new { Token = token });
+                return Ok(new TokenResponse() { Token = GenerateJwtToken(user) });
             }
 
             return Unauthorized("Invalid username or password");
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] LoginRegisterDto loginDto)
+        public async Task<ActionResult<TokenResponse>> Register([FromBody] LoginRegisterDto loginDto)
         {
             // TODO: Add data validation
 
@@ -45,25 +45,24 @@ namespace web_api.Controllers
                 return Conflict("User with this email already exists");
             }
 
-            _userRepostory.AddUser(new Models.User
+            var user = await _userRepostory.AddUserAsync(new User
             {
                 Email = loginDto.Username,
                 PasswordHash = Helper.PasswordHelper.GenerateVarbinary64FromPassword(loginDto.Password)
             });
 
-            var token = GenerateJwtToken(loginDto.Username);
-
-            return Ok(new { Token = token });
+            return Ok(new TokenResponse() { Token = GenerateJwtToken(user) });
         }
 
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, username)
+                new Claim("email", user.Email),
+                new Claim("userId", user.UserId.ToString()),
             };
 
             var token = new JwtSecurityToken(

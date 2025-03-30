@@ -26,9 +26,28 @@ static string GenerateTypeScriptClient(OpenApiDocument document)
             TypeStyle = TypeScriptTypeStyle.Interface,
             TypeScriptVersion = 3.5M,
             DateTimeType = TypeScriptDateTimeType.Date,
-            ExtensionCode = "export const api = new Client(\"https://localhost:5000\");",
+            MarkOptionalProperties = false,
+            ExtensionCode = """
+            const config: IConfig = {
+                getAuthorization: () => {
+                    return "Bearer " + localStorage.getItem("token");
+                }
+            }
+            export const api = new Client(config, "https://localhost:5000");
+            import { AuthorizedApiBase, IConfig } from "./authorized-api-base";
+
+            const token = await api.login({
+                username: "string",
+                password: "string"
+            });
+
+            localStorage.setItem("token", token.token!);
+            """,
         },
-        WithCredentials = true
+        WithCredentials = true,
+        ConfigurationClass = "IConfig",
+        ClientBaseClass = "AuthorizedApiBase",
+        UseTransformOptionsMethod = true,
     };
     var generator = new TypeScriptClientGenerator(document, settings);
     
