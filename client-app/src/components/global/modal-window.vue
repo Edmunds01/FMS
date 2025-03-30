@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <div :id="id" class="modal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
         <div v-if="$slots.header" class="modal-header">
           <slot name="header" />

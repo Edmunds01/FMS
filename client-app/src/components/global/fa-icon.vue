@@ -14,13 +14,15 @@ export const icons = [
   "money-bill",
   "sack-dollar",
   "money-bills",
+  "floppy-disk",
+  "trash",
 ] as const;
 </script>
 
 <script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-export type IconName = (typeof icons)[number];
+export type IconName = typeof icons[number];
 type IconSize =
   | "2xs"
   | "xs"
@@ -46,7 +48,11 @@ const props = defineProps<{
 </script>
 
 <template>
-  <font-awesome-icon v-if="iconName" :icon="'fa-solid fa-' + props.iconName" :size="size" />
+  <font-awesome-icon
+    v-if="iconName"
+    :icon="'fa-solid fa-' + props.iconName"
+    :size="size"
+  />
 </template>
 
 <style scoped></style>

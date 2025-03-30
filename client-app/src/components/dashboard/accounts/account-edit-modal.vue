@@ -2,14 +2,19 @@
 import { type Account } from "@/api/accounts";
 import ModalWindow from "@/components/global/modal-window.vue";
 import IconDropdown from "./icon-dropdown.vue";
+import { ref } from "vue";
+import FaIcon from "@/components/global/fa-icon.vue";
 
 const props = defineProps<{
   account: Account;
 }>();
 
-function saveAccount() {
-  console.log("Account saved:", props.account);
-}
+const editAccount = ref<Account>(props.account);
+const isEditMode = ref(false);
+
+defineEmits<{
+  (e: "save", account: boolean): void;
+}>();
 </script>
 
 <template>
@@ -17,17 +22,39 @@ function saveAccount() {
     <template #body>
       <div class="d-flex align-items-center">
         <IconDropdown
-          :icon-name="account.icon"
-          @select-icon="(icon) => (account.icon = icon)"
+          :icon-name="editAccount.icon"
+          @select-icon="(icon) => (editAccount.icon = icon)"
         />
-        <div class="flex-grow-1 me-3">
-          <div class="row mt-4 mb-2">
-            {{ acc }}
-            </div>
+        <div class="row flex-grow-1">
+          <div
+            v-if="!isEditMode"
+            class="col d-flex align-items-center justify-content-center"
+          >
+            <div class="p-0 me-5">{{ editAccount.name }}</div>
+            <button class="p-0" @click="isEditMode = true">
+              <FaIcon icon-name="pen" size="lg" />
+            </button>
+          </div>
+          <div v-else class="col d-flex align-items-center justify-content-center">
+            <input
+              v-model="editAccount.name"
+              type="text"
+              class="form-control form-control-sm me-4"
+              style="width: 30rem"
+            />
+            <button class="p-0" @click="isEditMode = false">
+              <FaIcon icon-name="floppy-disk" size="lg" />
+            </button>
+            <button class="p-0 ms-4" @click="isEditMode = false">
+              <FaIcon icon-name="xmark" size="lg" />
+            </button>
           </div>
         </div>
-        <div class="d-flex justify-content-between align-items-center mt-3">
-          <button class="btn btn-primary px-4" @click="saveAccount">Saglabāt</button>
+
+        <div class="d-flex justify-content-between align-items-center">
+          <button class="p-0">
+            <FaIcon icon-name="trash" size="lg" />
+          </button>
           <button
             type="button"
             class="btn-close ms-3 me-3"
@@ -62,63 +89,5 @@ function saveAccount() {
 .btn-close:hover {
   background-color: #f0f0f0;
   border-radius: 50%;
-}
-
-.account-div {
-  max-height: 100vh;
-  overflow-y: auto;
-}
-
-.account-icon {
-  width: 1rem;
-  height: 1rem;
-}
-
-.icon-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-  padding: 0.5rem;
-}
-
-.account-details {
-  flex: 1;
-  margin-left: 3rem;
-}
-
-.no-gutters {
-  margin-right: 0;
-  margin-left: 0;
-
-  > .col,
-  > [class*="col-"] {
-    padding-right: 0;
-    padding-left: 0;
-  }
-}
-
-.full-center-text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dashed-bottom-border {
-  border-bottom: var(--bs-border-width) dashed var(--bs-border-color) !important;
-}
-
-.text-ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 5px;
-  text-align: left !important;
-}
-
-.icon {
-  flex: 0 0 20%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 </style>

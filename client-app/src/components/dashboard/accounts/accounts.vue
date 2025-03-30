@@ -1,21 +1,35 @@
 <script setup lang="ts">
-import { accounts } from "@/api/accounts";
+import { accounts, type Account } from "@/api/accounts";
 import FaIcon from "@/components/global/fa-icon.vue";
 import Modal from "bootstrap/js/dist/modal";
 import { onMounted, onUnmounted, ref } from "vue";
 import NewAccountCreationModal from "./new-account-creation-modal.vue";
-import AccountEditModal from "./Account-edit-modal.vue";
+import AccountEditModal from "./account-edit-modal.vue";
 
-function addAccount(modelId: "accountModal" | "accountEditModal") {
-  const modal = document.getElementById(modelId);
-  if (modal) {
-    const modalInstance = Modal.getInstance(modal) ?? new Modal(modal);
-    if (modalInstance) {
-      modalInstance.show();
-    }
+const selectedAccount = ref<Account | null>(null);
+
+function openAccountModal(modelId: "accountModal" | "accountEditModal", account?: Account) {
+  if (account) {
+    selectedAccount.value = account;
   }
+  setTimeout(() => {
+    const modal = document.getElementById(modelId);
+    if (modal) {
+      const modalInstance = Modal.getInstance(modal) ?? new Modal(modal);
+      if (modalInstance) {
+        modalInstance.show();
+
+        const onModalHidden = () => {
+          selectedAccount.value = null;
+        };
+
+        modal.addEventListener("hidden.bs.modal", onModalHidden);
+      }
+    }
+  }, 0);
 }
 
+// #region ScreenNames
 const screenWidth = ref(window.innerWidth);
 
 function trimName(name: string) {
@@ -37,6 +51,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("resize", updateScreenWidth);
 });
+// #endregion
 </script>
 
 <template>
@@ -55,7 +70,7 @@ onUnmounted(() => {
       :key="account.name"
       class="row no-gutters border border-end-0 border-top-0 dashed-bottom-border"
     >
-      <button class="col d-flex" @click="addAccount('accountEditModal')">
+      <button class="col d-flex" @click="openAccountModal('accountEditModal', account)">
         <div class="account-details">
           <div class="full-center-text text-ellipsis fs-5" :title="account.name">
             {{ trimName(account.name) }}
@@ -68,12 +83,15 @@ onUnmounted(() => {
       </button>
     </div>
     <div class="row no-gutters border border-end-0 border-top-0">
-      <button class="col text-center add-account" @click="addAccount('accountModal')">
+      <button
+        class="col text-center add-account"
+        @click="openAccountModal('accountModal')"
+      >
         <div>+ Pievienot</div>
       </button>
     </div>
     <NewAccountCreationModal />
-    <AccountEditModal />
+    <AccountEditModal v-if="selectedAccount" :account="selectedAccount" />
   </div>
 </template>
 

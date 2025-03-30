@@ -6,11 +6,13 @@ defineProps<{
   iconName: IconName;
 }>();
 
-defineEmits(["selectIcon"]);
+defineEmits<{
+  selectIcon: [iconName: IconName];
+}>();
 </script>
 
 <template>
-  <div class="btn-group dropstart">
+  <div class="btn-group dropstart border-end rounded-0">
     <button
       type="button"
       class="btn dropdown-toggle"
@@ -40,38 +42,10 @@ defineEmits(["selectIcon"]);
 @import "../category-buttons/style.scss";
 </style>
 
-<style scoped>
-.btn-primary {
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-}
-
-.btn-close {
-  font-size: 1.25rem;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-close:hover {
-  background-color: #f0f0f0;
-  border-radius: 50%;
-}
-
-.account-div {
-  max-height: 100vh;
-  overflow-y: auto;
-}
-
-.account-icon {
-  width: 1rem;
-  height: 1rem;
+<style lang="scss">
+.btn {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .icon-grid {
@@ -79,46 +53,5 @@ defineEmits(["selectIcon"]);
   grid-template-columns: repeat(4, 1fr);
   gap: 0.5rem;
   padding: 0.5rem;
-}
-
-.account-details {
-  flex: 1;
-  margin-left: 3rem;
-}
-
-.no-gutters {
-  margin-right: 0;
-  margin-left: 0;
-
-  > .col,
-  > [class*="col-"] {
-    padding-right: 0;
-    padding-left: 0;
-  }
-}
-
-.full-center-text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dashed-bottom-border {
-  border-bottom: var(--bs-border-width) dashed var(--bs-border-color) !important;
-}
-
-.text-ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 5px;
-  text-align: left !important;
-}
-
-.icon {
-  flex: 0 0 20%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 </style>

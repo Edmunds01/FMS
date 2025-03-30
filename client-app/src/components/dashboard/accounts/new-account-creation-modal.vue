@@ -23,11 +23,11 @@ function saveAccount() {
           :icon-name="newAccount.icon"
           @select-icon="(icon) => (newAccount.icon = icon)"
         />
-        <div class="flex-grow-1 me-3">
+        <div class="flex-grow-1 pe-3 account-details">
           <div class="row mt-4 mb-2">
             <label
               for="colFormLabelSm"
-              class="col-3 col-form-label col-form-label-sm align-items-start"
+              class="col-4 col-form-label col-form-label-sm align-items-start"
               >Konta nosaukums:</label
             >
             <div class="col">
@@ -39,8 +39,8 @@ function saveAccount() {
               />
             </div>
           </div>
-          <div class="row mb-4">
-            <label for="colFormLabelSm" class="col-3 col-form-label col-form-label-sm"
+          <div class="row pb-4">
+            <label for="colFormLabelSm" class="col-4 col-form-label col-form-label-sm"
               >Konta sakotnēja summa:
             </label>
             <div class="col">
@@ -74,6 +74,11 @@ function saveAccount() {
   border-radius: 0.25rem;
 }
 
+.account-details {
+  margin-top: -2rem;
+  margin-bottom: -2rem;
+}
+
 .btn-close {
   font-size: 1.25rem;
   width: 2rem;
@@ -87,65 +92,11 @@ function saveAccount() {
 }
 
 .btn-close:hover {
-  background-color: #f0f0f0;
   border-radius: 50%;
-}
-
-.account-div {
-  max-height: 100vh;
-  overflow-y: auto;
-}
-
-.account-icon {
-  width: 1rem;
-  height: 1rem;
-}
-
-.icon-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-  padding: 0.5rem;
 }
 
 .account-details {
   flex: 1;
-  margin-left: 3rem;
-}
-
-.no-gutters {
-  margin-right: 0;
-  margin-left: 0;
-
-  > .col,
-  > [class*="col-"] {
-    padding-right: 0;
-    padding-left: 0;
-  }
-}
-
-.full-center-text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dashed-bottom-border {
-  border-bottom: var(--bs-border-width) dashed var(--bs-border-color) !important;
-}
-
-.text-ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 5px;
-  text-align: left !important;
-}
-
-.icon {
-  flex: 0 0 20%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-left: 1rem;
 }
 </style>
