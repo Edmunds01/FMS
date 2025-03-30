@@ -22,7 +22,7 @@ defineEmits<{
     <template #body>
       <div class="d-flex align-items-center">
         <IconDropdown
-          :icon-name="editAccount.icon!"
+          :icon-name="editAccount.icon ?? ''"
           @select-icon="(icon) => (editAccount.icon = icon)"
         />
         <div class="row flex-grow-1">
