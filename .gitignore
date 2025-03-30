@@ -3,3 +3,4 @@
 /web-api/.vs
 
 .vscode/settings.json
+.vs/slnx.sqlite

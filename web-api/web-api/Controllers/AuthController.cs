@@ -41,7 +41,9 @@ namespace web_api.Controllers
             // TODO: Add data validation
 
             if (_userRepostory.GetUser(loginDto.Username) != null)
+            {
                 return Conflict("User with this email already exists");
+            }
 
             _userRepostory.AddUser(new Models.User
             {
