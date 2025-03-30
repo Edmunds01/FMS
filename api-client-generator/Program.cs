@@ -7,8 +7,7 @@ using NSwag;
 using NSwag.CodeGeneration.CSharp;
 using NSwag.CodeGeneration.TypeScript;
 
-if (args.Length != 2) throw new ArgumentException("Expecting 2 arguments: URL, generatePath, language");
-
+if (args.Length != 2) throw new ArgumentException("Expecting 2 arguments: URL, generatePath");
 var url = args[0];
 var generatePath = args[1];
 
