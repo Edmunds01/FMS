@@ -1,24 +1,3 @@
-<script setup lang="ts">
-import FaIcon from "../global/fa-icon.vue";
-
-defineProps<{
-  amount: number;
-  category: string;
-  icon: string;
-}>();
-</script>
-
-<template>
-  <div class="category-button text-center">
-    <div class="amount">{{ amount }}€</div>
-    <div class="icon-container">
-      <FaIcon icon-name="calendar" />
-    </div>
-    <div class="category-name">{{ category }}</div>
-  </div>
-</template>
-
-<style scoped>
 .category-button {
   display: flex;
   flex-direction: column;
@@ -27,7 +6,6 @@ defineProps<{
   width: 3rem;
   height: 6.7rem;
   padding: 0.2rem;
-  background-color: #fff;
 }
 
 .amount {
@@ -55,4 +33,3 @@ defineProps<{
   font-size: 0.9rem;
   color: #555;
 }
-</style>
