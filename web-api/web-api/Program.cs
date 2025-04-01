@@ -9,13 +9,14 @@ using web_api.Services;
 using Microsoft.AspNetCore.Builder;
 using System.Diagnostics;
 using Microsoft.OpenApi.Models;
+using web_api.Services.Interfaces;
+using web_api.Attributes;
+using web_api.MiddleWere;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -95,6 +96,8 @@ RegisterRepositoriesAndServices(builder.Services);
 
 var app = builder.Build();
 
+ app.UseMiddleware<ConditionalAuthorizeMiddleware>();
+
 app.UseCors("AllowAll");
 
 app.UseAuthentication();
@@ -147,9 +150,13 @@ void RegisterRepositoriesAndServices(IServiceCollection services)
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IAccountRepository, AccountRepository>();
     services.AddScoped<ITransactionRepository, TransactionRepository>();
+    services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+    services.AddScoped<IAccountService, AccountService>();
+    services.AddScoped<ITransactionService, TransactionService>();
+    services.AddScoped<ICategoryService, CategoryService>();
 
     services.AddHttpContextAccessor();
-    services.AddScoped<IAccountService, AccountService>();
 
     services.AddAutoMapper(typeof(Program));
 }

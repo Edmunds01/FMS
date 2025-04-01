@@ -2,13 +2,15 @@
 
 public interface IAccountService
 {
-    IEnumerable<Dtos.Account> GetUserAccounts();
-
-    Task<bool> SaveAccountIconAsync(long accountId, string accountIcon);
-
-    Task<bool> SaveAccountNameAsync(long accountId, string accountName);
+    Task<IEnumerable<Dtos.Account>> GetUserAccountsAsync();
 
     Task CreateNewAccountAsync(Dtos.Account accountRaw);
 
-    Task<bool> DeleteAccountAsync(long accountId);
+    Task SaveAccountIconAsync(long accountId, string iconName);
+
+    Task SaveAccountNameAsync(long accountId, string name);
+
+    Task DeleteAccountAsync(long accountId);
+
+    Task ValidateIsUserAccountAsync(long accountId);
 }

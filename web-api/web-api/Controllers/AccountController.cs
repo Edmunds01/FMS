@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using web_api.Attributes;
 using web_api.Dtos;
 using web_api.Services;
 
@@ -7,7 +8,7 @@ namespace web_api.Controllers;
 
 [ApiController]
 [Route("api/account")]
-[Authorize]
+[NotAuthorizedExceptionFilter]
 public class AccountController : ControllerBase
 {
     private readonly IAccountService _accountService;
@@ -18,31 +19,25 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("accounts")]
-    public ActionResult<IEnumerable<Account>> GetAccounts()
+    public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
     {
-        return Ok(_accountService.GetUserAccounts());
+        return Ok(await _accountService.GetUserAccountsAsync());
     }
 
     [HttpPost("save-account-icon")]
     public async Task<IActionResult> SaveAccountIcon(long accountId, string accountIcon)
     {
-        if (await _accountService.SaveAccountIconAsync(accountId, accountIcon))
-        {
-            return Ok();
-        }
+        await _accountService.SaveAccountIconAsync(accountId, accountIcon);
 
-        return NotFound("Account not found");
+        return Ok();
     }
 
     [HttpPost("save-account-name")]
     public async Task<IActionResult> SaveAccountName(long accountId, string accountName)
     {
-        if (await _accountService.SaveAccountNameAsync(accountId, accountName))
-        {
-            return Ok();
-        }
+        await _accountService.SaveAccountNameAsync(accountId, accountName);
 
-        return NotFound("Account not found");
+        return Ok();
     }
 
     [HttpPost("create-new-account")]
@@ -56,11 +51,8 @@ public class AccountController : ControllerBase
     [HttpDelete("delete-account")]
     public async Task<ActionResult> DeleteAccount(long accountId)
     {
-        if (await _accountService.DeleteAccountAsync(accountId))
-        {
-            return Ok();
-        }
+        await _accountService.DeleteAccountAsync(accountId);
 
-        return NotFound("Account not found");
+        return Ok();
     }
 }

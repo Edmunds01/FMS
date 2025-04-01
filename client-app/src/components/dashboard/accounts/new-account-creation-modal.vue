@@ -87,7 +87,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .align-bottom {
-  align-self: flex-end; /* Выравнивание по нижнему краю */
+  align-self: flex-end;
 }
 
 .error {

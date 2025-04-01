@@ -1,10 +1,9 @@
-﻿namespace web_api.Repository;
+﻿using web_api.Models;
+using web_api.Repository.Interfaces;
 
-public interface IAccountRepository
+namespace web_api.Repository;
+
+public interface IAccountRepository : IBaseRepository<Account>
 {
-    IEnumerable<Models.Account> GetUserAccounts(int userId);
-    Task<bool> SaveAccountIconAsync(long accountId, string accountIcon, int userId);
-    Task<bool> SaveAccountNameAsync(long accountId, string accountName, int userId);
-    Task CreateNewAccountAsync(Models.Account account);
-    Task<bool> DeleteAccountAsync(long accountId, int userId);
+    Task<IEnumerable<Account>> GetUserAccountsAsync(int userId);
 }
