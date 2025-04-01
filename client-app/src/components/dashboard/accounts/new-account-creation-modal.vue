@@ -77,6 +77,7 @@ const emit = defineEmits<{
             class="btn-close ms-3 me-3"
             data-bs-dismiss="modal"
             aria-label="Close"
+            @click="error = undefined"
           ></button>
         </div>
       </div>
