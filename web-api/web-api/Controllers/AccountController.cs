@@ -20,6 +20,47 @@ public class AccountController : ControllerBase
     [HttpGet("accounts")]
     public ActionResult<IEnumerable<Account>> GetAccounts()
     {
-        return Ok(_accountService.GetUserAccounts(1));
+        return Ok(_accountService.GetUserAccounts());
+    }
+
+    [HttpPost("save-account-icon")]
+    public async Task<IActionResult> SaveAccountIcon(long accountId, string accountIcon)
+    {
+        if (await _accountService.SaveAccountIconAsync(accountId, accountIcon))
+        {
+            return Ok();
+        }
+
+        return NotFound("Account not found");
+    }
+
+    [HttpPost("save-account-name")]
+    public async Task<IActionResult> SaveAccountName(int accountId, string accountName)
+    {
+        if (await _accountService.SaveAccountNameAsync(accountId, accountName))
+        {
+            return Ok();
+        }
+
+        return NotFound("Account not found");
+    }
+
+    [HttpPost("create-new-account")]
+    public async Task<ActionResult> CreateNewAccount([FromBody] Account account)
+    {
+        await _accountService.CreateNewAccountAsync(account);
+
+        return Ok();
+    }
+
+    [HttpDelete("delete-account")]
+    public async Task<ActionResult> DeleteAccount(long accountId)
+    {
+        if (await _accountService.DeleteAccountAsync(accountId))
+        {
+            return Ok();
+        }
+
+        return NotFound("Account not found");
     }
 }

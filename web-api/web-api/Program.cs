@@ -148,5 +148,8 @@ void RegisterRepositoriesAndServices(IServiceCollection services)
     services.AddScoped<IAccountRepository, AccountRepository>();
     services.AddScoped<ITransactionRepository, TransactionRepository>();
 
+    services.AddHttpContextAccessor();
     services.AddScoped<IAccountService, AccountService>();
+
+    services.AddAutoMapper(typeof(Program));
 }
