@@ -13,7 +13,7 @@ defineProps<{
         <div v-if="$slots.header" class="modal-header">
           <slot name="header" />
         </div>
-        <div v-if="$slots.body" class="modal-body p-0">
+        <div v-if="$slots.body" class="modal-body p-0" :style="`height: ${height}rem`">
           <slot name="body" />
         </div>
         <div v-if="$slots.footer" class="modal-footer">

@@ -60,6 +60,176 @@ export class Client extends AuthorizedApiBase {
     }
 
     /**
+     * @param accountId (optional) 
+     * @param accountIcon (optional) 
+     * @return Success
+     */
+    saveAccountIcon(accountId: number | undefined, accountIcon: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/account/save-account-icon?";
+        if (accountId === null)
+            throw new Error("The parameter 'accountId' cannot be null.");
+        else if (accountId !== undefined)
+            url_ += "accountId=" + encodeURIComponent("" + accountId) + "&";
+        if (accountIcon === null)
+            throw new Error("The parameter 'accountIcon' cannot be null.");
+        else if (accountIcon !== undefined)
+            url_ += "accountIcon=" + encodeURIComponent("" + accountIcon) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processSaveAccountIcon(_response);
+        });
+    }
+
+    protected processSaveAccountIcon(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param accountId (optional) 
+     * @param accountName (optional) 
+     * @return Success
+     */
+    saveAccountName(accountId: number | undefined, accountName: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/account/save-account-name?";
+        if (accountId === null)
+            throw new Error("The parameter 'accountId' cannot be null.");
+        else if (accountId !== undefined)
+            url_ += "accountId=" + encodeURIComponent("" + accountId) + "&";
+        if (accountName === null)
+            throw new Error("The parameter 'accountName' cannot be null.");
+        else if (accountName !== undefined)
+            url_ += "accountName=" + encodeURIComponent("" + accountName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processSaveAccountName(_response);
+        });
+    }
+
+    protected processSaveAccountName(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    createNewAccount(body: Account | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/account/create-new-account";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processCreateNewAccount(_response);
+        });
+    }
+
+    protected processCreateNewAccount(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param accountId (optional) 
+     * @return Success
+     */
+    deleteAccount(accountId: number | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/account/delete-account?";
+        if (accountId === null)
+            throw new Error("The parameter 'accountId' cannot be null.");
+        else if (accountId !== undefined)
+            url_ += "accountId=" + encodeURIComponent("" + accountId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processDeleteAccount(_response);
+        });
+    }
+
+    protected processDeleteAccount(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -144,70 +314,14 @@ export class Client extends AuthorizedApiBase {
         }
         return Promise.resolve<TokenResponse>(null as any);
     }
-
-    /**
-     * @return Success
-     */
-    getWeatherForecast(): Promise<WeatherForecast[]> {
-        let url_ = this.baseUrl + "/WeatherForecast";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processGetWeatherForecast(_response);
-        });
-    }
-
-    protected processGetWeatherForecast(response: Response): Promise<WeatherForecast[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as WeatherForecast[];
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<WeatherForecast[]>(null as any);
-    }
 }
 
 export interface Account {
-    accountId: number;
+    accountId: number | undefined;
     name: string | undefined;
     icon: string | undefined;
     balance: number;
-}
-
-export interface DateOnly {
-    year: number;
-    month: number;
-    day: number;
-    dayOfWeek: DayOfWeek;
-    readonly dayOfYear: number;
-    readonly dayNumber: number;
-}
-
-export enum DayOfWeek {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
-    _5 = 5,
-    _6 = 6,
+    showDeleteButton: boolean | undefined;
 }
 
 export interface LoginRegisterDto {
@@ -217,13 +331,6 @@ export interface LoginRegisterDto {
 
 export interface TokenResponse {
     token: string | undefined;
-}
-
-export interface WeatherForecast {
-    date: DateOnly;
-    temperatureC: number;
-    readonly temperatureF: number;
-    summary: string | undefined;
 }
 
 export class ApiException extends Error {
