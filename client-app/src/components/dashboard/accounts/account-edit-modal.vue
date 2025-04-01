@@ -40,10 +40,7 @@ async function iconNameSaved() {
           @select-icon="(icon) => iconChanged(icon)"
         />
         <div class="row flex-grow-1">
-          <div
-            v-if="isEditMode"
-            class="col d-flex align-items-center justify-content-center"
-          >
+          <div v-if="isEditMode" class="col d-flex align-items-center justify-content-center">
             <input
               v-model="newName"
               type="text"

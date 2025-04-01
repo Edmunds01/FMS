@@ -120,10 +120,7 @@ onUnmounted(() => {
       </button>
     </div>
     <div class="row no-gutters border border-end-0 border-top-0">
-      <button
-        class="col text-center add-account"
-        @click="openAccountModal('accountModal')"
-      >
+      <button class="col text-center add-account" @click="openAccountModal('accountModal')">
         <div>+ Pievienot</div>
       </button>
     </div>

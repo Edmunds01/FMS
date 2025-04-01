@@ -46,11 +46,11 @@ public class AccountRepository : IAccountRepository
         return true;
     }
 
-    public Task CreateNewAccountAsync(Account account)
+    public async Task CreateNewAccountAsync(Account account)
     {
-        _context.Accounts.AddAsync(account);
+        await _context.Accounts.AddAsync(account);
 
-        return _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<bool> DeleteAccountAsync(long accountId, int userId)

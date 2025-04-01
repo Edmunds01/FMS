@@ -24,9 +24,12 @@ const saveAccount = () => {
   }
 };
 
-watch(() => newAccount.value.name, () => {
-  validateForm();
-});
+watch(
+  () => newAccount.value.name,
+  () => {
+    validateForm();
+  },
+);
 
 const emit = defineEmits<{
   (e: "save-account", accountId?: Account): void;
@@ -59,9 +62,7 @@ const emit = defineEmits<{
             </div>
           </div>
           <div class="row">
-            <label
-              for="inputPassword"
-              class="col-5 col-form-label text-start align-bottom"
+            <label for="inputPassword" class="col-5 col-form-label text-start align-bottom"
               >Konta sakotnēja summa:</label
             >
             <div class="col-7">
