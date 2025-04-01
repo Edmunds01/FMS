@@ -35,7 +35,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("save-account-name")]
-    public async Task<IActionResult> SaveAccountName(int accountId, string accountName)
+    public async Task<IActionResult> SaveAccountName(long accountId, string accountName)
     {
         if (await _accountService.SaveAccountNameAsync(accountId, accountName))
         {
