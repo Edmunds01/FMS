@@ -8,7 +8,7 @@ namespace web_api.Models;
 public partial class CategoryType
 {
     /// <summary>
-    /// CategoryType unique identificator
+    /// CategoryType unique identification
     /// </summary>
     public byte CategoryTypeId { get; set; }
 

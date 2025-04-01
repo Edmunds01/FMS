@@ -31,7 +31,7 @@ public partial class FMSContext : DbContext
         {
             entity.ToTable("Account");
 
-            entity.Property(e => e.AccountId).HasComment("Account unique identificator");
+            entity.Property(e => e.AccountId).HasComment("Account unique identification");
             entity.Property(e => e.Icon)
                 .IsRequired()
                 .HasMaxLength(50)
@@ -43,7 +43,7 @@ public partial class FMSContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .HasComment("User defined account name");
-            entity.Property(e => e.UserId).HasComment("User unique identificator with reference to User table");
+            entity.Property(e => e.UserId).HasComment("User unique identification with reference to User table");
 
             entity.HasOne(d => d.User).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.UserId)
@@ -55,7 +55,7 @@ public partial class FMSContext : DbContext
         {
             entity.HasKey(e => e.LogId).HasName("PK_Log");
 
-            entity.Property(e => e.LogId).HasComment("Log unique identificator");
+            entity.Property(e => e.LogId).HasComment("Log unique identification");
             entity.Property(e => e.Action)
                 .IsRequired()
                 .HasMaxLength(1024)
@@ -80,7 +80,7 @@ public partial class FMSContext : DbContext
         {
             entity.ToTable("Category");
 
-            entity.Property(e => e.CategoryId).HasComment("Category unique identificator");
+            entity.Property(e => e.CategoryId).HasComment("Category unique identification");
             entity.Property(e => e.Icon)
                 .IsRequired()
                 .HasMaxLength(50)
@@ -90,7 +90,7 @@ public partial class FMSContext : DbContext
                 .HasMaxLength(50)
                 .HasComment("User defined category name");
             entity.Property(e => e.Type).HasComment("Category type with reference to CategoryType table");
-            entity.Property(e => e.UserId).HasComment("User unique identificator with reference to User table");
+            entity.Property(e => e.UserId).HasComment("User unique identification with reference to User table");
 
             entity.HasOne(d => d.TypeNavigation).WithMany(p => p.Categories)
                 .HasForeignKey(d => d.Type)
@@ -109,7 +109,7 @@ public partial class FMSContext : DbContext
 
             entity.Property(e => e.CategoryTypeId)
                 .ValueGeneratedOnAdd()
-                .HasComment("CategoryType unique identificator");
+                .HasComment("CategoryType unique identification");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50)
@@ -121,20 +121,20 @@ public partial class FMSContext : DbContext
         {
             entity.ToTable("Transaction");
 
-            entity.Property(e => e.TransactionId).HasComment("Tranzaction unique identificator");
-            entity.Property(e => e.AccountId).HasComment("Account unique identificator with reference to Account table");
+            entity.Property(e => e.TransactionId).HasComment("Transaction unique identification");
+            entity.Property(e => e.AccountId).HasComment("Account unique identification with reference to Account table");
             entity.Property(e => e.Amount)
-                .HasComment("Tranzaction money amount")
+                .HasComment("Transaction money amount")
                 .HasColumnType("decimal(19, 4)");
-            entity.Property(e => e.CategoryId).HasComment("Category unique identificator with reference to Category table");
+            entity.Property(e => e.CategoryId).HasComment("Category unique identification with reference to Category table");
             entity.Property(e => e.Comment)
                 .IsRequired()
                 .HasMaxLength(50)
-                .HasComment("Tranzaction comment");
+                .HasComment("Transaction comment");
             entity.Property(e => e.CreatedDateTime)
-                .HasComment("Tranzaction DateTime")
+                .HasComment("Transaction DateTime")
                 .HasColumnType("datetime");
-            entity.Property(e => e.UserId).HasComment("User unique identificator with reference to User table");
+            entity.Property(e => e.UserId).HasComment("User unique identification with reference to User table");
 
             entity.HasOne(d => d.Account).WithMany(p => p.Transactions)
                 .HasForeignKey(d => d.AccountId)
@@ -158,12 +158,12 @@ public partial class FMSContext : DbContext
 
             entity.HasIndex(e => e.Email, "IX_UserEmail_Unique").IsUnique();
 
-            entity.Property(e => e.UserId).HasComment("User unique identificator");
+            entity.Property(e => e.UserId).HasComment("User unique identification");
             entity.Property(e => e.Email)
                 .IsRequired()
                 .HasMaxLength(100)
                 .IsUnicode(false)
-                .HasComment("User Email, uniqe value");
+                .HasComment("User Email, unique value");
             entity.Property(e => e.PasswordHash)
                 .IsRequired()
                 .HasMaxLength(64)

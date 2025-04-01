@@ -8,37 +8,37 @@ namespace web_api.Models;
 public partial class Transaction
 {
     /// <summary>
-    /// Tranzaction unique identificator
+    /// Transaction unique identification
     /// </summary>
     public long TransactionId { get; set; }
 
     /// <summary>
-    /// User unique identificator with reference to User table
+    /// User unique identification with reference to User table
     /// </summary>
     public int UserId { get; set; }
 
     /// <summary>
-    /// Account unique identificator with reference to Account table
+    /// Account unique identification with reference to Account table
     /// </summary>
     public long AccountId { get; set; }
 
     /// <summary>
-    /// Category unique identificator with reference to Category table
+    /// Category unique identification with reference to Category table
     /// </summary>
     public long CategoryId { get; set; }
 
     /// <summary>
-    /// Tranzaction money amount
+    /// Transaction money amount
     /// </summary>
     public decimal Amount { get; set; }
 
     /// <summary>
-    /// Tranzaction comment
+    /// Transaction comment
     /// </summary>
     public string Comment { get; set; }
 
     /// <summary>
-    /// Tranzaction DateTime
+    /// Transaction DateTime
     /// </summary>
     public DateTime CreatedDateTime { get; set; }
 

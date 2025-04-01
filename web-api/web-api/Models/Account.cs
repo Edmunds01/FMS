@@ -8,12 +8,12 @@ namespace web_api.Models;
 public partial class Account
 {
     /// <summary>
-    /// Account unique identificator
+    /// Account unique identification
     /// </summary>
     public long AccountId { get; set; }
 
     /// <summary>
-    /// User unique identificator with reference to User table
+    /// User unique identification with reference to User table
     /// </summary>
     public int UserId { get; set; }
 

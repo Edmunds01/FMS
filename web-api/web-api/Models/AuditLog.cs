@@ -8,7 +8,7 @@ namespace web_api.Models;
 public partial class AuditLog
 {
     /// <summary>
-    /// Log unique identificator
+    /// Log unique identification
     /// </summary>
     public long LogId { get; set; }
 

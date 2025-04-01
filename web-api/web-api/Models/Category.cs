@@ -8,12 +8,12 @@ namespace web_api.Models;
 public partial class Category
 {
     /// <summary>
-    /// Category unique identificator
+    /// Category unique identification
     /// </summary>
     public long CategoryId { get; set; }
 
     /// <summary>
-    /// User unique identificator with reference to User table
+    /// User unique identification with reference to User table
     /// </summary>
     public int UserId { get; set; }
 

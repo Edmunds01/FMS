@@ -8,12 +8,12 @@ namespace web_api.Models;
 public partial class User
 {
     /// <summary>
-    /// User unique identificator
+    /// User unique identification
     /// </summary>
     public int UserId { get; set; }
 
     /// <summary>
-    /// User Email, uniqe value
+    /// User Email, unique value
     /// </summary>
     public string Email { get; set; }
 
