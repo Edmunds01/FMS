@@ -3,7 +3,7 @@ import FaIcon, { type IconName } from "@/components/global/fa-icon.vue";
 import { icons as iconNames } from "@/components/global/fa-icon.vue";
 
 defineProps<{
-  iconName: IconName | string;
+  iconName?: IconName | string | null;
 }>();
 
 defineEmits<{
@@ -12,7 +12,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="btn-group dropstart border-end rounded-0">
+  <div class="btn-group dropstart border-end rounded-0 h-100">
     <button
       type="button"
       class="btn dropdown-toggle"

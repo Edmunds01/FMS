@@ -10,8 +10,40 @@ const selectedAccount = ref<Account | null>(null);
 const accounts = ref<Account[]>([]);
 
 onMounted(async () => {
-  accounts.value = await api.accounts();
+  await fetchAccounts();
 });
+
+async function fetchAccounts() {
+  accounts.value = await api.accounts();
+}
+
+async function saveAccount(account?: Account) {
+  closeModal("accountModal");
+  selectedAccount.value = null;
+
+  if (account) {
+    await api.createNewAccount(account);
+    accounts.value.push(account);
+  }
+}
+
+async function deleteAccount(accountId?: number) {
+  closeModal("accountEditModal");
+  selectedAccount.value = null;
+  await api.deleteAccount(accountId);
+
+  accounts.value = accounts.value.filter((account) => account.accountId !== accountId);
+}
+
+function closeModal(modalId: "accountModal" | "accountEditModal") {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    const modalInstance = Modal.getInstance(modal);
+    if (modalInstance) {
+      modalInstance.hide();
+    }
+  }
+}
 
 function openAccountModal(modelId: "accountModal" | "accountEditModal", account?: Account) {
   if (account) {
@@ -72,7 +104,7 @@ onUnmounted(() => {
     </div>
     <div
       v-for="account in accounts"
-      :key="account.name"
+      :key="account.accountId"
       class="row no-gutters border border-end-0 border-top-0 dashed-bottom-border"
     >
       <button class="col d-flex" @click="openAccountModal('accountEditModal', account)">
@@ -88,37 +120,26 @@ onUnmounted(() => {
       </button>
     </div>
     <div class="row no-gutters border border-end-0 border-top-0">
-      <button class="col text-center add-account" @click="openAccountModal('accountModal')">
+      <button
+        class="col text-center add-account"
+        @click="openAccountModal('accountModal')"
+      >
         <div>+ Pievienot</div>
       </button>
     </div>
-    <NewAccountCreationModal />
-    <AccountEditModal v-if="selectedAccount" :account="selectedAccount" />
+    <NewAccountCreationModal @save-account="saveAccount" />
+    <AccountEditModal
+      v-if="selectedAccount"
+      :account="selectedAccount"
+      @delete-account="deleteAccount"
+    />
   </div>
 </template>
 
 <style scoped>
-.btn-primary {
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-}
-
 .account-div {
   max-height: 100vh;
   overflow-y: auto;
-}
-
-.account-icon {
-  width: 1rem;
-  height: 1rem;
-}
-
-.icon-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-  padding: 0.5rem;
 }
 
 .account-details {

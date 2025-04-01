@@ -1,59 +1,75 @@
 <script setup lang="ts">
-import { type Account } from "@/api/accounts";
 import ModalWindow from "@/components/global/modal-window.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import IconDropdown from "./icon-dropdown.vue";
+import { type Account } from "@/api/auto-generated-client";
 
 const newAccount = ref<Account>({
+  accountId: undefined,
   icon: "sack-dollar",
   name: "",
   balance: 0,
+  showDeleteButton: undefined,
+});
+const error = ref<string>();
+
+const validateForm = () => {
+  error.value = !newAccount.value.name ? "Name is required" : undefined;
+  return !error.value;
+};
+
+const saveAccount = () => {
+  if (validateForm()) {
+    emit("save-account", newAccount.value);
+  }
+};
+
+watch(() => newAccount.value.name, () => {
+  validateForm();
 });
 
-function saveAccount() {
-  console.log("Account saved:", newAccount.value);
-}
+const emit = defineEmits<{
+  (e: "save-account", accountId?: Account): void;
+}>();
 </script>
 
 <template>
-  <ModalWindow id="accountModal">
+  <ModalWindow id="accountModal" :height="10">
     <template #body>
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center h-100">
         <IconDropdown
           :icon-name="newAccount.icon"
           @select-icon="(icon) => (newAccount.icon = icon)"
         />
         <div class="flex-grow-1 pe-3 account-details">
-          <div class="row mt-4 mb-2">
-            <label
-              for="colFormLabelSm"
-              class="col-4 col-form-label col-form-label-sm align-items-start"
+          <div class="mb-1 row">
+            <label for="staticEmail" class="col-5 col-form-label text-start align-bottom"
               >Konta nosaukums:</label
             >
-            <div class="col">
+            <div class="col-7">
+              <div v-if="error" class="text-danger mt-1 error">
+                {{ error }}
+              </div>
               <input
-                id="colFormLabelSm"
+                v-model="newAccount.name"
                 type="text"
-                class="form-control form-control-sm"
-                placeholder="Konta nosaukums"
+                class="form-control"
+                :class="{ 'is-invalid': error }"
               />
             </div>
           </div>
-          <div class="row pb-4">
-            <label for="colFormLabelSm" class="col-4 col-form-label col-form-label-sm"
-              >Konta sakotnēja summa:
-            </label>
-            <div class="col">
-              <input
-                id="colFormLabelSm"
-                type="text"
-                class="form-control form-control-sm"
-                :placeholder="(0).toEurFormat()"
-              />
+          <div class="row">
+            <label
+              for="inputPassword"
+              class="col-5 col-form-label text-start align-bottom"
+              >Konta sakotnēja summa:</label
+            >
+            <div class="col-7">
+              <input v-model="newAccount.balance" type="number" class="form-control" />
             </div>
           </div>
         </div>
-        <div class="d-flex justify-content-between align-items-center mt-3">
+        <div class="d-flex align-items-center">
           <button class="btn btn-primary px-4" @click="saveAccount">Saglabāt</button>
           <button
             type="button"
@@ -68,15 +84,26 @@ function saveAccount() {
 </template>
 
 <style scoped>
+.align-bottom {
+  align-self: flex-end; /* Выравнивание по нижнему краю */
+}
+
+.error {
+  position: absolute;
+  top: 0;
+  margin-left: 0.5rem;
+}
+
+.is-invalid {
+  border-color: red;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+}
+
 .btn-primary {
   font-size: 1rem;
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
-}
-
-.account-details {
-  margin-top: -2rem;
-  margin-bottom: -2rem;
+  height: 2rem;
 }
 
 .btn-close {

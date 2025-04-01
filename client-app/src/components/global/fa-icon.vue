@@ -16,11 +16,13 @@ export const icons = [
   "money-bills",
   "floppy-disk",
   "trash",
+  "money-bill-1",
 ] as const;
 </script>
 
 <script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { computed } from "vue";
 
 export type IconName = (typeof icons)[number];
 type IconSize =
@@ -45,10 +47,16 @@ const props = defineProps<{
   iconName?: IconName | null | string;
   size?: IconSize;
 }>();
+
+const defaultIcon = "money-bill-1";
+
+const resolvedIconName = computed(() => {
+  return icons.includes(props.iconName as IconName) ? props.iconName : defaultIcon;
+});
 </script>
 
 <template>
-  <font-awesome-icon v-if="iconName" :icon="'fa-solid fa-' + props.iconName" :size="size" />
+  <font-awesome-icon v-if="iconName" :icon="'fa-solid fa-' + resolvedIconName" :size="size" />
 </template>
 
 <style scoped></style>

@@ -2,8 +2,8 @@
 import ModalWindow from "@/components/global/modal-window.vue";
 import IconDropdown from "./icon-dropdown.vue";
 import { ref } from "vue";
-import FaIcon from "@/components/global/fa-icon.vue";
-import type { Account } from "@/api/auto-generated-client";
+import FaIcon, { type IconName } from "@/components/global/fa-icon.vue";
+import { api, type Account } from "@/api/auto-generated-client";
 
 const props = defineProps<{
   account: Account;
@@ -11,10 +11,24 @@ const props = defineProps<{
 
 const editAccount = ref<Account>(props.account);
 const isEditMode = ref(false);
+const newName = ref(editAccount.value.name);
 
 defineEmits<{
-  (e: "save", account: boolean): void;
+  (e: "delete-account", accountId?: number): void;
 }>();
+
+async function iconChanged(icon: IconName) {
+  editAccount.value.icon = icon;
+
+  await api.saveAccountIcon(editAccount.value.accountId, icon);
+}
+
+async function iconNameSaved() {
+  isEditMode.value = false;
+
+  editAccount.value.name = newName.value;
+  await api.saveAccountName(editAccount.value.accountId, newName.value);
+}
 </script>
 
 <template>
@@ -23,33 +37,46 @@ defineEmits<{
       <div class="d-flex align-items-center">
         <IconDropdown
           :icon-name="editAccount.icon ?? ''"
-          @select-icon="(icon) => (editAccount.icon = icon)"
+          @select-icon="(icon) => iconChanged(icon)"
         />
         <div class="row flex-grow-1">
-          <div v-if="!isEditMode" class="col d-flex align-items-center justify-content-center">
+          <div
+            v-if="isEditMode"
+            class="col d-flex align-items-center justify-content-center"
+          >
+            <input
+              v-model="newName"
+              type="text"
+              class="form-control form-control-sm me-4"
+              style="width: 30rem"
+            />
+            <button class="p-0" @click="iconNameSaved()">
+              <FaIcon icon-name="floppy-disk" size="lg" />
+            </button>
+            <button
+              class="p-0 ms-4"
+              @click="
+                isEditMode = false;
+                newName = editAccount.name;
+              "
+            >
+              <FaIcon icon-name="xmark" size="lg" />
+            </button>
+          </div>
+          <div v-else class="col d-flex align-items-center justify-content-center">
             <div class="p-0 me-5">{{ editAccount.name }}</div>
             <button class="p-0" @click="isEditMode = true">
               <FaIcon icon-name="pen" size="lg" />
             </button>
           </div>
-          <div v-else class="col d-flex align-items-center justify-content-center">
-            <input
-              v-model="editAccount.name"
-              type="text"
-              class="form-control form-control-sm me-4"
-              style="width: 30rem"
-            />
-            <button class="p-0" @click="isEditMode = false">
-              <FaIcon icon-name="floppy-disk" size="lg" />
-            </button>
-            <button class="p-0 ms-4" @click="isEditMode = false">
-              <FaIcon icon-name="xmark" size="lg" />
-            </button>
-          </div>
         </div>
 
         <div class="d-flex justify-content-between align-items-center">
-          <button class="p-0">
+          <button
+            v-if="editAccount.showDeleteButton"
+            class="p-0"
+            @click="$emit('delete-account', editAccount.accountId)"
+          >
             <FaIcon icon-name="trash" size="lg" />
           </button>
           <button
