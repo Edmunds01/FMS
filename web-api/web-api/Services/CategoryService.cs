@@ -15,9 +15,11 @@ public class CategoryService : BaseService, ICategoryService
         ITransactionRepository transactionRepository,
         ICategoryRepository categoryRepository,
         IHttpContextAccessor httpContextAccessor,
+        IConfiguration configuration,
+        IHostEnvironment env,
         IMapper mapper
     )
-        : base(httpContextAccessor, mapper)
+        : base(httpContextAccessor, mapper, configuration, env)
     {
         _accountRepository = accountRepository;
         _transactionRepository = transactionRepository;

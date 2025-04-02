@@ -5,5 +5,5 @@ namespace web_api.Repository;
 
 public interface ITransactionRepository : IBaseRepository<Transaction>
 {
-    public Task<IEnumerable<Transaction>> GetUserTransactions(int userId);
+    public Task<IEnumerable<Transaction>> GetUserTransactionsAsync(int userId);
 }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using web_api.Exceptions;
-using web_api.Models;
 using web_api.Repository;
 
 namespace web_api.Services;
@@ -15,9 +14,11 @@ public class AccountService : BaseService, IAccountService
         IAccountRepository accountRepository,
         ITransactionRepository transactionRepository,
         IHttpContextAccessor httpContextAccessor,
+        IHostEnvironment env,
+        IConfiguration configuration,
         IMapper mapper
     )
-        : base(httpContextAccessor, mapper)
+        : base(httpContextAccessor, mapper, configuration, env)
     {
         _accountRepository = accountRepository;
         _transactionRepository = transactionRepository;
@@ -26,7 +27,7 @@ public class AccountService : BaseService, IAccountService
     public async Task<IEnumerable<Dtos.Account>> GetUserAccountsAsync()
     {
         var accounts = await _accountRepository.GetUserAccountsAsync(UserId);
-        var transactions = await _transactionRepository.GetUserTransactions(UserId);
+        var transactions = await _transactionRepository.GetUserTransactionsAsync(UserId);
 
         return accounts.Select(a => new Dtos.Account
         {
@@ -54,11 +55,10 @@ public class AccountService : BaseService, IAccountService
         });
     }
 
-    public Task CreateNewAccountAsync(Dtos.Account accountRaw)
+    public Task CreateNewAccountAsync(Dtos.NewAccount accountRaw)
     {
         var account = _mapper.Map<Models.Account>(accountRaw);
         account.UserId = UserId;
-        account.AccountId = 0;
 
         return _accountRepository.InsertAsync(account);
     }
@@ -76,7 +76,7 @@ public class AccountService : BaseService, IAccountService
 
         if (account == null || account.UserId != UserId)
         {
-            throw new NotAuthorizedException(nameof(Account), accountId);
+            throw new NotAuthorizedException(nameof(Models.Account), accountId);
         }
     }
 

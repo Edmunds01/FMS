@@ -41,7 +41,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("create-new-account")]
-    public async Task<ActionResult> CreateNewAccount([FromBody] Account account)
+    public async Task<IActionResult> CreateNewAccount([FromBody] NewAccount account)
     {
         await _accountService.CreateNewAccountAsync(account);
 

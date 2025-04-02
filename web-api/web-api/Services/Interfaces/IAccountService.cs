@@ -4,7 +4,7 @@ public interface IAccountService
 {
     Task<IEnumerable<Dtos.Account>> GetUserAccountsAsync();
 
-    Task CreateNewAccountAsync(Dtos.Account accountRaw);
+    Task CreateNewAccountAsync(Dtos.NewAccount accountRaw);
 
     Task SaveAccountIconAsync(long accountId, string iconName);
 

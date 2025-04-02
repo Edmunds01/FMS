@@ -1,11 +1,11 @@
-﻿namespace web_api.MiddleWere;
+﻿namespace web_api.Middleware;
 
 public class ConditionalAuthorizeMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IHostEnvironment _env;
 
-    public ConditionalAuthorizeMiddleware(RequestDelegate next, IHostEnvironment env)
+    public ConditionalAuthorizeMiddleware(RequestDelegate next, IHostEnvironment env, IConfiguration configuration)
     {
         _next = next;
         _env = env;
@@ -24,7 +24,9 @@ public class ConditionalAuthorizeMiddleware
             }
         }
 
-        if (_env.IsProduction() && !context.User.Identity.IsAuthenticated)
+        var isAuthenticated = context.User.Identity?.IsAuthenticated;
+
+        if (_env.IsProduction() && (!isAuthenticated.HasValue || !isAuthenticated.Value))
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             return;

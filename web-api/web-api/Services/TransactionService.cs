@@ -16,9 +16,11 @@ public class TransactionService : BaseService, ITransactionService
         IAccountService accountService,
         ICategoryService categoryService,
         IHttpContextAccessor httpContextAccessor,
+        IConfiguration configuration,
+        IHostEnvironment env,
         IMapper mapper
     )
-        : base(httpContextAccessor, mapper)
+        : base(httpContextAccessor, mapper, configuration, env)
     {
         _transactionRepository = transactionRepository;
         _accountService = accountService;

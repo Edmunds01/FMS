@@ -1,17 +1,14 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Diagnostics;
+using System.Text;
+using web_api.Middleware;
 using web_api.Models;
 using web_api.Repository;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using web_api.Services;
-using Microsoft.AspNetCore.Builder;
-using System.Diagnostics;
-using Microsoft.OpenApi.Models;
 using web_api.Services.Interfaces;
-using web_api.Attributes;
-using web_api.MiddleWere;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,9 +91,11 @@ builder.Services.AddAuthentication(options =>
 
 RegisterRepositoriesAndServices(builder.Services);
 
+builder.Configuration.AddEnvironmentVariables();
+
 var app = builder.Build();
 
- app.UseMiddleware<ConditionalAuthorizeMiddleware>();
+app.UseMiddleware<ConditionalAuthorizeMiddleware>();
 
 app.UseCors("AllowAll");
 

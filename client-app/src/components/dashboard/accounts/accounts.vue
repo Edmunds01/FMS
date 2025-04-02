@@ -4,7 +4,7 @@ import Modal from "bootstrap/js/dist/modal";
 import { onMounted, onUnmounted, ref } from "vue";
 import NewAccountCreationModal from "./new-account-creation-modal.vue";
 import AccountEditModal from "./account-edit-modal.vue";
-import { api, type Account } from "@/api/auto-generated-client";
+import { api, type Account, type NewAccount } from "@/api/auto-generated-client";
 
 const selectedAccount = ref<Account | null>(null);
 const accounts = ref<Account[]>([]);
@@ -17,13 +17,13 @@ async function fetchAccounts() {
   accounts.value = await api.accounts();
 }
 
-async function saveAccount(account?: Account) {
+async function saveAccount(account?: NewAccount) {
   closeModal("accountModal");
   selectedAccount.value = null;
 
   if (account) {
     await api.createNewAccount(account);
-    accounts.value.push(account);
+    await fetchAccounts();
   }
 }
 

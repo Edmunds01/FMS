@@ -2,15 +2,15 @@
 import ModalWindow from "@/components/global/modal-window.vue";
 import { ref, watch } from "vue";
 import IconDropdown from "./icon-dropdown.vue";
-import { type Account } from "@/api/auto-generated-client";
+import { type NewAccount } from "@/api/auto-generated-client";
 
-const newAccount = ref<Account>({
-  accountId: undefined,
+const defaultAccount = {
   icon: "sack-dollar",
   name: "",
   balance: 0,
-  showDeleteButton: undefined,
-});
+};
+
+const newAccount = ref<NewAccount>({ ...defaultAccount });
 const error = ref<string>();
 
 const validateForm = () => {
@@ -20,6 +20,8 @@ const validateForm = () => {
 
 const saveAccount = () => {
   if (validateForm()) {
+    newAccount.value = { ...defaultAccount };
+    error.value = undefined;
     emit("save-account", newAccount.value);
   }
 };
@@ -31,8 +33,15 @@ watch(
   },
 );
 
+function clearData() {
+  newAccount.value = { ...defaultAccount };
+  setTimeout(() => {
+    error.value = undefined;
+  }, 0);
+}
+
 const emit = defineEmits<{
-  (e: "save-account", accountId?: Account): void;
+  (e: "save-account", accountId?: NewAccount): void;
 }>();
 </script>
 
@@ -77,7 +86,7 @@ const emit = defineEmits<{
             class="btn-close ms-3 me-3"
             data-bs-dismiss="modal"
             aria-label="Close"
-            @click="error = undefined"
+            @click="clearData"
           ></button>
         </div>
       </div>

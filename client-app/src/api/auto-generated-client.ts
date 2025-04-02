@@ -153,7 +153,7 @@ export class Client extends AuthorizedApiBase {
      * @param body (optional) 
      * @return Success
      */
-    createNewAccount(body: Account | undefined): Promise<void> {
+    createNewAccount(body: NewAccount | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/account/create-new-account";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -622,16 +622,22 @@ export class Client extends AuthorizedApiBase {
 }
 
 export interface Account {
-    accountId: number | undefined;
+    accountId: number;
     name: string | undefined;
     icon: string | undefined;
     balance: number;
-    showDeleteButton: boolean | undefined;
+    showDeleteButton: boolean;
 }
 
 export interface LoginRegisterDto {
     username: string | undefined;
     password: string | undefined;
+}
+
+export interface NewAccount {
+    name: string | undefined;
+    icon: string | undefined;
+    balance: number;
 }
 
 export interface TokenResponse {

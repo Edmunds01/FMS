@@ -12,7 +12,7 @@ public class TransactionRepository : BaseRepository<Transaction>,  ITransactionR
         _context = context;
     }
 
-    public async Task<IEnumerable<Transaction>> GetUserTransactions(int userId)
+    public async Task<IEnumerable<Transaction>> GetUserTransactionsAsync(int userId)
     {
         return await _context.Transactions.Where(t => t.UserId == userId).ToListAsync();
     }
