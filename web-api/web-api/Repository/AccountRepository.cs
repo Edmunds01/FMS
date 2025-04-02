@@ -12,7 +12,6 @@ public class AccountRepository : BaseRepository<Account>, IAccountRepository
         _context = context;
     }
 
-
     public async Task<IEnumerable<Account>> GetUserAccountsAsync(int userId)
     {
         return await _context.Accounts.Where(a => a.UserId == userId).ToListAsync();
