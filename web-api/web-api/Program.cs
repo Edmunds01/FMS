@@ -170,7 +170,6 @@ void GenerateTypeScriptClientApi()
         if (!string.IsNullOrEmpty(error))
         {
             Debug.WriteLine("Error: " + error);
-            Environment.Exit(1);
         }
 
         var output = await process.StandardOutput.ReadToEndAsync();

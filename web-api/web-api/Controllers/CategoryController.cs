@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using web_api.Dtos;
 using web_api.Services;
-using web_api.Services.Interfaces;
 
 namespace web_api.Controllers;
 

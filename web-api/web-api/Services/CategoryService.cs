@@ -5,13 +5,11 @@ namespace web_api.Services;
 
 public class CategoryService : BaseService, ICategoryService
 {
-    private readonly IAccountRepository _accountRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly ICategoryRepository _categoryRepository;
 
     public CategoryService
     (
-        IAccountRepository accountRepository,
         ITransactionRepository transactionRepository,
         ICategoryRepository categoryRepository,
         IHttpContextAccessor httpContextAccessor,
@@ -21,7 +19,6 @@ public class CategoryService : BaseService, ICategoryService
     )
         : base(httpContextAccessor, mapper, configuration, env)
     {
-        _accountRepository = accountRepository;
         _transactionRepository = transactionRepository;
         _categoryRepository = categoryRepository;
     }
