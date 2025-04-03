@@ -2,15 +2,20 @@
 import ModalWindow from "@/components/global/modal-window.vue";
 import { ref, watch } from "vue";
 import IconDropdown from "./icon-dropdown.vue";
-import { type Account } from "@/api/auto-generated-client";
+import { type NewAccount } from "@/api/auto-generated-client";
+import SaveOrClose from "@/components/global/save-or-close.vue";
 
-const newAccount = ref<Account>({
-  accountId: undefined,
+defineProps<{
+  id: string;
+}>();
+
+const defaultAccount = {
   icon: "sack-dollar",
   name: "",
   balance: 0,
-  showDeleteButton: undefined,
-});
+};
+
+const newAccount = ref<NewAccount>({ ...defaultAccount });
 const error = ref<string>();
 
 const validateForm = () => {
@@ -18,9 +23,10 @@ const validateForm = () => {
   return !error.value;
 };
 
-const saveAccount = () => {
+const addNewAccount = () => {
   if (validateForm()) {
     emit("save-account", newAccount.value);
+    clearData();
   }
 };
 
@@ -31,13 +37,20 @@ watch(
   },
 );
 
+function clearData() {
+  newAccount.value = { ...defaultAccount };
+  setTimeout(() => {
+    error.value = undefined;
+  }, 0);
+}
+
 const emit = defineEmits<{
-  (e: "save-account", accountId?: Account): void;
+  (e: "save-account", accountId?: NewAccount): void;
 }>();
 </script>
 
 <template>
-  <ModalWindow id="accountModal" :height="10">
+  <ModalWindow :id="id" :height="10">
     <template #body>
       <div class="d-flex align-items-center h-100">
         <IconDropdown
@@ -70,16 +83,7 @@ const emit = defineEmits<{
             </div>
           </div>
         </div>
-        <div class="d-flex align-items-center">
-          <button class="btn btn-primary px-4" @click="saveAccount">Saglabāt</button>
-          <button
-            type="button"
-            class="btn-close ms-3 me-3"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-            @click="error = undefined"
-          ></button>
-        </div>
+        <SaveOrClose @save="addNewAccount" />
       </div>
     </template>
   </ModalWindow>
@@ -87,7 +91,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .align-bottom {
-  align-self: flex-end; /* Выравнивание по нижнему краю */
+  align-self: flex-end;
 }
 
 .error {

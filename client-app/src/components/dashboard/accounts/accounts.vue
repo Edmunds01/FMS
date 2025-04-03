@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import FaIcon from "@/components/global/fa-icon.vue";
-import Modal from "bootstrap/js/dist/modal";
 import { onMounted, onUnmounted, ref } from "vue";
 import NewAccountCreationModal from "./new-account-creation-modal.vue";
 import AccountEditModal from "./account-edit-modal.vue";
-import { api, type Account } from "@/api/auto-generated-client";
+import { api, type Account, type NewAccount } from "@/api/auto-generated-client";
+import { closeModal, openModal } from "@/components/global/modal-window.vue";
 
 const selectedAccount = ref<Account | null>(null);
 const accounts = ref<Account[]>([]);
@@ -13,60 +13,44 @@ onMounted(async () => {
   await fetchAccounts();
 });
 
+const newAccountModalId = "accountModal";
+const accountEditModalId = "accountEditModal";
+
 async function fetchAccounts() {
   accounts.value = await api.accounts();
 }
 
-async function saveAccount(account?: Account) {
-  closeModal("accountModal");
+async function saveAccount(account?: NewAccount) {
+  closeModal(newAccountModalId);
   selectedAccount.value = null;
 
   if (account) {
     await api.createNewAccount(account);
-    accounts.value.push(account);
+    await fetchAccounts();
   }
 }
 
 async function deleteAccount(accountId?: number) {
-  closeModal("accountEditModal");
+  closeModal(accountEditModalId);
   selectedAccount.value = null;
   await api.deleteAccount(accountId);
 
   accounts.value = accounts.value.filter((account) => account.accountId !== accountId);
 }
 
-function closeModal(modalId: "accountModal" | "accountEditModal") {
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    const modalInstance = Modal.getInstance(modal);
-    if (modalInstance) {
-      modalInstance.hide();
-    }
-  }
-}
-
-function openAccountModal(modelId: "accountModal" | "accountEditModal", account?: Account) {
+function openAccountModal(modelId: string, account?: Account) {
   if (account) {
     selectedAccount.value = account;
   }
-  setTimeout(() => {
-    const modal = document.getElementById(modelId);
-    if (modal) {
-      const modalInstance = Modal.getInstance(modal) ?? new Modal(modal);
-      if (modalInstance) {
-        modalInstance.show();
 
-        const onModalHidden = () => {
-          selectedAccount.value = null;
-        };
+  const onModalHidden = () => {
+    selectedAccount.value = null;
+  };
 
-        modal.addEventListener("hidden.bs.modal", onModalHidden);
-      }
-    }
-  }, 0);
+  openModal(modelId, onModalHidden);
 }
 
-// #region ScreenNames
+// #region AccountNames
 const screenWidth = ref(window.innerWidth);
 
 function trimName(name: string) {
@@ -107,7 +91,7 @@ onUnmounted(() => {
       :key="account.accountId"
       class="row no-gutters border border-end-0 border-top-0 dashed-bottom-border"
     >
-      <button class="col d-flex" @click="openAccountModal('accountEditModal', account)">
+      <button class="col d-flex" @click="openAccountModal(accountEditModalId, account)">
         <div class="account-details">
           <div class="full-center-text text-ellipsis fs-5" :title="account.name">
             {{ trimName(account.name ?? "") }}
@@ -120,13 +104,14 @@ onUnmounted(() => {
       </button>
     </div>
     <div class="row no-gutters border border-end-0 border-top-0">
-      <button class="col text-center add-account" @click="openAccountModal('accountModal')">
+      <button class="col text-center add-account" @click="openAccountModal(newAccountModalId)">
         <div>+ Pievienot</div>
       </button>
     </div>
-    <NewAccountCreationModal @save-account="saveAccount" />
+    <NewAccountCreationModal :id="newAccountModalId" @save-account="saveAccount" />
     <AccountEditModal
       v-if="selectedAccount"
+      :id="accountEditModalId"
       :account="selectedAccount"
       @delete-account="deleteAccount"
     />

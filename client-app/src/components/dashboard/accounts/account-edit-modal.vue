@@ -6,6 +6,7 @@ import FaIcon, { type IconName } from "@/components/global/fa-icon.vue";
 import { api, type Account } from "@/api/auto-generated-client";
 
 const props = defineProps<{
+  id: string;
   account: Account;
 }>();
 
@@ -32,7 +33,7 @@ async function iconNameSaved() {
 </script>
 
 <template>
-  <ModalWindow id="accountEditModal">
+  <ModalWindow :id="id">
     <template #body>
       <div class="d-flex align-items-center">
         <IconDropdown
@@ -67,7 +68,6 @@ async function iconNameSaved() {
             </button>
           </div>
         </div>
-
         <div class="d-flex justify-content-between align-items-center">
           <button
             v-if="editAccount.showDeleteButton"
@@ -89,12 +89,6 @@ async function iconNameSaved() {
 </template>
 
 <style scoped>
-.btn-primary {
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-}
-
 .btn-close {
   font-size: 1.25rem;
   width: 2rem;

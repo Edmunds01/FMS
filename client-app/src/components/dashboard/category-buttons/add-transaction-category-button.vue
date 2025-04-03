@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import type { CategoryType } from "@/api/categories";
 import FaIcon from "@/components/global/fa-icon.vue";
-
-defineProps<{
-  type: CategoryType;
-}>();
 </script>
 
 <template>

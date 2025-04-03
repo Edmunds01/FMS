@@ -153,7 +153,7 @@ export class Client extends AuthorizedApiBase {
      * @param body (optional) 
      * @return Success
      */
-    createNewAccount(body: Account | undefined): Promise<void> {
+    createNewAccount(body: NewAccount | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/account/create-new-account";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -314,14 +314,411 @@ export class Client extends AuthorizedApiBase {
         }
         return Promise.resolve<TokenResponse>(null as any);
     }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    addCategory(body: NewCategory | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/category/add-category";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processAddCategory(_response);
+        });
+    }
+
+    protected processAddCategory(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getCategories(): Promise<Category[]> {
+        let url_ = this.baseUrl + "/api/category/get-categories";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processGetCategories(_response);
+        });
+    }
+
+    protected processGetCategories(response: Response): Promise<Category[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Category[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Category[]>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    addTransaction(body: Transaction | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/transaction/add-transaction";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processAddTransaction(_response);
+        });
+    }
+
+    protected processAddTransaction(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param transactionId (optional) 
+     * @param newAccountId (optional) 
+     * @return Success
+     */
+    saveTransactionAccount(transactionId: number | undefined, newAccountId: number | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/transaction/save-transaction-account?";
+        if (transactionId === null)
+            throw new Error("The parameter 'transactionId' cannot be null.");
+        else if (transactionId !== undefined)
+            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
+        if (newAccountId === null)
+            throw new Error("The parameter 'newAccountId' cannot be null.");
+        else if (newAccountId !== undefined)
+            url_ += "newAccountId=" + encodeURIComponent("" + newAccountId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processSaveTransactionAccount(_response);
+        });
+    }
+
+    protected processSaveTransactionAccount(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param transactionId (optional) 
+     * @param newCategoryId (optional) 
+     * @return Success
+     */
+    saveTransactionCategory(transactionId: number | undefined, newCategoryId: number | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/transaction/save-transaction-category?";
+        if (transactionId === null)
+            throw new Error("The parameter 'transactionId' cannot be null.");
+        else if (transactionId !== undefined)
+            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
+        if (newCategoryId === null)
+            throw new Error("The parameter 'newCategoryId' cannot be null.");
+        else if (newCategoryId !== undefined)
+            url_ += "newCategoryId=" + encodeURIComponent("" + newCategoryId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processSaveTransactionCategory(_response);
+        });
+    }
+
+    protected processSaveTransactionCategory(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param transactionId (optional) 
+     * @param newAmount (optional) 
+     * @return Success
+     */
+    saveTransactionAmount(transactionId: number | undefined, newAmount: number | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/transaction/save-transaction-amount?";
+        if (transactionId === null)
+            throw new Error("The parameter 'transactionId' cannot be null.");
+        else if (transactionId !== undefined)
+            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
+        if (newAmount === null)
+            throw new Error("The parameter 'newAmount' cannot be null.");
+        else if (newAmount !== undefined)
+            url_ += "newAmount=" + encodeURIComponent("" + newAmount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processSaveTransactionAmount(_response);
+        });
+    }
+
+    protected processSaveTransactionAmount(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param transactionId (optional) 
+     * @param newAmount (optional) 
+     * @return Success
+     */
+    saveTransactionComment(transactionId: number | undefined, newAmount: number | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/transaction/save-transaction-comment?";
+        if (transactionId === null)
+            throw new Error("The parameter 'transactionId' cannot be null.");
+        else if (transactionId !== undefined)
+            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
+        if (newAmount === null)
+            throw new Error("The parameter 'newAmount' cannot be null.");
+        else if (newAmount !== undefined)
+            url_ += "newAmount=" + encodeURIComponent("" + newAmount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processSaveTransactionComment(_response);
+        });
+    }
+
+    protected processSaveTransactionComment(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param transactionId (optional) 
+     * @param newDate (optional) 
+     * @return Success
+     */
+    saveTransactionDate(transactionId: number | undefined, newDate: Date | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/transaction/save-transaction-date?";
+        if (transactionId === null)
+            throw new Error("The parameter 'transactionId' cannot be null.");
+        else if (transactionId !== undefined)
+            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
+        if (newDate === null)
+            throw new Error("The parameter 'newDate' cannot be null.");
+        else if (newDate !== undefined)
+            url_ += "newDate=" + encodeURIComponent(newDate ? "" + newDate.toISOString() : "") + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processSaveTransactionDate(_response);
+        });
+    }
+
+    protected processSaveTransactionDate(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param transactionId (optional) 
+     * @return Success
+     */
+    deleteTransaction(transactionId: number | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/transaction/delete-transaction?";
+        if (transactionId === null)
+            throw new Error("The parameter 'transactionId' cannot be null.");
+        else if (transactionId !== undefined)
+            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processDeleteTransaction(_response);
+        });
+    }
+
+    protected processDeleteTransaction(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export interface Account {
-    accountId: number | undefined;
+    accountId: number;
     name: string | undefined;
     icon: string | undefined;
     balance: number;
-    showDeleteButton: boolean | undefined;
+    showDeleteButton: boolean;
+}
+
+export interface Category {
+    categoryId: number;
+    name: string | undefined;
+    icon: string | undefined;
+    type: CategoryType;
+    showDeleteButton: boolean;
+    sumOfTransactions: number;
+}
+
+export enum CategoryType {
+    Income = "Income",
+    Expense = "Expense",
 }
 
 export interface LoginRegisterDto {
@@ -329,8 +726,29 @@ export interface LoginRegisterDto {
     password: string | undefined;
 }
 
+export interface NewAccount {
+    name: string | undefined;
+    icon: string | undefined;
+    balance: number;
+}
+
+export interface NewCategory {
+    name: string | undefined;
+    icon: string | undefined;
+    type: CategoryType;
+}
+
 export interface TokenResponse {
     token: string | undefined;
+}
+
+export interface Transaction {
+    transactionId: number;
+    accountId: number;
+    categoryId: number;
+    comment: string | undefined;
+    amount: number;
+    createdDateTime: Date;
 }
 
 export class ApiException extends Error {

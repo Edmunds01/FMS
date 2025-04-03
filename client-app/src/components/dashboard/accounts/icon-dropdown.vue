@@ -15,7 +15,7 @@ defineEmits<{
   <div class="btn-group dropstart border-end rounded-0 h-100">
     <button
       type="button"
-      class="btn dropdown-toggle"
+      class="btn dropdown-toggle icon-dropdown-toggle"
       data-bs-toggle="dropdown"
       aria-expanded="false"
     >
@@ -43,7 +43,7 @@ defineEmits<{
 </style>
 
 <style lang="scss">
-.btn {
+.icon-dropdown-toggle {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }

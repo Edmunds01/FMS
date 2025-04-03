@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using web_api.Exceptions;
 using web_api.Repository;
 
 namespace web_api.Services;
@@ -13,18 +14,20 @@ public class AccountService : BaseService, IAccountService
         IAccountRepository accountRepository,
         ITransactionRepository transactionRepository,
         IHttpContextAccessor httpContextAccessor,
+        IHostEnvironment env,
+        IConfiguration configuration,
         IMapper mapper
     )
-        : base(httpContextAccessor, mapper)
+        : base(httpContextAccessor, mapper, configuration, env)
     {
         _accountRepository = accountRepository;
         _transactionRepository = transactionRepository;
     }
 
-    public IEnumerable<Dtos.Account> GetUserAccounts()
+    public async Task<IEnumerable<Dtos.Account>> GetUserAccountsAsync()
     {
-        var accounts = _accountRepository.GetUserAccounts(UserId).ToList();
-        var transactions = _transactionRepository.GetUserTransactions(UserId).ToList();
+        var accounts = await _accountRepository.GetUserAccountsAsync(UserId);
+        var transactions = await _transactionRepository.GetUserTransactionsAsync(UserId);
 
         return accounts.Select(a => new Dtos.Account
         {
@@ -36,27 +39,55 @@ public class AccountService : BaseService, IAccountService
         });
     }
 
-    public Task<bool> SaveAccountIconAsync(long accountId, string accountIcon)
+    public async Task SaveAccountNameAsync(long accountId, string name)
     {
-        return _accountRepository.SaveAccountIconAsync(accountId, accountIcon, UserId);
+        await SaveAccountAsync(accountId, category =>
+        {
+            category.Icon = name;
+        });
     }
 
-    public Task<bool> SaveAccountNameAsync(long accountId, string accountName)
+    public async Task SaveAccountIconAsync(long accountId, string iconName)
     {
-        return _accountRepository.SaveAccountNameAsync(accountId, accountName, UserId);
+        await SaveAccountAsync(accountId, category =>
+        {
+            category.Icon = iconName;
+        });
     }
 
-    public Task CreateNewAccountAsync(Dtos.Account accountRaw)
+    public Task CreateNewAccountAsync(Dtos.NewAccount accountRaw)
     {
         var account = _mapper.Map<Models.Account>(accountRaw);
         account.UserId = UserId;
-        account.AccountId = 0;
 
-        return _accountRepository.CreateNewAccountAsync(account);
+        return _accountRepository.InsertAsync(account);
     }
-    
-    public Task<bool> DeleteAccountAsync(long accountId)
+
+    public async Task DeleteAccountAsync(long accountId)
     {
-        return _accountRepository.DeleteAccountAsync(accountId, UserId);
+        await ValidateIsUserAccountAsync(accountId);
+
+        await _accountRepository.DeleteAsync(accountId);
+    }
+
+    public async Task ValidateIsUserAccountAsync(long accountId)
+    {
+        var account = await _accountRepository.GetByIdAsync(accountId);
+
+        if (account == null || account.UserId != UserId)
+        {
+            throw new NotAuthorizedException(nameof(Models.Account), accountId);
+        }
+    }
+
+    private async Task SaveAccountAsync(long accountId, Action<Models.Account> updateAccount)
+    {
+        await ValidateIsUserAccountAsync(accountId);
+
+        var account = await _accountRepository.GetByIdStrictAsync(accountId);
+
+        updateAccount(account);
+
+        await _transactionRepository.SaveChanges();
     }
 }

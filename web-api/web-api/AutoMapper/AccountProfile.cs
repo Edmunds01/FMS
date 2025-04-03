@@ -9,6 +9,8 @@ public class AccountProfile : Profile
         CreateMap<Dtos.Account, Models.Account>()
             .ForMember(dest => dest.InitialBalance, opt => opt.MapFrom(src => src.Balance));
 
-        CreateMap<Models.Account, Dtos.Account>();
+        CreateMap<Dtos.NewAccount, Models.Account>()
+            .ForMember(dest => dest.InitialBalance, opt => opt.MapFrom(src => src.Balance))
+            .ForMember(dest => dest.AccountId, opt => opt.MapFrom(_ => 0));
     }
 }
