@@ -10,12 +10,10 @@ namespace web_api.Controllers;
 [Route("api/category")]
 public class CategoryController : ControllerBase
 {
-    private readonly ITransactionService _transactionService;
     private readonly ICategoryService _categoryService;
 
-    public CategoryController(ITransactionService transactionService, ICategoryService categoryService)
+    public CategoryController(ICategoryService categoryService)
     {
-        _transactionService = transactionService;
         _categoryService = categoryService;
     }
 
@@ -26,7 +24,7 @@ public class CategoryController : ControllerBase
 
         return Ok();
     }
-    
+
     [HttpGet("get-categories")]
     public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
     {

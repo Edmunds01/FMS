@@ -118,8 +118,9 @@ function mapCategoryTypeName(category: CategoryType): string {
             </div>
           </div>
           <SaveOrClose @save="addNewCategory" />
-        </div> </template
-    ></ModalWindow>
+        </div>
+      </template>
+    </ModalWindow>
   </div>
 </template>
 

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using System.Net.NetworkInformation;
 
 namespace web_api.AutoMapper;
 
