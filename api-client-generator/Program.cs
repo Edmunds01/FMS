@@ -1,7 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using NJsonSchema.CodeGeneration;
 using NJsonSchema.CodeGeneration.TypeScript;
 using NSwag;
 using NSwag.CodeGeneration.CSharp;
@@ -15,6 +19,8 @@ var document = await OpenApiDocument.FromUrlAsync(url);
 Console.WriteLine($"Generating {generatePath}...");
 
 await System.IO.File.WriteAllTextAsync(generatePath, GenerateTypeScriptClient(document));
+
+Console.WriteLine($"Finished for {generatePath}...");
 
 static string GenerateTypeScriptClient(OpenApiDocument document)
 {
@@ -49,6 +55,6 @@ static string GenerateTypeScriptClient(OpenApiDocument document)
         UseTransformOptionsMethod = true,
     };
     var generator = new TypeScriptClientGenerator(document, settings);
-    
+
     return generator.GenerateFile();
 }

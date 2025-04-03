@@ -3,6 +3,11 @@ import ModalWindow from "@/components/global/modal-window.vue";
 import { ref, watch } from "vue";
 import IconDropdown from "./icon-dropdown.vue";
 import { type NewAccount } from "@/api/auto-generated-client";
+import SaveOrClose from "@/components/global/save-or-close.vue";
+
+defineProps<{
+  id: string;
+}>();
 
 const defaultAccount = {
   icon: "sack-dollar",
@@ -18,11 +23,10 @@ const validateForm = () => {
   return !error.value;
 };
 
-const saveAccount = () => {
+const addNewAccount = () => {
   if (validateForm()) {
-    newAccount.value = { ...defaultAccount };
-    error.value = undefined;
     emit("save-account", newAccount.value);
+    clearData();
   }
 };
 
@@ -46,7 +50,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <ModalWindow id="accountModal" :height="10">
+  <ModalWindow :id="id" :height="10">
     <template #body>
       <div class="d-flex align-items-center h-100">
         <IconDropdown
@@ -79,16 +83,7 @@ const emit = defineEmits<{
             </div>
           </div>
         </div>
-        <div class="d-flex align-items-center">
-          <button class="btn btn-primary px-4" @click="saveAccount">Saglabāt</button>
-          <button
-            type="button"
-            class="btn-close ms-3 me-3"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-            @click="clearData"
-          ></button>
-        </div>
+        <SaveOrClose @save="addNewAccount" />
       </div>
     </template>
   </ModalWindow>

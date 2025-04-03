@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json.Serialization;
 using web_api.Middleware;
 using web_api.Models;
 using web_api.Repository;
@@ -12,7 +13,11 @@ using web_api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); // Convert Enums to Strings
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -118,28 +123,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// TODO: Prob add as a project reference
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-Task.Run(async () =>
-{
-    await Task.Delay(1000);
-    var process = new Process
-    {
-        StartInfo = new ProcessStartInfo
-        {
-            FileName = "dotnet",
-            Arguments = "run --project ../../api-client-generator https://localhost:5000/swagger/v1/swagger.json ../../client-app/src/api/auto-generated-client.ts",
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        }
-    };
-
-    process.Start();
-});
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-
+GenerateTypeScriptClientApi();
 
 await app.RunAsync();
 
@@ -158,4 +142,41 @@ void RegisterRepositoriesAndServices(IServiceCollection services)
     services.AddHttpContextAccessor();
 
     services.AddAutoMapper(typeof(Program));
+}
+
+void GenerateTypeScriptClientApi()
+{
+    // TODO: Prob add as a project reference
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+    Task.Run(async () =>
+    {
+        await Task.Delay(1000);
+        var process = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "dotnet",
+                Arguments = "run --project ../../api-client-generator https://localhost:5000/swagger/v1/swagger.json ../../client-app/src/api/auto-generated-client.ts",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
+
+        process.Start();
+
+        var error = await process.StandardError.ReadToEndAsync();
+        if (!string.IsNullOrEmpty(error))
+        {
+            Debug.WriteLine("Error: " + error);
+            Environment.Exit(1);
+        }
+
+        var output = await process.StandardOutput.ReadToEndAsync();
+        Debug.WriteLineIf(!string.IsNullOrEmpty(output), "Message: " + output);
+
+        await process.WaitForExitAsync();
+    });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 }

@@ -11,4 +11,9 @@ public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
         _context = context;
     }
+
+    public async Task<IEnumerable<Category>> GetUserCategoriesAsync(int userId)
+    {
+        return await _context.Categories.Where(c => c.UserId == userId).ToListAsync();
+    }
 }

@@ -26,9 +26,15 @@ public class CategoryService : BaseService, ICategoryService
         _categoryRepository = categoryRepository;
     }
 
+    public async Task<IEnumerable<Dtos.Category>> GetUserCategoriesAsync()
+    {
+        var categories = await _categoryRepository.GetUserCategoriesAsync(UserId);
+
+        return _mapper.Map<IEnumerable<Dtos.Category>>(categories);
+    }
+
     public async Task SaveCategoryIcon(long categoryId, string iconName)
     {
-
         await SaveCategoryAsync(categoryId, category =>
         {
             category.Icon = iconName;
@@ -43,7 +49,7 @@ public class CategoryService : BaseService, ICategoryService
         });
     }
 
-    public Task CreateNewCategoryAsync(Dtos.Category categoryRaw)
+    public Task CreateNewCategoryAsync(Dtos.NewCategory categoryRaw)
     {
         var category = _mapper.Map<Models.Category>(categoryRaw);
         category.UserId = UserId;

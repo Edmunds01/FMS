@@ -1,14 +1,29 @@
 <script setup lang="ts">
-import { categories } from "@/api/categories";
 import DateSelect from "./date-select.vue";
 import Accounts from "./accounts/accounts.vue";
 import Transactions from "./transactions.vue";
+import { api, CategoryType, type Category } from "@/api/auto-generated-client";
+import { computed, onMounted, ref } from "vue";
 
 const startDate = new Date();
 const endDate = new Date(2026, 9, 18);
 
-const expense = categories.filter((category) => category.type === "expense");
-const income = categories.filter((category) => category.type === "income");
+const categories = ref<Category[]>([]);
+
+async function fetchCategories() {
+  categories.value = await api.getCategories();
+}
+
+const expense = computed(() =>
+  categories.value.filter((category) => category.type === CategoryType.Expense),
+);
+const income = computed(() =>
+  categories.value.filter((category) => category.type === CategoryType.Income),
+);
+
+onMounted(async () => {
+  await fetchCategories();
+});
 </script>
 
 <template>
@@ -27,15 +42,15 @@ const income = categories.filter((category) => category.type === "income");
           <div class="row vh-100">
             <div class="col-3 p-0 bg-expense">
               <Transactions
-                transaction-type="expense"
-                :transaction-sum="200"
+                :transaction-type="CategoryType.Expense"
                 :categories="expense"
+                @add-category="fetchCategories"
               />
             </div>
             <div class="col-3 p-0 bg-income">
-              <Transactions transaction-type="income" :transaction-sum="200" :categories="income" />
+              <Transactions :transaction-type="CategoryType.Income" :categories="income" />
             </div>
-            <div class="col p-0">Stats</div>
+            <div class="col p-0 bf-neutral">Stats</div>
           </div>
         </div>
       </div>
