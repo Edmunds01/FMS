@@ -44,7 +44,7 @@ public class TransactionController : ControllerBase
     }
 
     [HttpPost("save-transaction-comment")]
-    public Task<IActionResult> SaveTransactionComment(long transactionId, decimal newAmount)
+    public Task<IActionResult> SaveTransactionComment(long transactionId, string newComment)
     {
         throw new NotImplementedException();
     }
