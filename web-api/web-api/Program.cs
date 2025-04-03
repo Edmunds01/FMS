@@ -13,6 +13,13 @@ using web_api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseUrls("http://0.0.0.0:5000", "https://0.0.0.0:5001");
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -29,7 +36,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Please enter a valid token"
+        Description = "Please use a valid token"
     });
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -61,7 +68,6 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader();
     });
 });
-
 
 builder.Services.AddAuthentication(options =>
 {
@@ -100,6 +106,16 @@ builder.Configuration.AddEnvironmentVariables();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<FMSContext>();
+    await dbContext.Database.MigrateAsync();
+}
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+logger.LogInformation("Environment6: {Environment}", app.Environment.EnvironmentName);
+
 app.UseMiddleware<ConditionalAuthorizeMiddleware>();
 
 app.UseCors("AllowAll");
@@ -107,7 +123,6 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -126,7 +141,6 @@ app.MapControllers();
 GenerateTypeScriptClientApi();
 
 await app.RunAsync();
-
 
 void RegisterRepositoriesAndServices(IServiceCollection services)
 {
