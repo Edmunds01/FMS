@@ -23,24 +23,27 @@ namespace web_api.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult<TokenResponse> Login([FromBody] LoginRegisterDto loginDto)
+        public async Task<IActionResult> Login([FromBody] LoginRegisterDto loginDto)
         {
-            var user = _userRepository.GetUser(loginDto.Username);
+            var user = await _userRepository.GetUserAsync(loginDto.Username);
 
             if (user != null && Helper.PasswordHelper.ComparePasswords(user.PasswordHash, loginDto.Password))
             {
-                return Ok(new TokenResponse() { Token = GenerateJwtToken(user) });
+                var token = GenerateJwtToken(user);
+                SetTokenCookie(token);
+
+                return Ok();
             }
 
             return Unauthorized("Invalid username or password");
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<TokenResponse>> Register([FromBody] LoginRegisterDto loginDto)
+        public async Task<IActionResult> Register([FromBody] LoginRegisterDto loginDto)
         {
             // TODO: Add data validation
 
-            if (_userRepository.GetUser(loginDto.Username) != null)
+            if (_userRepository.GetUserAsync(loginDto.Username) != null)
             {
                 return Conflict("User with this email already exists");
             }
@@ -51,7 +54,23 @@ namespace web_api.Controllers
                 PasswordHash = Helper.PasswordHelper.GenerateVarbinary64FromPassword(loginDto.Password)
             });
 
-            return Ok(new TokenResponse() { Token = GenerateJwtToken(user) });
+            var token = GenerateJwtToken(user);
+            SetTokenCookie(token);
+
+            return Ok();
+        }
+
+        private void SetTokenCookie(string token)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7),
+                Secure = true,
+                Domain = _configuration["Jwt:Domain"],
+                SameSite = SameSiteMode.Strict
+            };
+            Response.Cookies.Append("jwt", token, cookieOptions);
         }
 
         private string GenerateJwtToken(User user)
