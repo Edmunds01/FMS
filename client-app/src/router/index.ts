@@ -1,4 +1,3 @@
- 
 import { api } from "@/api/auto-generated-client";
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 
@@ -55,7 +54,6 @@ router.beforeEach(async (to, from, next) => {
     catch {
       next("/login");
     }
-    
   } else {
     next();
   }
