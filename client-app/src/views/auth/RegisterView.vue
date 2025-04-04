@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import UserRegister from "@/components/auth/user-register.vue";
+import Dashboard from "@/components/dashboard/user-dashboard.vue";
 </script>
 
 <template>
   <main>
-    <UserRegister />
+    <Dashboard />
   </main>
 </template>
