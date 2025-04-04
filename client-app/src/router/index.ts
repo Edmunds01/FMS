@@ -42,7 +42,7 @@ router.beforeEach((to, from, next) => {
   console.log("to", to);
   console.log("from", from);
 
-  if(!(import.meta.env.REQUIRED_AUTH)) {
+  if((import.meta.env.NOT_REQUIRED_AUTH)) {
     next();
     return;
   }

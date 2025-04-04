@@ -788,5 +788,5 @@ const config: IConfig = {
     }
 }
 
-const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:5000";
+const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
 export const api = new Client(config, apiUrl);

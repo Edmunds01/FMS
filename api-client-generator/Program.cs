@@ -39,7 +39,7 @@ static string GenerateTypeScriptClient(OpenApiDocument document)
                 }
             }
 
-            const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:5000";
+            const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
             export const api = new Client(config, apiUrl);
 
             import { AuthorizedApiBase, IConfig } from "./authorized-api-base";
