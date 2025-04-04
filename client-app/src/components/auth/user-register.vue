@@ -2,8 +2,8 @@
 // TODO: Add unsuccessful register alert
 // TODO: Change redirection link
 
+import { api } from "@/api/auto-generated-client";
 import { ref } from "vue";
-import { register } from "@/api/register";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -53,10 +53,13 @@ const validateForm = async () => {
 
 const handleRegister = async () => {
   try {
-    const token = await register({ username: username.value, password: password.value });
-    localStorage.setItem("token", token);
+    const token = await api.register({
+      username: username.value,
+      password: password.value,
+    });
+    localStorage.setItem("token", token.token ?? "");
     router.push("/login");
-  } catch (error) {
+  } catch {
     username.value = "";
     password.value = "";
     confirmPassword.value = "";
@@ -78,7 +81,7 @@ const handleRegister = async () => {
           <fa-icon icon="fa-solid fa-xmark" class="ms-auto" size="2xl" />
         </a>
       </div>
-      <form @submit.prevent="validateForm" class="container">
+      <form class="container" @submit.prevent="validateForm">
         <div class="row mb-1 mt-2">
           <label for="username" class="form-label col-4">E-pasts</label>
           <div class="col">
