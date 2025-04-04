@@ -27,7 +27,7 @@ const handleLogin = async () => {
     <div class="border p-4 w-25">
       <h1 class="border-bottom">Ieiet</h1>
       <form class="container" @submit.prevent="handleLogin">
-        <div class="row mb-1">
+        <div class="row mb-1 mt-4">
           <label for="username" class="form-label col-3">E-pasts</label>
           <input
             id="username"
