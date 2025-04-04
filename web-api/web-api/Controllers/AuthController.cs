@@ -43,7 +43,7 @@ namespace web_api.Controllers
         {
             // TODO: Add data validation
 
-            if (_userRepository.GetUserAsync(loginDto.Username) != null)
+            if (await _userRepository.GetUserAsync(loginDto.Username) != null)
             {
                 return Conflict("User with this email already exists");
             }
