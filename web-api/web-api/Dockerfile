@@ -17,7 +17,7 @@ COPY --from=build /out .
 
 # Expose the port the application runs on
 EXPOSE 5000
-EXPOSE 5001
+#EXPOSE 5001
 
 # Set the entry point for the application
 ENTRYPOINT ["dotnet", "web-api.dll"]

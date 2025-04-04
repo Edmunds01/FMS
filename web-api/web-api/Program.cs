@@ -13,7 +13,7 @@ using web_api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://0.0.0.0:5000", "https://0.0.0.0:5001");
+builder.WebHost.UseUrls("http://0.0.0.0:5000");
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -132,7 +132,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
