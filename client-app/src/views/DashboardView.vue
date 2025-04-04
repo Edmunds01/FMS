@@ -4,6 +4,7 @@ import Dashboard from "@/components/dashboard/user-dashboard.vue";
 
 <template>
   <main>
+    <div>Main</div>
     <Dashboard />
   </main>
 </template>
