@@ -81,8 +81,8 @@ namespace web_api.Controllers
                 //Domain = _configuration["Jwt:Domain"],
 
                 // TODO: Enable for https
-                //Secure = true,
-                //SameSite = SameSiteMode.Strict
+                Secure = true,
+                SameSite = SameSiteMode.None
             };
             Response.Cookies.Append("jwt", token, cookieOptions);
         }
