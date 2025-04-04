@@ -171,7 +171,7 @@ void GenerateTypeScriptClientApi()
             StartInfo = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = "run --project ../../api-client-generator https://localhost:5000/swagger/v1/swagger.json ../../client-app/src/api/auto-generated-client.ts",
+                Arguments = "run --project ../../api-client-generator http://localhost:5000/swagger/v1/swagger.json ../../client-app/src/api/auto-generated-client.ts",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,

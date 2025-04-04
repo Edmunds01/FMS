@@ -570,19 +570,19 @@ export class Client extends AuthorizedApiBase {
 
     /**
      * @param transactionId (optional) 
-     * @param newAmount (optional) 
+     * @param newComment (optional) 
      * @return Success
      */
-    saveTransactionComment(transactionId: number | undefined, newAmount: number | undefined): Promise<void> {
+    saveTransactionComment(transactionId: number | undefined, newComment: string | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/transaction/save-transaction-comment?";
         if (transactionId === null)
             throw new Error("The parameter 'transactionId' cannot be null.");
         else if (transactionId !== undefined)
             url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
-        if (newAmount === null)
-            throw new Error("The parameter 'newAmount' cannot be null.");
-        else if (newAmount !== undefined)
-            url_ += "newAmount=" + encodeURIComponent("" + newAmount) + "&";
+        if (newComment === null)
+            throw new Error("The parameter 'newComment' cannot be null.");
+        else if (newComment !== undefined)
+            url_ += "newComment=" + encodeURIComponent("" + newComment) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {

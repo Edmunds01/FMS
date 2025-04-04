@@ -38,15 +38,12 @@ static string GenerateTypeScriptClient(OpenApiDocument document)
                     return "Bearer " + localStorage.getItem("token");
                 }
             }
-            export const api = new Client(config, "https://localhost:5000");
+
+            const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:5000";
+            export const api = new Client(config, apiUrl);
+
             import { AuthorizedApiBase, IConfig } from "./authorized-api-base";
 
-            const token = await api.login({
-                username: "string",
-                password: "string"
-            });
-
-            localStorage.setItem("token", token.token!);
             """,
         },
         WithCredentials = true,
