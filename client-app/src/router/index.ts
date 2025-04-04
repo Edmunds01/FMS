@@ -37,6 +37,16 @@ const routes: RouteRecordRaw[] = [
     name: "das",
     component: () => import("@/views/auth/DashboardView.vue"),
   },
+  {
+    path: "/dasb",
+    name: "dasb",
+    component: () => import("@/views/DashboardView.vue"),
+  },
+  {
+    path: "/dasbo",
+    name: "dasbo",
+    component: () => import("../views/DashboardView.vue"),
+  },
 ];
 
 // for (const route of routes) {
