@@ -115,7 +115,7 @@ using (var scope = app.Services.CreateScope())
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
-logger.LogInformation("Environment6: {Environment}", app.Environment.EnvironmentName);
+logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
 
 app.UseMiddleware<ConditionalAuthorizeMiddleware>();
 
