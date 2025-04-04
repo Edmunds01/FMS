@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FaIcon from "@/components/global/fa-icon.vue";
-import { onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import NewAccountCreationModal from "./new-account-creation-modal.vue";
 import AccountEditModal from "./account-edit-modal.vue";
 import { api, type Account, type NewAccount } from "@/api/auto-generated-client";
@@ -59,7 +59,9 @@ function trimName(name: string) {
   return name.length > maxLength ? name.slice(0, maxLength) + "..." : name;
 }
 
-const total = accounts.value.reduce((acc, account) => acc + account.balance, 0);
+const total = computed(() => {
+  return accounts.value.reduce((acc, account) => acc + account.balance, 0);
+});
 
 function updateScreenWidth() {
   screenWidth.value = window.innerWidth;
@@ -104,7 +106,10 @@ onUnmounted(() => {
       </button>
     </div>
     <div class="row no-gutters border border-end-0 border-top-0">
-      <button class="col text-center add-account" @click="openAccountModal(newAccountModalId)">
+      <button
+        class="col text-center add-account"
+        @click="openAccountModal(newAccountModalId)"
+      >
         <div>+ Pievienot</div>
       </button>
     </div>

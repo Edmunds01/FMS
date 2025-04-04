@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import UserRegister from "@/components/auth/user-register.vue";
+import RegisterView from "@/components/auth/user-register.vue";
 </script>
 
 <template>
   <main>
-    <UserRegister />
+    <RegisterView />
   </main>
 </template>
