@@ -53,12 +53,11 @@ const validateForm = async () => {
 
 const handleRegister = async () => {
   try {
-    const token = await api.register({
+    await api.register({
       username: username.value,
       password: password.value,
     });
-    localStorage.setItem("token", token.token ?? "");
-    router.push("/login");
+    router.push("/");
   } catch {
     username.value = "";
     password.value = "";

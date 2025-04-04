@@ -233,7 +233,7 @@ export class Client extends AuthorizedApiBase {
      * @param body (optional) 
      * @return Success
      */
-    login(body: LoginRegisterDto | undefined): Promise<TokenResponse> {
+    login(body: LoginRegisterDto | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/auth/login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -244,7 +244,6 @@ export class Client extends AuthorizedApiBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "text/plain"
             }
         };
 
@@ -255,28 +254,26 @@ export class Client extends AuthorizedApiBase {
         });
     }
 
-    protected processLogin(response: Response): Promise<TokenResponse> {
+    protected processLogin(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TokenResponse;
-            return result200;
+            return;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<TokenResponse>(null as any);
+        return Promise.resolve<void>(null as any);
     }
 
     /**
      * @param body (optional) 
      * @return Success
      */
-    register(body: LoginRegisterDto | undefined): Promise<TokenResponse> {
+    register(body: LoginRegisterDto | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/auth/register";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -287,7 +284,6 @@ export class Client extends AuthorizedApiBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "text/plain"
             }
         };
 
@@ -298,21 +294,54 @@ export class Client extends AuthorizedApiBase {
         });
     }
 
-    protected processRegister(response: Response): Promise<TokenResponse> {
+    protected processRegister(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TokenResponse;
-            return result200;
+            return;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<TokenResponse>(null as any);
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    validateSession(): Promise<void> {
+        let url_ = this.baseUrl + "/api/auth/validate-session";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processValidateSession(_response);
+        });
+    }
+
+    protected processValidateSession(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
     }
 
     /**
@@ -736,10 +765,6 @@ export interface NewCategory {
     name: string | undefined;
     icon: string | undefined;
     type: CategoryType;
-}
-
-export interface TokenResponse {
-    token: string | undefined;
 }
 
 export interface Transaction {

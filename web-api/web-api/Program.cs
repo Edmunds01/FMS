@@ -64,9 +64,16 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        var allowedOrigin = builder.Configuration["ALLOWED_ORIGIN"];
+
+        policy.AllowAnyMethod()
+              .AllowCredentials()
+              .AllowAnyHeader()
+              .SetIsOriginAllowed(origin => {
+                  var host = new Uri(origin).Host;
+
+                  return host == "localhost" || host == allowedOrigin;
+              });
     });
 });
 
@@ -117,9 +124,9 @@ var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
 
-app.UseMiddleware<ConditionalAuthorizeMiddleware>();
-
 app.UseCors("AllowAll");
+
+app.UseMiddleware<ConditionalAuthorizeMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

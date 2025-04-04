@@ -60,15 +60,29 @@ namespace web_api.Controllers
             return Ok();
         }
 
+        [HttpGet("validate-session")]
+        public IActionResult ValidateSession()
+        {
+            if (HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated)
+            {
+                return Ok();
+            }
+
+            return Unauthorized();
+        }
+
+
         private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddDays(7),
-                Secure = true,
                 Domain = _configuration["Jwt:Domain"],
-                SameSite = SameSiteMode.Strict
+
+                // TODO: Enable for https
+                //Secure = true,
+                //SameSite = SameSiteMode.Strict
             };
             Response.Cookies.Append("jwt", token, cookieOptions);
         }
