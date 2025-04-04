@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Dashboard from "@/components/dashboard/user-dashboard.vue";
+import RegisterView from "@/components/auth/user-register.vue";
 </script>
 
 <template>
   <main>
-    <Dashboard />
+    <RegisterView />
   </main>
 </template>

@@ -28,11 +28,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import("../views/auth/RegisterView.vue"),
   },
   {
-    path: "/d",
-    name: "d",
-    component: () => import("../views/auth/RegisterView.vue"),
-  },
-  {
     path: "/da",
     name: "da",
     component: () => import("../views/auth/DashboardView.vue"),
