@@ -787,4 +787,6 @@ const config: IConfig = {
         return "Bearer " + localStorage.getItem("token");
     }
 }
-export const api = new Client(config, "https://fms-3.onrender.com");
+
+const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:5000";
+export const api = new Client(config, apiUrl);

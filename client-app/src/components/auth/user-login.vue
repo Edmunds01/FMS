@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { api } from "@/api/auto-generated-client";
 import { ref } from "vue";
-import { login } from "@/api/login";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -10,10 +10,10 @@ const password = ref("");
 
 const handleLogin = async () => {
   try {
-    const token = await login({ username: username.value, password: password.value });
-    localStorage.setItem("token", token);
+    const token = await api.login({ username: username.value, password: password.value });
+    localStorage.setItem("token", token.token ?? "");
     router.push("/");
-  } catch (error) {
+  } catch {
     username.value = "";
     password.value = "";
   }
@@ -26,7 +26,7 @@ const handleLogin = async () => {
 
     <div class="border p-4 w-25">
       <h1 class="border-bottom">Ieiet</h1>
-      <form @submit.prevent="handleLogin" class="container">
+      <form class="container" @submit.prevent="handleLogin">
         <div class="row mb-1">
           <label for="username" class="form-label col-3">E-pasts</label>
           <input
@@ -56,7 +56,9 @@ const handleLogin = async () => {
         <div class="row">
           <div class="col-3"></div>
           <button type="submit" class="btn btn-primary col">Ieiet</button>
-          <a type="button" href="register" class="btn btn-primary ms-2 col">Registrēties</a>
+          <a type="button" href="register" class="btn btn-primary ms-2 col"
+            >Registrēties</a
+          >
         </div>
       </form>
     </div>
