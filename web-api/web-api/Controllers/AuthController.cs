@@ -78,7 +78,7 @@ namespace web_api.Controllers
             {
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddDays(7),
-                Domain = _configuration["Jwt:Domain"],
+                //Domain = _configuration["Jwt:Domain"],
 
                 // TODO: Enable for https
                 //Secure = true,

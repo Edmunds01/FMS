@@ -11,6 +11,8 @@ using web_api.Repository;
 using web_api.Services;
 using web_api.Services.Interfaces;
 
+const string CorsPolicyName = "SpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseUrls("http://0.0.0.0:5000");
@@ -62,7 +64,7 @@ builder.Services.AddDbContext<FMSContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy(CorsPolicyName, policy =>
     {
         var allowedOrigin = builder.Configuration["ALLOWED_ORIGIN"];
 
@@ -124,7 +126,7 @@ var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
 
-app.UseCors("AllowAll");
+app.UseCors(CorsPolicyName);
 
 app.UseMiddleware<ConditionalAuthorizeMiddleware>();
 
