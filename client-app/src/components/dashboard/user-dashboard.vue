@@ -5,8 +5,8 @@ import Transactions from "./transactions.vue";
 import { api, CategoryType, type Category } from "@/api/auto-generated-client";
 import { computed, onMounted, ref } from "vue";
 
-const startDate = new Date();
-const endDate = new Date(2026, 9, 18);
+const startDate = ref(new Date());
+const endDate = ref(new Date(2025, 9, 1));
 
 const categories = ref<Category[]>([]);
 
@@ -48,7 +48,10 @@ onMounted(async () => {
               />
             </div>
             <div class="col-3 p-0 bg-income">
-              <Transactions :transaction-type="CategoryType.Income" :categories="income" />
+              <Transactions
+                :transaction-type="CategoryType.Income"
+                :categories="income"
+              />
             </div>
             <div class="col p-0 bf-neutral">Stats</div>
           </div>

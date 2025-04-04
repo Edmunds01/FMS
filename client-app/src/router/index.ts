@@ -1,4 +1,4 @@
- 
+import { api } from "@/api/auto-generated-client";
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 
 const routes: RouteRecordRaw[] = [
@@ -37,18 +37,23 @@ const router = createRouter({
   routes: routes,
 });
 
-router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem("token");
+router.beforeEach(async (to, from, next) => {
   console.log("to", to);
   console.log("from", from);
 
-  if(!(import.meta.env.REQUIRED_AUTH)) {
+  if((import.meta.env.NOT_REQUIRED_AUTH)) {
     next();
     return;
   }
 
-  if (to.meta.requiresAuth && !token) {
-    next("/login");
+  if (to.meta.requiresAuth) {
+    try {
+      await api.validateSession()
+      next();
+    }
+    catch {
+      next("/login");
+    }
   } else {
     next();
   }

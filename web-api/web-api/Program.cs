@@ -11,6 +11,8 @@ using web_api.Repository;
 using web_api.Services;
 using web_api.Services.Interfaces;
 
+const string CorsPolicyName = "SpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseUrls("http://0.0.0.0:5000");
@@ -62,11 +64,18 @@ builder.Services.AddDbContext<FMSContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy(CorsPolicyName, policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        var allowedOrigin = builder.Configuration["ALLOWED_ORIGIN"];
+
+        policy.AllowAnyMethod()
+              .AllowCredentials()
+              .AllowAnyHeader()
+              .SetIsOriginAllowed(origin => {
+                  var host = new Uri(origin).Host;
+
+                  return host == "localhost" || host == allowedOrigin;
+              });
     });
 });
 
@@ -115,11 +124,11 @@ using (var scope = app.Services.CreateScope())
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
-logger.LogInformation("Environment6: {Environment}", app.Environment.EnvironmentName);
+logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
+
+app.UseCors(CorsPolicyName);
 
 app.UseMiddleware<ConditionalAuthorizeMiddleware>();
-
-app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -171,7 +180,7 @@ void GenerateTypeScriptClientApi()
             StartInfo = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = "run --project ../../api-client-generator https://localhost:5000/swagger/v1/swagger.json ../../client-app/src/api/auto-generated-client.ts",
+                Arguments = "run --project ../../api-client-generator http://localhost:5000/swagger/v1/swagger.json ../../client-app/src/api/auto-generated-client.ts",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,

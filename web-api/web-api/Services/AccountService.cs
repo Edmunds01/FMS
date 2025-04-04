@@ -43,7 +43,7 @@ public class AccountService : BaseService, IAccountService
     {
         await SaveAccountAsync(accountId, category =>
         {
-            category.Icon = name;
+            category.Name = name;
         });
     }
 

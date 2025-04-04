@@ -10,8 +10,7 @@ const password = ref("");
 
 const handleLogin = async () => {
   try {
-    const token = await api.login({ username: username.value, password: password.value });
-    localStorage.setItem("token", token.token ?? "");
+    await api.login({ username: username.value, password: password.value });
     router.push("/");
   } catch {
     username.value = "";

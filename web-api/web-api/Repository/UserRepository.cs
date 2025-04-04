@@ -1,4 +1,5 @@
-﻿using web_api.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using web_api.Models;
 
 namespace web_api.Repository
 {
@@ -19,9 +20,9 @@ namespace web_api.Repository
             return user;
         }
 
-        public User? GetUser(string email)
+        public Task<User?> GetUserAsync(string email)
         {
-            return _context.Users.FirstOrDefault(u => u.Email == email);
+            return _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
     }
 }
