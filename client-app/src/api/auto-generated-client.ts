@@ -787,11 +787,4 @@ const config: IConfig = {
         return "Bearer " + localStorage.getItem("token");
     }
 }
-export const api = new Client(config, "https://localhost:5000");
-
-const token = await api.login({
-    username: "string",
-    password: "string"
-});
-
-localStorage.setItem("token", token.token!);
+export const api = new Client(config, "https://fms-3.onrender.com");
