@@ -78,12 +78,14 @@ namespace web_api.Controllers
             {
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddDays(7),
-                //Domain = _configuration["Jwt:Domain"],
-
-                // TODO: Enable for https
-                Secure = true,
-                SameSite = SameSiteMode.None
             };
+
+            if (bool.TryParse(_configuration["IS_DEPLOYMENT"], out var isDeployment) && isDeployment)
+            {
+                cookieOptions.Secure = true;
+                cookieOptions.SameSite = SameSiteMode.None;
+            }
+
             Response.Cookies.Append("jwt", token, cookieOptions);
         }
 
