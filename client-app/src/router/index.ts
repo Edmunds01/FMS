@@ -3,50 +3,25 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router"
 
 const routes: RouteRecordRaw[] = [
   {
+    path: "/",
+    name: "default",
+    component: () => import("@/views/DashboardView.vue"),
+  },
+  {
     path: "/dashboard",
     name: "dashboard",
-    component: import("../views/DashboardView.vue"),
-  },
-  {
-    path: "/dashboard2",
-    name: "dashboard2",
-    component: import("@/views/DashboardView.vue"),
-  },
-  {
-    path: "/login2",
-    name: "login2",
-    component: import("../views/auth/LoginView.vue"),
+    component: () => import("@/views/DashboardView.vue"),
   },
   {
     path: "/login",
     name: "login",
-    component: () => import("../views/auth/LoginView.vue"),
+    component: () => import("@/views/auth/LoginView.vue"),
   },
   {
     path: "/register",
     name: "register",
-    component: () => import("../views/auth/RegisterView.vue"),
-  },
-  {
-    path: "/da",
-    name: "da",
-    component: () => import("../views/auth/DashboardView.vue"),
-  },
-  {
-    path: "/das",
-    name: "das",
-    component: () => import("@/views/auth/DashboardView.vue"),
-  },
-  {
-    path: "/dasb",
-    name: "dasb",
-    component: () => import("@/views/DashboardView.vue"),
-  },
-  {
-    path: "/dasbo",
-    name: "dasbo",
-    component: () => import("../views/DashboardView.vue"),
-  },
+    component: () => import("@/views/auth/RegisterView.vue"),
+  }
 ];
 
 for (const route of routes) {
@@ -63,9 +38,15 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem("token") ?? "some-token-value";
+  const token = localStorage.getItem("token");
   console.log("to", to);
   console.log("from", from);
+
+  if(!(import.meta.env.REQUIRED_AUTH)) {
+    next();
+    return;
+  }
+
   if (to.meta.requiresAuth && !token) {
     next("/login");
   } else {
