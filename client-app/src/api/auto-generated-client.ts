@@ -600,7 +600,7 @@ export class Client extends AuthorizedApiBase {
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
-            method: "POST",
+            method: "GET",
             headers: {
                 "Accept": "text/plain"
             }
