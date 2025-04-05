@@ -12,7 +12,7 @@ public class TransactionController(ITransactionService transactionService) : Con
 {
     private readonly ITransactionService _transactionService = transactionService;
 
-    [HttpPost("category-transactions")]
+    [HttpGet("category-transactions")]
     public ActionResult<IEnumerable<Transaction>> GetTransaction(long categoryId)
     {
         return Ok(_transactionService.GetUserTransactions(categoryId));
