@@ -8,11 +8,18 @@ const router = useRouter();
 const username = ref("");
 const password = ref("");
 
+const loading = ref(false);
+
+// TODO: Add error handling
 const handleLogin = async () => {
+  if (loading.value) return;
+
   try {
+    loading.value = true;
     await api.login({ username: username.value, password: password.value });
     router.push("/");
-  } catch {
+  } finally {
+    loading.value = false;
     username.value = "";
     password.value = "";
   }
@@ -55,9 +62,7 @@ const handleLogin = async () => {
         <div class="row">
           <div class="col-3"></div>
           <button type="submit" class="btn btn-primary col">Ieiet</button>
-          <a type="button" href="register" class="btn btn-primary ms-2 col"
-            >Registrēties</a
-          >
+          <a type="button" href="register" class="btn btn-primary ms-2 col">Registrēties</a>
         </div>
       </form>
     </div>

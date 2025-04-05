@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,6 +14,7 @@ namespace web_api.Controllers
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
+        private const string _authCookieName = "jwt";
         private readonly IConfiguration _configuration;
         private readonly IUserRepository _userRepository;
 
@@ -59,6 +61,14 @@ namespace web_api.Controllers
 
             return Ok();
         }
+        
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            Response.Cookies.Delete(_authCookieName);
+
+            return Ok();
+        }
 
         [HttpGet("validate-session")]
         public IActionResult ValidateSession()
@@ -86,7 +96,7 @@ namespace web_api.Controllers
                 cookieOptions.SameSite = SameSiteMode.None;
             }
 
-            Response.Cookies.Append("jwt", token, cookieOptions);
+            Response.Cookies.Append(_authCookieName, token, cookieOptions);
         }
 
         private string GenerateJwtToken(User user)

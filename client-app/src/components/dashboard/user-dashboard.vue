@@ -4,6 +4,7 @@ import Accounts from "./accounts/accounts.vue";
 import Transactions from "./transactions.vue";
 import { api, CategoryType, type Category } from "@/api/auto-generated-client";
 import { computed, onMounted, ref } from "vue";
+import FaIcon from "@/components/global/fa-icon.vue";
 
 const startDate = ref(new Date());
 const endDate = ref(new Date(2025, 9, 1));
@@ -38,6 +39,11 @@ onMounted(async () => {
             <div class="col p-0 border-bottom">
               <DateSelect :start-date="startDate" :end-date="endDate" />
             </div>
+            <div class="col-1 p-0 border-bottom d-flex align-items-center justify-content-end me-3">
+              <button title="Iziet" class="btn" @click="$router.push('/logout')">
+                <FaIcon icon-name="right-from-bracket" size="2x" />
+              </button>
+            </div>
           </div>
           <div class="row vh-100">
             <div class="col-3 p-0 bg-expense">
@@ -48,10 +54,7 @@ onMounted(async () => {
               />
             </div>
             <div class="col-3 p-0 bg-income">
-              <Transactions
-                :transaction-type="CategoryType.Income"
-                :categories="income"
-              />
+              <Transactions :transaction-type="CategoryType.Income" :categories="income" />
             </div>
             <div class="col p-0 bf-neutral">Stats</div>
           </div>

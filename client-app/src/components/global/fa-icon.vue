@@ -17,6 +17,7 @@ export const icons = [
   "floppy-disk",
   "trash",
   "money-bill-1",
+  "right-from-bracket",
 ] as const;
 </script>
 
