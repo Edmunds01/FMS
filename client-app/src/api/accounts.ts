@@ -1,4 +1,4 @@
-import type { IconName } from "@/components/global/fa-icon.vue";
+import type { IconName } from "@/components/global/FaIcon.vue";
 
 export type Account = {
   name: string;

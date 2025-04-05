@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import TransactionCategoryButton from "./categories/transaction-category-button.vue";
-import AddTransactionCategoryButton from "./categories/add-transaction-category-button.vue";
-import { closeModal, openModal } from "../global/modal-window.vue";
+import CategoryButton from "@/components/dashboard/categories/CategoryButton.vue";
+import AddCategoryButton from "@/components/dashboard/categories/AddCategoryButton.vue";
+import { closeModal, openModal } from "@/components/global/ModalWindow.vue";
 import { computed, ref } from "vue";
-import { icons } from "../global/fa-icon.vue";
+import { icons } from "@/components/global/FaIcon.vue";
 import { api, CategoryType, type Category, type NewCategory } from "@/api/auto-generated-client";
-import AddCategoryModal from "./categories/add-category-modal.vue";
-import EditCategoryModal from "./categories/edit-category-modal.vue";
-import { isConfirmModal } from "../global/confirm-action.vue";
+import AddCategoryModal from "@/components/dashboard/categories/AddCategoryModal.vue";
+import EditCategoryModal from "@/components/dashboard/categories/EditCategoryModal.vue";
+import { isConfirmModal } from "@/components/global/ConfirmAction.vue";
 
 const props = defineProps<{
   transactionType: CategoryType;
@@ -105,7 +105,7 @@ function mapCategoryTypeName(category: CategoryType): string {
     <div class="row flex-grow-1 border-end">
       <div class="col">
         <div class="transaction-list d-flex flex-wrap">
-          <TransactionCategoryButton
+          <CategoryButton
             v-for="category in categories"
             :key="category.categoryId"
             :category="category"
@@ -113,7 +113,7 @@ function mapCategoryTypeName(category: CategoryType): string {
             @left-click="console.log('left-click', category)"
             @right-click="showEditCategoryModal(category)"
           />
-          <AddTransactionCategoryButton
+          <AddCategoryButton
             :type="transactionType"
             class="category-width user-select-none"
             @left-click="showAddCategoryModal"

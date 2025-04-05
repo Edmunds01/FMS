@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { NewCategory } from "@/api/auto-generated-client";
 import { ref } from "vue";
-import IconDropdown from "@/components/dashboard/accounts/icon-dropdown.vue";
-import SaveOrClose from "@/components/global/save-or-close.vue";
-import ModalWindow from "@/components/global/modal-window.vue";
+import SelectIconDropdown from "@/components/global/SelectIconDropdown.vue";
+import SaveOrCloseInModal from "@/components/global/SaveOrCloseInModal.vue";
+import ModalWindow from "@/components/global/ModalWindow.vue";
 
 const props = defineProps<{
   id: string;
@@ -21,7 +21,7 @@ defineEmits<{
   <ModalWindow :id="id" :height="6">
     <template #body>
       <div class="d-flex align-items-center h-100">
-        <IconDropdown
+        <SelectIconDropdown
           :icon-name="newCategory.icon"
           @select-icon="(icon) => (newCategory.icon = icon)"
         />
@@ -36,7 +36,7 @@ defineEmits<{
             />
           </div>
         </div>
-        <SaveOrClose @save="$emit('add-category')" />
+        <SaveOrCloseInModal @save="$emit('add-category')" />
       </div>
     </template>
   </ModalWindow>

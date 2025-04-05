@@ -1,56 +1,61 @@
 <script setup lang="ts">
-import { api, type Category } from "@/api/auto-generated-client";
+import ModalWindow from "@/components/global/ModalWindow.vue";
+import SelectIconDropdown from "@/components/global/SelectIconDropdown.vue";
 import { ref } from "vue";
-import IconDropdown from "@/components/dashboard/accounts/icon-dropdown.vue";
-import ModalWindow from "@/components/global/modal-window.vue";
-import FaIcon from "@/components/global/fa-icon.vue";
+import FaIcon, { type IconName } from "@/components/global/FaIcon.vue";
+import { api, type Account } from "@/api/auto-generated-client";
 import { useConfirm } from "@/utils/confirm";
 
 const props = defineProps<{
   id: string;
-  category: Category;
+  account: Account;
 }>();
 
-const category = ref(props.category);
+const editAccount = ref<Account>(props.account);
 const isEditMode = ref(false);
-const newName = ref(category.value.name);
+const newName = ref(editAccount.value.name);
 
 const emit = defineEmits<{
-  (e: "delete-category", categoryId: number): void;
+  (e: "delete-account", accountId?: number): void;
 }>();
 
 const confirm = useConfirm();
 
-async function deleteCategory() {
+async function deleteAccount() {
   const result = await confirm(
     "Apsitpriniet",
-    `Vēlaties izdzēst kategoriju "${category.value.name}"`,
+    `Vēlaties izdzēst kontu "${editAccount.value.name}"`,
     props.id,
     true,
   );
 
   if (result) {
-    emit("delete-category", category.value.categoryId);
+    emit("delete-account", props.account.accountId);
   }
 }
 
-async function iconChanged(icon: string) {
-  category.value.icon = icon;
-  await api.saveCategoryIcon(category.value.categoryId, icon);
+async function iconChanged(icon: IconName) {
+  editAccount.value.icon = icon;
+
+  await api.saveAccountIcon(editAccount.value.accountId, icon);
 }
 
-async function nameChanged() {
+async function iconNameSaved() {
   isEditMode.value = false;
-  category.value.name = newName.value;
-  await api.saveCategoryName(category.value.categoryId, newName.value);
+
+  editAccount.value.name = newName.value;
+  await api.saveAccountName(editAccount.value.accountId, newName.value);
 }
 </script>
 
 <template>
-  <ModalWindow :id="id" :height="6">
+  <ModalWindow :id="id">
     <template #body>
       <div class="d-flex align-items-center h-100">
-        <IconDropdown :icon-name="category.icon ?? ''" @select-icon="(icon) => iconChanged(icon)" />
+        <SelectIconDropdown
+          :icon-name="editAccount.icon ?? ''"
+          @select-icon="(icon) => iconChanged(icon)"
+        />
         <div class="row flex-grow-1">
           <div v-if="isEditMode" class="col d-flex align-items-center justify-content-center">
             <input
@@ -59,28 +64,28 @@ async function nameChanged() {
               class="form-control form-control-sm me-4"
               style="width: 30rem"
             />
-            <button class="p-0" @click="nameChanged()">
+            <button class="p-0" @click="iconNameSaved()">
               <FaIcon icon-name="floppy-disk" size="lg" />
             </button>
             <button
               class="p-0 ms-4"
               @click="
                 isEditMode = false;
-                newName = category.name;
+                newName = editAccount.name;
               "
             >
               <FaIcon icon-name="xmark" size="lg" />
             </button>
           </div>
           <div v-else class="col d-flex align-items-center justify-content-center">
-            <div class="p-0 me-5">{{ category.name }}</div>
+            <div class="p-0 me-5">{{ editAccount.name }}</div>
             <button class="p-0" @click="isEditMode = true">
               <FaIcon icon-name="pen" size="lg" />
             </button>
           </div>
         </div>
         <div class="d-flex justify-content-between align-items-center">
-          <button v-if="category.showDeleteButton" class="p-0" @click="deleteCategory">
+          <button v-if="editAccount.showDeleteButton" class="p-0" @click="deleteAccount">
             <FaIcon icon-name="trash" size="lg" />
           </button>
           <button
@@ -95,4 +100,21 @@ async function nameChanged() {
   </ModalWindow>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.btn-close {
+  font-size: 1.25rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-close:hover {
+  background-color: #f0f0f0;
+  border-radius: 50%;
+}
+</style>

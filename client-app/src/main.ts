@@ -9,15 +9,11 @@ import router from "./router";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 
-import FaIcon from "./components/global/fa-icon.vue";
-
 import { fas } from "@fortawesome/free-solid-svg-icons";
 
 library.add(fas);
 
 const app = createApp(App);
-
-app.component("FaIcon", FaIcon);
 
 app.use(router);
 

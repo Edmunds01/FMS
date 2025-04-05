@@ -4,7 +4,7 @@ export let isConfirmModal = false;
 
 <script setup lang="ts">
 import { ref, getCurrentInstance } from "vue";
-import ModalWindow, { closeModal, openModal } from "./modal-window.vue";
+import ModalWindow, { closeModal, openModal } from "@/components/global/ModalWindow.vue";
 
 const confirmModalId = "confirmModal";
 

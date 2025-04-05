@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import FaIcon, { type IconName } from "@/components/global/fa-icon.vue";
-import { icons as iconNames } from "@/components/global/fa-icon.vue";
+import FaIcon, { type IconName } from "@/components/global/FaIcon.vue";
+import { icons as iconNames } from "@/components/global/FaIcon.vue";
 
 defineProps<{
   iconName?: IconName | string | null;
@@ -39,7 +39,7 @@ defineEmits<{
 </template>
 
 <style scoped lang="scss">
-@use "../categories/style.scss";
+@use "../dashboard/categories/style.scss" as *;
 </style>
 
 <style lang="scss">

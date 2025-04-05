@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Category } from "@/api/auto-generated-client";
-import FaIcon from "@/components/global/fa-icon.vue";
+import FaIcon from "@/components/global/FaIcon.vue";
 
 defineProps<{
   category: Category;

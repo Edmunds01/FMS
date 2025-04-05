@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import ModalWindow from "@/components/global/modal-window.vue";
+import ModalWindow from "@/components/global/ModalWindow.vue";
 import { ref, watch } from "vue";
-import IconDropdown from "./icon-dropdown.vue";
+import SelectIconDropdown from "@/components/global/SelectIconDropdown.vue";
 import { type NewAccount } from "@/api/auto-generated-client";
-import SaveOrClose from "@/components/global/save-or-close.vue";
+import SaveOrCloseInModal from "@/components/global/SaveOrCloseInModal.vue";
 
 defineProps<{
   id: string;
@@ -53,7 +53,7 @@ const emit = defineEmits<{
   <ModalWindow :id="id" :height="10">
     <template #body>
       <div class="d-flex align-items-center h-100">
-        <IconDropdown
+        <SelectIconDropdown
           :icon-name="newAccount.icon"
           @select-icon="(icon) => (newAccount.icon = icon)"
         />
@@ -83,7 +83,7 @@ const emit = defineEmits<{
             </div>
           </div>
         </div>
-        <SaveOrClose @save="addNewAccount" />
+        <SaveOrCloseInModal @save="addNewAccount" />
       </div>
     </template>
   </ModalWindow>
