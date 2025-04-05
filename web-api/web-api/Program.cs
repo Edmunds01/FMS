@@ -143,7 +143,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// TODO: check if this will works on deploy
+// TODO: check if this will work on deploy
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();
