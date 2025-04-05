@@ -8,15 +8,16 @@ namespace web_api.Controllers;
 
 [ApiController]
 [Route("api/transaction")]
-public class TransactionController : ControllerBase
+public class TransactionController(ITransactionService transactionService) : ControllerBase
 {
-    private readonly ITransactionService _transactionService;
+    private readonly ITransactionService _transactionService = transactionService;
 
-    public TransactionController(ITransactionService transactionService)
+    [HttpGet("category-transactions")]
+    public ActionResult<IEnumerable<Transaction>> GetTransaction(long categoryId)
     {
-        _transactionService = transactionService;
+        return Ok(_transactionService.GetUserTransactions(categoryId));
     }
-
+    
     [HttpPost("add-transaction")]
     public async Task<IActionResult> AddTransaction([FromBody] Dtos.Transaction transaction)
     {

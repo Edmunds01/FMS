@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using web_api.Repository;
+using web_api.Repository.Interfaces;
 using web_api.Services.Interfaces;
 
 namespace web_api.Services;
@@ -16,11 +16,19 @@ public class CategoryService(
     private readonly ITransactionRepository _transactionRepository = transactionRepository;
     private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
-    public async Task<IEnumerable<Dtos.Category>> GetUserCategoriesAsync()
+    public IEnumerable<Dtos.Category> GetUserCategories()
     {
-        var categories = await _categoryRepository.GetUserCategoriesAsync(UserId);
-        
-        return _mapper.Map<IEnumerable<Dtos.Category>>(categories);
+        var categoriesRaw = _categoryRepository.GetUserCategories(UserId);
+        var transactions = _transactionRepository.GetUserTransactions(UserId);
+        var categories = _mapper.Map<IEnumerable<Dtos.Category>>(categoriesRaw);
+
+        return categories.Select(category =>
+        {
+            category.ShowDeleteButton = transactions.Any(t => t.CategoryId == category.CategoryId);
+            category.SumOfTransactions = transactions.Where(t => t.CategoryId == category.CategoryId).Sum(t => t.Amount);
+
+            return category;
+        });
     }
 
     public async Task SaveCategoryIconAsync(long categoryId, string icon)

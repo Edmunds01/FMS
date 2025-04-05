@@ -13,9 +13,9 @@ public class AccountController(IAccountService accountService) : ControllerBase
     private readonly IAccountService _accountService = accountService;
 
     [HttpGet("accounts")]
-    public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
+    public ActionResult<IEnumerable<Account>> GetAccounts()
     {
-        return Ok(await _accountService.GetUserAccountsAsync());
+        return Ok(_accountService.GetUserAccounts());
     }
 
     [HttpPost("save-account-icon")]

@@ -588,6 +588,49 @@ export class Client extends AuthorizedApiBase {
     }
 
     /**
+     * @param categoryId (optional) 
+     * @return Success
+     */
+    categoryTransactions(categoryId: number | undefined): Promise<Transaction[]> {
+        let url_ = this.baseUrl + "/api/transaction/category-transactions?";
+        if (categoryId === null)
+            throw new Error("The parameter 'categoryId' cannot be null.");
+        else if (categoryId !== undefined)
+            url_ += "categoryId=" + encodeURIComponent("" + categoryId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processCategoryTransactions(_response);
+        });
+    }
+
+    protected processCategoryTransactions(response: Response): Promise<Transaction[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Transaction[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Transaction[]>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */

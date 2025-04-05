@@ -1,19 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using web_api.Models;
+using web_api.Repository.Interfaces;
 
 namespace web_api.Repository;
 
-public class TransactionRepository : BaseRepository<Transaction>,  ITransactionRepository
+public class TransactionRepository(FMSContext context) : BaseRepository<Transaction>(context), ITransactionRepository
 {
-    private new readonly FMSContext _context;
+    private new readonly FMSContext _context = context;
 
-    public TransactionRepository(FMSContext context) : base(context)
+    public IEnumerable<Transaction> GetUserTransactions(int userId, long categoryId)
     {
-        _context = context;
+         return GetUserTransactions(userId).Where(t => t.CategoryId == categoryId);
     }
 
-    public async Task<IEnumerable<Transaction>> GetUserTransactionsAsync(int userId)
+    public IEnumerable<Transaction> GetUserTransactions(int userId)
     {
-        return await _context.Transactions.Where(t => t.UserId == userId).ToListAsync();
+        return _context.Transactions.Where(t => t.UserId == userId);
     }
 }

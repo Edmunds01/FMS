@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using web_api.Dtos;
 using web_api.Models;
-using web_api.Repository;
+using web_api.Repository.Interfaces;
 
 namespace web_api.Controllers;
 

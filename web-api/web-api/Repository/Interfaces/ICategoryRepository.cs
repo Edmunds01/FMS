@@ -1,9 +1,8 @@
 ﻿using web_api.Models;
-using web_api.Repository.Interfaces;
 
-namespace web_api.Repository;
+namespace web_api.Repository.Interfaces;
 
 public interface ICategoryRepository : IBaseRepository<Category>
 {
-    Task<IEnumerable<Category>> GetUserCategoriesAsync(int userId);
+    IEnumerable<Category> GetUserCategories(int userId);
 }

@@ -2,7 +2,7 @@
 
 public interface IAccountService
 {
-    Task<IEnumerable<Dtos.Account>> GetUserAccountsAsync();
+    IEnumerable<Dtos.Account> GetUserAccounts();
 
     Task CreateNewAccountAsync(Dtos.NewAccount accountRaw);
 

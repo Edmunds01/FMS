@@ -19,9 +19,9 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     }
 
     [HttpGet("get-categories")]
-    public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+    public ActionResult<IEnumerable<Category>> GetCategories()
     {
-        return Ok(await _categoryService.GetUserCategoriesAsync());
+        return Ok(_categoryService.GetUserCategories());
     }
 
     [HttpPost("save-category-icon")]
