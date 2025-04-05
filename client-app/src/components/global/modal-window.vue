@@ -16,7 +16,6 @@ export function openModal(id: string, onModalHidden: () => void) {
 export function closeModal(id: string) {
   setTimeout(() => {
     const modal = document.getElementById(id);
-    console.log(modal);
     if (modal) {
       const modalInstance = Modal.getInstance(modal);
       if (modalInstance) {
@@ -39,7 +38,7 @@ defineProps<{
 
 <template>
   <div :id="id" class="modal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered" :style="`width: ${width}rem`">
       <div class="modal-content">
         <div v-if="$slots.header" class="modal-header">
           <slot name="header" />

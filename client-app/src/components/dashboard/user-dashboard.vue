@@ -2,7 +2,7 @@
 import DateSelect from "./date-select.vue";
 import Accounts from "./accounts/accounts.vue";
 import Transactions from "./transactions.vue";
-import { api, CategoryType, type Category } from "@/api/auto-generated-client";
+import { api, CategoryType, type Category, type NewCategory } from "@/api/auto-generated-client";
 import { computed, onMounted, ref } from "vue";
 import FaIcon from "@/components/global/fa-icon.vue";
 
@@ -13,6 +13,22 @@ const categories = ref<Category[]>([]);
 
 async function fetchCategories() {
   categories.value = await api.getCategories();
+}
+
+function addCategory(newCategory: NewCategory) {
+  categories.value.push({
+    ...newCategory,
+    sumOfTransactions: 0,
+  } as Category);
+
+  setTimeout(async () => {
+    await api.addCategory(newCategory);
+    await fetchCategories();
+  }, 0);
+}
+
+function deleteCategory(categoryId: number) {
+  categories.value = categories.value.filter((category) => category.categoryId !== categoryId);
 }
 
 const expense = computed(() =>
@@ -50,11 +66,17 @@ onMounted(async () => {
               <Transactions
                 :transaction-type="CategoryType.Expense"
                 :categories="expense"
-                @add-category="fetchCategories"
+                @add-category="addCategory"
+                @delete-category="deleteCategory"
               />
             </div>
             <div class="col-3 p-0 bg-income">
-              <Transactions :transaction-type="CategoryType.Income" :categories="income" />
+              <Transactions
+                :transaction-type="CategoryType.Income"
+                :categories="income"
+                @add-category="addCategory"
+                @delete-category="deleteCategory"
+              />
             </div>
             <div class="col p-0 bf-neutral">Stats</div>
           </div>

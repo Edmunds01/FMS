@@ -18,6 +18,20 @@ export const icons = [
   "trash",
   "money-bill-1",
   "right-from-bracket",
+  "r",
+  "p",
+  "s",
+  "wallet",
+  "pizza-slice",
+  "house",
+  "person",
+  "gift",
+  "gifts",
+  "percent",
+  "plane",
+  "plane-departure",
+  "car-side",
+  "cart-plus",
 ] as const;
 </script>
 
@@ -57,7 +71,7 @@ const resolvedIconName = computed(() => {
 </script>
 
 <template>
-  <font-awesome-icon v-if="iconName" :icon="'fa-solid fa-' + resolvedIconName" :size="size" />
+  <font-awesome-icon :icon="'fa-solid fa-' + resolvedIconName" :size="size" />
 </template>
 
 <style scoped></style>

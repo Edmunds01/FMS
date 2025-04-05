@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import TransactionCategoryButton from "./category-buttons/transaction-category-button.vue";
-import AddTransactionCategoryButton from "./category-buttons/add-transaction-category-button.vue";
-import ModalWindow, { openModal } from "../global/modal-window.vue";
+import TransactionCategoryButton from "./categories/transaction-category-button.vue";
+import AddTransactionCategoryButton from "./categories/add-transaction-category-button.vue";
+import { closeModal, openModal } from "../global/modal-window.vue";
 import { computed, ref } from "vue";
 import { icons } from "../global/fa-icon.vue";
-import IconDropdown from "./accounts/icon-dropdown.vue";
-import {
-  api,
-  CategoryType,
-  type Category,
-  type NewCategory as TempCategory,
-} from "@/api/auto-generated-client";
-import SaveOrClose from "../global/save-or-close.vue";
+import { api, CategoryType, type Category, type NewCategory } from "@/api/auto-generated-client";
+import AddCategoryModal from "./categories/add-category-modal.vue";
+import EditCategoryModal from "./categories/edit-category-modal.vue";
+import { isConfirmModal } from "../global/confirm-action.vue";
 
 const props = defineProps<{
   transactionType: CategoryType;
@@ -19,17 +15,20 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "add-category"): void;
+  (e: "add-category", category: NewCategory): void;
+  (e: "delete-category", categoryId: number): void;
 }>();
 
-const newCategory = ref<TempCategory>({
+const newCategory = ref<NewCategory>({
   name: "",
   icon: icons[0],
   type: CategoryType.Expense,
 });
 
+const selectedCategory = ref<Category | null>(null);
 const isAddCategory = ref(false);
-const modalId = "addCategory";
+const addCategoryModalId = "addCategory";
+const editCategoryModalId = "editCategory";
 
 function showAddCategoryModal() {
   isAddCategory.value = true;
@@ -40,7 +39,21 @@ function showAddCategoryModal() {
     newCategory.value.icon = icons[0];
   };
 
-  openModal(modalId, onModalHidden);
+  openModal(addCategoryModalId, onModalHidden);
+}
+
+function showEditCategoryModal(category: Category) {
+  if (category) {
+    selectedCategory.value = category;
+  }
+
+  const onModalHidden = () => {
+    if (!isConfirmModal) {
+      selectedCategory.value = null;
+    }
+  };
+
+  openModal(editCategoryModalId, onModalHidden);
 }
 
 const transactionSum = computed(() => {
@@ -51,17 +64,24 @@ const transactionSum = computed(() => {
   );
 });
 
-async function addNewCategory() {
+async function addCategory() {
   const newCategoryData = {
     ...newCategory.value,
     type: props.transactionType,
   };
 
-  await api.addCategory(newCategoryData);
-
   newCategory.value.name = "";
   newCategory.value.icon = icons[0];
-  emit("add-category");
+  emit("add-category", newCategoryData);
+  closeModal(addCategoryModalId);
+}
+
+async function deleteCategory(categoryId: number) {
+  closeModal(editCategoryModalId);
+
+  emit("delete-category", categoryId);
+
+  api.deleteCategory(categoryId);
 }
 
 function mapCategoryTypeName(category: CategoryType): string {
@@ -90,37 +110,30 @@ function mapCategoryTypeName(category: CategoryType): string {
             :key="category.categoryId"
             :category="category"
             class="category-width user-select-none"
+            @left-click="console.log('left-click', category)"
+            @right-click="showEditCategoryModal(category)"
           />
           <AddTransactionCategoryButton
             :type="transactionType"
             class="category-width user-select-none"
-            @click="showAddCategoryModal"
+            @left-click="showAddCategoryModal"
           />
         </div>
       </div>
     </div>
-    <ModalWindow v-if="isAddCategory" :id="modalId" :height="6">
-      <template #body>
-        <div class="d-flex align-items-center h-100">
-          <IconDropdown
-            :icon-name="newCategory.icon"
-            @select-icon="(icon) => (newCategory.icon = icon)"
-          />
-          <div class="row flex-grow-1">
-            <div class="col d-flex align-items-center justify-content-center">
-              <input
-                v-model="newCategory.name"
-                placeholder="Kategorijas nosaukums"
-                type="text"
-                class="form-control form-control-sm me-4"
-                style="width: 30rem"
-              />
-            </div>
-          </div>
-          <SaveOrClose @save="addNewCategory" />
-        </div>
-      </template>
-    </ModalWindow>
+    <AddCategoryModal
+      v-if="isAddCategory"
+      :id="addCategoryModalId"
+      :new-category="newCategory"
+      @add-category="addCategory"
+      @delete-category="deleteCategory"
+    />
+    <EditCategoryModal
+      v-if="selectedCategory"
+      :id="editCategoryModalId"
+      :category="selectedCategory"
+      @delete-category="deleteCategory"
+    />
   </div>
 </template>
 

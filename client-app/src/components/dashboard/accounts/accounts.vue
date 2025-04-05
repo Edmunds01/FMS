@@ -5,6 +5,7 @@ import NewAccountCreationModal from "./new-account-creation-modal.vue";
 import AccountEditModal from "./account-edit-modal.vue";
 import { api, type Account, type NewAccount } from "@/api/auto-generated-client";
 import { closeModal, openModal } from "@/components/global/modal-window.vue";
+import { isConfirmModal } from "@/components/global/confirm-action.vue";
 
 const selectedAccount = ref<Account | null>(null);
 const accounts = ref<Account[]>([]);
@@ -22,18 +23,23 @@ async function fetchAccounts() {
 
 async function saveAccount(account?: NewAccount) {
   closeModal(newAccountModalId);
-  selectedAccount.value = null;
+
+  accounts.value.push({
+    ...account,
+  } as Account);
 
   if (account) {
-    await api.createNewAccount(account);
+    await api.addAccount(account);
     await fetchAccounts();
   }
 }
 
 async function deleteAccount(accountId?: number) {
   closeModal(accountEditModalId);
-  selectedAccount.value = null;
-  await api.deleteAccount(accountId);
+  setTimeout(() => {
+    selectedAccount.value = null;
+  }, 0);
+  api.deleteAccount(accountId);
 
   accounts.value = accounts.value.filter((account) => account.accountId !== accountId);
 }
@@ -44,12 +50,13 @@ function openAccountModal(modelId: string, account?: Account) {
   }
 
   const onModalHidden = () => {
-    selectedAccount.value = null;
+    if (!isConfirmModal) {
+      selectedAccount.value = null;
+    }
   };
 
   openModal(modelId, onModalHidden);
 }
-
 // #region AccountNames
 const screenWidth = ref(window.innerWidth);
 

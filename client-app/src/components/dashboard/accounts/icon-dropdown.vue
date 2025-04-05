@@ -20,7 +20,7 @@ defineEmits<{
       aria-expanded="false"
     >
       <div class="icon-container">
-        <FaIcon :icon-name="iconName" size="lg" />
+        <FaIcon :icon-name="iconName" size="lg"></FaIcon>
       </div>
     </button>
     <ul class="dropdown-menu">
@@ -39,7 +39,7 @@ defineEmits<{
 </template>
 
 <style scoped lang="scss">
-@use "../category-buttons/style.scss";
+@use "../categories/style.scss";
 </style>
 
 <style lang="scss">

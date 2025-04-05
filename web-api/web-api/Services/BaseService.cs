@@ -4,23 +4,15 @@ using System.Security.Claims;
 
 namespace web_api.Services;
 
-public abstract class BaseService
+public abstract class BaseService(IHttpContextAccessor httpContextAccessor, IMapper mapper, IConfiguration configuration, IHostEnvironment env)
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IConfiguration _configuration;
-    private readonly IHostEnvironment _env;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    private readonly IConfiguration _configuration = configuration;
+    private readonly IHostEnvironment _env = env;
 
-    protected readonly IMapper _mapper;
+    protected readonly IMapper _mapper = mapper;
 
     protected int UserId => GetUserIdFromClaims();
-
-    protected BaseService(IHttpContextAccessor httpContextAccessor, IMapper mapper, IConfiguration configuration, IHostEnvironment env)
-    {
-        _httpContextAccessor = httpContextAccessor;
-        _mapper = mapper;
-        _configuration = configuration;
-        _env = env;
-    }
 
     private int GetUserIdFromClaims()
     {
