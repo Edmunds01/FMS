@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using web_api.Exceptions;
 using web_api.Repository;
+using web_api.Repository.Interfaces;
 using web_api.Services.Interfaces;
 
 namespace web_api.Services;
@@ -17,10 +18,10 @@ public class AccountService(
     private readonly IAccountRepository _accountRepository = accountRepository;
     private readonly ITransactionRepository _transactionRepository = transactionRepository;
 
-    public async Task<IEnumerable<Dtos.Account>> GetUserAccountsAsync()
+    public IEnumerable<Dtos.Account> GetUserAccounts()
     {
-        var accounts = await _accountRepository.GetUserAccountsAsync(UserId);
-        var transactions = await _transactionRepository.GetUserTransactionsAsync(UserId);
+        var accounts = _accountRepository.GetUserAccounts(UserId).ToList();
+        var transactions = _transactionRepository.GetUserTransactions(UserId).ToList();
 
         return accounts.Select(a => new Dtos.Account
         {

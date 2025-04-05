@@ -1,19 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using web_api.Models;
+using web_api.Repository.Interfaces;
 
 namespace web_api.Repository;
 
-public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
+public class CategoryRepository(FMSContext context) : BaseRepository<Category>(context), ICategoryRepository
 {
-    private new readonly FMSContext _context;
+    private new readonly FMSContext _context = context;
 
-    public CategoryRepository(FMSContext context) : base(context)
+    public IEnumerable<Category> GetUserCategories(int userId)
     {
-        _context = context;
-    }
-
-    public async Task<IEnumerable<Category>> GetUserCategoriesAsync(int userId)
-    {
-        return await _context.Categories.Where(c => c.UserId == userId).ToListAsync();
+        return _context.Categories.Where(c => c.UserId == userId);
     }
 }

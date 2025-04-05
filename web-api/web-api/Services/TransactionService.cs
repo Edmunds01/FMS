@@ -1,32 +1,29 @@
 ﻿using AutoMapper;
-using web_api.Repository;
+using web_api.Repository.Interfaces;
 using web_api.Services.Interfaces;
 
 namespace web_api.Services;
 
-public class TransactionService : BaseService, ITransactionService
+public class TransactionService(
+    ITransactionRepository transactionRepository,
+    IAccountService accountService,
+    ICategoryService categoryService,
+    IHttpContextAccessor httpContextAccessor,
+    IConfiguration configuration,
+    IHostEnvironment env,
+    IMapper mapper
+    ) : BaseService(httpContextAccessor, mapper, configuration, env), ITransactionService
 {
-    private readonly ITransactionRepository _transactionRepository;
-    private readonly IAccountService _accountService;
-    private readonly ICategoryService _categoryService;
+    private readonly ITransactionRepository _transactionRepository = transactionRepository;
+    private readonly IAccountService _accountService = accountService;
+    private readonly ICategoryService _categoryService = categoryService;
 
-    public TransactionService
-    (
-        ITransactionRepository transactionRepository,
-        IAccountService accountService,
-        ICategoryService categoryService,
-        IHttpContextAccessor httpContextAccessor,
-        IConfiguration configuration,
-        IHostEnvironment env,
-        IMapper mapper
-    )
-        : base(httpContextAccessor, mapper, configuration, env)
-    {
-        _transactionRepository = transactionRepository;
-        _accountService = accountService;
-        _categoryService = categoryService;
+    public IEnumerable<Dtos.Transaction> GetUserTransactions(long categoryId)
+    { 
+        var transactions = _transactionRepository.GetUserTransactions(UserId, categoryId);
+
+        return _mapper.Map<IEnumerable<Dtos.Transaction>>(transactions);
     }
-
     public async Task CreateNewTransactionAsync(Dtos.Transaction transactionRaw)
     {
         await _accountService.ValidateIsUserAccountAsync(transactionRaw.AccountId);
@@ -38,31 +35,31 @@ public class TransactionService : BaseService, ITransactionService
         await _transactionRepository.InsertAsync(transaction);
     }
 
-    public async Task SaveTransactionAccount(long transactionId, long newAccountId)
+    public async Task SaveTransactionAccount(long transactionId, long accountId)
     {
-        await _accountService.ValidateIsUserAccountAsync(newAccountId);
+        await _accountService.ValidateIsUserAccountAsync(accountId);
 
         await SaveTransactionAsync(transactionId, transaction =>
         {
-            transaction.AccountId = newAccountId;
+            transaction.AccountId = accountId;
         });
     }
 
-    public async Task SaveTransactionCategory(long transactionId, long newCategoryId)
+    public async Task SaveTransactionCategory(long transactionId, long categoryId)
     {
-        await _categoryService.ValidateIsUserCategoryAsync(newCategoryId);
+        await _categoryService.ValidateIsUserCategoryAsync(categoryId);
 
         await SaveTransactionAsync(transactionId, transaction =>
         {
-            transaction.CategoryId = newCategoryId;
+            transaction.CategoryId = categoryId;
         });
     }
 
-    public async Task SaveTransactionAmount(long transactionId, decimal newAmount)
+    public async Task SaveTransactionAmount(long transactionId, decimal amount)
     {
         await SaveTransactionAsync(transactionId, transaction =>
         {
-            transaction.Amount = newAmount;
+            transaction.Amount = amount;
         });
     }
 

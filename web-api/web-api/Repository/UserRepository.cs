@@ -1,28 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using web_api.Models;
+using web_api.Repository.Interfaces;
 
-namespace web_api.Repository
+namespace web_api.Repository;
+
+public class UserRepository(FMSContext context) : IUserRepository
 {
-    public class UserRepository : IUserRepository
+    private readonly FMSContext _context = context;
+
+    public async Task<User> AddUserAsync(User user)
     {
-        private readonly FMSContext _context;
+        await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();
 
-        public UserRepository(FMSContext context)
-        {
-            _context = context;
-        }
+        return user;
+    }
 
-        public async Task<User> AddUserAsync(User user)
-        {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-
-            return user;
-        }
-
-        public Task<User?> GetUserAsync(string email)
-        {
-            return _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        }
+    public Task<User?> GetUserAsync(string email)
+    {
+        return _context.Users.FirstOrDefaultAsync(u => u.Email == email);
     }
 }

@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using web_api.Middleware;
 using web_api.Models;
 using web_api.Repository;
+using web_api.Repository.Interfaces;
 using web_api.Services;
 using web_api.Services.Interfaces;
 
@@ -142,6 +143,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// TODO: check if this will works on deploy
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -171,7 +173,6 @@ void RegisterRepositoriesAndServices(IServiceCollection services)
 void GenerateTypeScriptClientApi()
 {
     // TODO: Prob add as a project reference
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
     Task.Run(async () =>
     {
         await Task.Delay(1000);
@@ -201,5 +202,4 @@ void GenerateTypeScriptClientApi()
 
         await process.WaitForExitAsync();
     });
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 }

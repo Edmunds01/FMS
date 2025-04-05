@@ -1,9 +1,8 @@
 ﻿using web_api.Models;
-using web_api.Repository.Interfaces;
 
-namespace web_api.Repository;
+namespace web_api.Repository.Interfaces;
 
 public interface IAccountRepository : IBaseRepository<Account>
 {
-    Task<IEnumerable<Account>> GetUserAccountsAsync(int userId);
+    IEnumerable<Account> GetUserAccounts(int userId);
 }

@@ -8,6 +8,7 @@ import { api, CategoryType, type Category, type NewCategory } from "@/api/auto-g
 import AddCategoryModal from "@/components/dashboard/categories/AddCategoryModal.vue";
 import EditCategoryModal from "@/components/dashboard/categories/EditCategoryModal.vue";
 import { isConfirmModal } from "@/components/global/ConfirmAction.vue";
+import TransactionListModal from "../transactions/TransactionListModal.vue";
 
 const props = defineProps<{
   transactionType: CategoryType;
@@ -26,9 +27,11 @@ const newCategory = ref<NewCategory>({
 });
 
 const selectedCategory = ref<Category | null>(null);
+const selectedTransactionCategory = ref<Category | null>(null);
 const isAddCategory = ref(false);
-const addCategoryModalId = "addCategory";
-const editCategoryModalId = "editCategory";
+const addCategoryModalId = "addCategoryModal";
+const editCategoryModalId = "editCategoryModal";
+const transactionListModalId = "transactionListModal";
 
 function showAddCategoryModal() {
   isAddCategory.value = true;
@@ -43,9 +46,7 @@ function showAddCategoryModal() {
 }
 
 function showEditCategoryModal(category: Category) {
-  if (category) {
-    selectedCategory.value = category;
-  }
+  selectedCategory.value = category;
 
   const onModalHidden = () => {
     if (!isConfirmModal) {
@@ -54,6 +55,16 @@ function showEditCategoryModal(category: Category) {
   };
 
   openModal(editCategoryModalId, onModalHidden);
+}
+
+function showTransactionListModal(category: Category) {
+  selectedTransactionCategory.value = category;
+
+  const onModalHidden = () => {
+    selectedTransactionCategory.value = null;
+  };
+
+  openModal(transactionListModalId, onModalHidden);
 }
 
 const transactionSum = computed(() => {
@@ -110,7 +121,7 @@ function mapCategoryTypeName(category: CategoryType): string {
             :key="category.categoryId"
             :category="category"
             class="category-width user-select-none"
-            @left-click="console.log('left-click', category)"
+            @left-click="showTransactionListModal(category)"
             @right-click="showEditCategoryModal(category)"
           />
           <AddCategoryButton
@@ -133,6 +144,11 @@ function mapCategoryTypeName(category: CategoryType): string {
       :id="editCategoryModalId"
       :category="selectedCategory"
       @delete-category="deleteCategory"
+    />
+    <TransactionListModal
+      v-if="selectedTransactionCategory"
+      :id="transactionListModalId"
+      :category="selectedTransactionCategory"
     />
   </div>
 </template>

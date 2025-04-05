@@ -1,19 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using web_api.Models;
+using web_api.Repository.Interfaces;
 
 namespace web_api.Repository;
 
-public class AccountRepository : BaseRepository<Account>, IAccountRepository
+public class AccountRepository(FMSContext context) : BaseRepository<Account>(context), IAccountRepository
 {
-    private new readonly FMSContext _context;
+    private new readonly FMSContext _context = context;
 
-    public AccountRepository(FMSContext context) : base(context)
+    public IEnumerable<Account> GetUserAccounts(int userId)
     {
-        _context = context;
-    }
-
-    public async Task<IEnumerable<Account>> GetUserAccountsAsync(int userId)
-    {
-        return await _context.Accounts.Where(a => a.UserId == userId).ToListAsync();
+        return _context.Accounts.Where(a => a.UserId == userId);
     }
 }

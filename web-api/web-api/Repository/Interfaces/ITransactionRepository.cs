@@ -1,9 +1,9 @@
 ﻿using web_api.Models;
-using web_api.Repository.Interfaces;
 
-namespace web_api.Repository;
+namespace web_api.Repository.Interfaces;
 
 public interface ITransactionRepository : IBaseRepository<Transaction>
 {
-    public Task<IEnumerable<Transaction>> GetUserTransactionsAsync(int userId);
+    public IEnumerable<Transaction> GetUserTransactions(int userId, long categoryId);
+    public IEnumerable<Transaction> GetUserTransactions(int userId);
 }
