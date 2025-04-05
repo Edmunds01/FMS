@@ -1,22 +1,16 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using web_api.Attributes;
 using web_api.Dtos;
-using web_api.Services;
+using web_api.Services.Interfaces;
 
 namespace web_api.Controllers;
 
 [ApiController]
 [Route("api/account")]
 [NotAuthorizedExceptionFilter]
-public class AccountController : ControllerBase
+public class AccountController(IAccountService accountService) : ControllerBase
 {
-    private readonly IAccountService _accountService;
-
-    public AccountController(IAccountService accountService)
-    {
-        _accountService = accountService;
-    }
+    private readonly IAccountService _accountService = accountService;
 
     [HttpGet("accounts")]
     public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
@@ -40,8 +34,8 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("create-new-account")]
-    public async Task<IActionResult> CreateNewAccount([FromBody] NewAccount account)
+    [HttpPost("add-account")]
+    public async Task<IActionResult> AddAccount([FromBody] NewAccount account)
     {
         await _accountService.CreateNewAccountAsync(account);
 

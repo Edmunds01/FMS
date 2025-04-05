@@ -21,11 +21,16 @@ const routes: RouteRecordRaw[] = [
     path: "/register",
     name: "register",
     component: () => import("@/views/auth/RegisterView.vue"),
-  }
+  },
+  {
+    path: "/logout",
+    name: "logout",
+    component: () => import("@/views/auth/LogoutView.vue"),
+  },
 ];
 
 for (const route of routes) {
-  if (route.name !== "login" && route.name !== "register") {
+  if (route.name !== "login" && route.name !== "register" && route.name !== "logout") {
     route.meta = {
       requiresAuth: true,
     };
@@ -41,17 +46,16 @@ router.beforeEach(async (to, from, next) => {
   console.log("to", to);
   console.log("from", from);
 
-  if((import.meta.env.NOT_REQUIRED_AUTH)) {
+  if (import.meta.env.NOT_REQUIRED_AUTH) {
     next();
     return;
   }
 
   if (to.meta.requiresAuth) {
     try {
-      await api.validateSession()
+      await api.validateSession();
       next();
-    }
-    catch {
+    } catch {
       next("/login");
     }
   } else {

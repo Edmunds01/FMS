@@ -153,8 +153,8 @@ export class Client extends AuthorizedApiBase {
      * @param body (optional) 
      * @return Success
      */
-    createNewAccount(body: NewAccount | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/account/create-new-account";
+    addAccount(body: NewAccount | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/account/add-account";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -170,11 +170,11 @@ export class Client extends AuthorizedApiBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processCreateNewAccount(_response);
+            return this.processAddAccount(_response);
         });
     }
 
-    protected processCreateNewAccount(response: Response): Promise<void> {
+    protected processAddAccount(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -312,6 +312,41 @@ export class Client extends AuthorizedApiBase {
     /**
      * @return Success
      */
+    logout(): Promise<void> {
+        let url_ = this.baseUrl + "/api/auth/logout";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processLogout(_response);
+        });
+    }
+
+    protected processLogout(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     validateSession(): Promise<void> {
         let url_ = this.baseUrl + "/api/auth/validate-session";
         url_ = url_.replace(/[?&]$/, "");
@@ -420,6 +455,136 @@ export class Client extends AuthorizedApiBase {
             });
         }
         return Promise.resolve<Category[]>(null as any);
+    }
+
+    /**
+     * @param categoryId (optional) 
+     * @param icon (optional) 
+     * @return Success
+     */
+    saveCategoryIcon(categoryId: number | undefined, icon: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/category/save-category-icon?";
+        if (categoryId === null)
+            throw new Error("The parameter 'categoryId' cannot be null.");
+        else if (categoryId !== undefined)
+            url_ += "categoryId=" + encodeURIComponent("" + categoryId) + "&";
+        if (icon === null)
+            throw new Error("The parameter 'icon' cannot be null.");
+        else if (icon !== undefined)
+            url_ += "icon=" + encodeURIComponent("" + icon) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processSaveCategoryIcon(_response);
+        });
+    }
+
+    protected processSaveCategoryIcon(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param categoryId (optional) 
+     * @param name (optional) 
+     * @return Success
+     */
+    saveCategoryName(categoryId: number | undefined, name: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/category/save-category-name?";
+        if (categoryId === null)
+            throw new Error("The parameter 'categoryId' cannot be null.");
+        else if (categoryId !== undefined)
+            url_ += "categoryId=" + encodeURIComponent("" + categoryId) + "&";
+        if (name === null)
+            throw new Error("The parameter 'name' cannot be null.");
+        else if (name !== undefined)
+            url_ += "name=" + encodeURIComponent("" + name) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processSaveCategoryName(_response);
+        });
+    }
+
+    protected processSaveCategoryName(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param categoryId (optional) 
+     * @return Success
+     */
+    deleteCategory(categoryId: number | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/category/delete-category?";
+        if (categoryId === null)
+            throw new Error("The parameter 'categoryId' cannot be null.");
+        else if (categoryId !== undefined)
+            url_ += "categoryId=" + encodeURIComponent("" + categoryId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processDeleteCategory(_response);
+        });
+    }
+
+    protected processDeleteCategory(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
     }
 
     /**

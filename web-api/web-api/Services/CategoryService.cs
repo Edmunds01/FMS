@@ -1,44 +1,37 @@
 ﻿using AutoMapper;
 using web_api.Repository;
+using web_api.Services.Interfaces;
 
 namespace web_api.Services;
 
-public class CategoryService : BaseService, ICategoryService
+public class CategoryService(
+    ITransactionRepository transactionRepository,
+    ICategoryRepository categoryRepository,
+    IHttpContextAccessor httpContextAccessor,
+    IConfiguration configuration,
+    IHostEnvironment env,
+    IMapper mapper
+    ) : BaseService(httpContextAccessor, mapper, configuration, env), ICategoryService
 {
-    private readonly ITransactionRepository _transactionRepository;
-    private readonly ICategoryRepository _categoryRepository;
-
-    public CategoryService
-    (
-        ITransactionRepository transactionRepository,
-        ICategoryRepository categoryRepository,
-        IHttpContextAccessor httpContextAccessor,
-        IConfiguration configuration,
-        IHostEnvironment env,
-        IMapper mapper
-    )
-        : base(httpContextAccessor, mapper, configuration, env)
-    {
-        _transactionRepository = transactionRepository;
-        _categoryRepository = categoryRepository;
-    }
+    private readonly ITransactionRepository _transactionRepository = transactionRepository;
+    private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
     public async Task<IEnumerable<Dtos.Category>> GetUserCategoriesAsync()
     {
         var categories = await _categoryRepository.GetUserCategoriesAsync(UserId);
-
+        
         return _mapper.Map<IEnumerable<Dtos.Category>>(categories);
     }
 
-    public async Task SaveCategoryIcon(long categoryId, string iconName)
+    public async Task SaveCategoryIconAsync(long categoryId, string icon)
     {
         await SaveCategoryAsync(categoryId, category =>
         {
-            category.Icon = iconName;
+            category.Icon = icon;
         });
     }
 
-    public async Task SaveCategoryName(long categoryId, string name)
+    public async Task SaveCategoryNameAsync(long categoryId, string name)
     {
         await SaveCategoryAsync(categoryId, category =>
         {

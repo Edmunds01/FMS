@@ -1,4 +1,4 @@
-﻿namespace web_api.Services;
+﻿namespace web_api.Services.Interfaces;
 
 public interface IAccountService
 {
@@ -6,7 +6,7 @@ public interface IAccountService
 
     Task CreateNewAccountAsync(Dtos.NewAccount accountRaw);
 
-    Task SaveAccountIconAsync(long accountId, string iconName);
+    Task SaveAccountIconAsync(long accountId, string icon);
 
     Task SaveAccountNameAsync(long accountId, string name);
 

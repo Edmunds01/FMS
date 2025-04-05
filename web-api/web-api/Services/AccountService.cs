@@ -1,28 +1,21 @@
 ﻿using AutoMapper;
 using web_api.Exceptions;
 using web_api.Repository;
+using web_api.Services.Interfaces;
 
 namespace web_api.Services;
 
-public class AccountService : BaseService, IAccountService
+public class AccountService(
+    IAccountRepository accountRepository,
+    ITransactionRepository transactionRepository,
+    IHttpContextAccessor httpContextAccessor,
+    IHostEnvironment env,
+    IConfiguration configuration,
+    IMapper mapper
+    ) : BaseService(httpContextAccessor, mapper, configuration, env), IAccountService
 {
-    private readonly IAccountRepository _accountRepository;
-    private readonly ITransactionRepository _transactionRepository;
-
-    public AccountService
-    (
-        IAccountRepository accountRepository,
-        ITransactionRepository transactionRepository,
-        IHttpContextAccessor httpContextAccessor,
-        IHostEnvironment env,
-        IConfiguration configuration,
-        IMapper mapper
-    )
-        : base(httpContextAccessor, mapper, configuration, env)
-    {
-        _accountRepository = accountRepository;
-        _transactionRepository = transactionRepository;
-    }
+    private readonly IAccountRepository _accountRepository = accountRepository;
+    private readonly ITransactionRepository _transactionRepository = transactionRepository;
 
     public async Task<IEnumerable<Dtos.Account>> GetUserAccountsAsync()
     {
@@ -47,11 +40,11 @@ public class AccountService : BaseService, IAccountService
         });
     }
 
-    public async Task SaveAccountIconAsync(long accountId, string iconName)
+    public async Task SaveAccountIconAsync(long accountId, string icon)
     {
         await SaveAccountAsync(accountId, category =>
         {
-            category.Icon = iconName;
+            category.Icon = icon;
         });
     }
 
