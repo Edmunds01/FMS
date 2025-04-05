@@ -1,5 +1,5 @@
 import { createVNode, render } from "vue";
-import ConfirmDialog from "@/components/global/confirm-action.vue";
+import ConfirmDialog from "@/components/global/ConfirmAction.vue";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let instance: any = null;

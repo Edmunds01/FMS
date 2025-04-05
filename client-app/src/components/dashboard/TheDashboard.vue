@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import DateSelect from "./date-select.vue";
-import Accounts from "./accounts/accounts.vue";
-import Transactions from "./transactions.vue";
+import TheDateSelect from "./TheDateSelect.vue";
+import TheAccounts from "./accounts/TheAccounts.vue";
+import UserCategories from "./categories/UserCategories.vue";
 import { api, CategoryType, type Category, type NewCategory } from "@/api/auto-generated-client";
 import { computed, onMounted, ref } from "vue";
-import FaIcon from "@/components/global/fa-icon.vue";
+import FaIcon from "@/components/global/FaIcon.vue";
 
 const startDate = ref(new Date());
 const endDate = ref(new Date(2025, 9, 1));
@@ -45,15 +45,16 @@ onMounted(async () => {
 
 <template>
   <div class="container-fluid vh-100 text-center">
+    <title>Vadības panelis</title>
     <div class="row vh-100">
       <div class="col-2 p-0 border-end bf-neutral">
-        <Accounts />
+        <TheAccounts />
       </div>
       <div class="col p-0">
         <div class="container-fluid text-center">
           <div class="row first-row-height">
             <div class="col p-0 border-bottom">
-              <DateSelect :start-date="startDate" :end-date="endDate" />
+              <TheDateSelect :start-date="startDate" :end-date="endDate" />
             </div>
             <div class="col-1 p-0 border-bottom d-flex align-items-center justify-content-end">
               <button title="Iziet" class="btn" @click="$router.push('/logout')">
@@ -63,7 +64,7 @@ onMounted(async () => {
           </div>
           <div class="row vh-100">
             <div class="col-3 p-0 bg-expense">
-              <Transactions
+              <UserCategories
                 :transaction-type="CategoryType.Expense"
                 :categories="expense"
                 @add-category="addCategory"
@@ -71,7 +72,7 @@ onMounted(async () => {
               />
             </div>
             <div class="col-3 p-0 bg-income">
-              <Transactions
+              <UserCategories
                 :transaction-type="CategoryType.Income"
                 :categories="income"
                 @add-category="addCategory"

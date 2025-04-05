@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FaIcon from "@/components/global/fa-icon.vue";
+import FaIcon from "@/components/global/FaIcon.vue";
 
 defineEmits<{
   (e: "left-click"): void;

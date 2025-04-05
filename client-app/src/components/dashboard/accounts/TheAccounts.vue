@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import FaIcon from "@/components/global/fa-icon.vue";
+import FaIcon from "@/components/global/FaIcon.vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import NewAccountCreationModal from "./new-account-creation-modal.vue";
-import AccountEditModal from "./account-edit-modal.vue";
+import AddAccountModal from "@/components/dashboard/accounts/AddAccountModal.vue";
+import EditAccountModal from "@/components/dashboard/accounts/EditAccountModal.vue";
 import { api, type Account, type NewAccount } from "@/api/auto-generated-client";
-import { closeModal, openModal } from "@/components/global/modal-window.vue";
-import { isConfirmModal } from "@/components/global/confirm-action.vue";
+import { closeModal, openModal } from "@/components/global/ModalWindow.vue";
+import { isConfirmModal } from "@/components/global/ConfirmAction.vue";
 
 const selectedAccount = ref<Account | null>(null);
 const accounts = ref<Account[]>([]);
@@ -117,8 +117,8 @@ onUnmounted(() => {
         <div>+ Pievienot</div>
       </button>
     </div>
-    <NewAccountCreationModal :id="newAccountModalId" @save-account="saveAccount" />
-    <AccountEditModal
+    <AddAccountModal :id="newAccountModalId" @save-account="saveAccount" />
+    <EditAccountModal
       v-if="selectedAccount"
       :id="accountEditModalId"
       :account="selectedAccount"
