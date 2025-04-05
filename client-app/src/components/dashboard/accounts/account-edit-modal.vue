@@ -35,13 +35,16 @@ async function iconNameSaved() {
 <template>
   <ModalWindow :id="id">
     <template #body>
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center h-100">
         <IconDropdown
           :icon-name="editAccount.icon ?? ''"
           @select-icon="(icon) => iconChanged(icon)"
         />
         <div class="row flex-grow-1">
-          <div v-if="isEditMode" class="col d-flex align-items-center justify-content-center">
+          <div
+            v-if="isEditMode"
+            class="col d-flex align-items-center justify-content-center"
+          >
             <input
               v-model="newName"
               type="text"
@@ -88,7 +91,7 @@ async function iconNameSaved() {
   </ModalWindow>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .btn-close {
   font-size: 1.25rem;
   width: 2rem;

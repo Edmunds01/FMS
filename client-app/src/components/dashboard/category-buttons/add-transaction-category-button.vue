@@ -13,7 +13,7 @@ import FaIcon from "@/components/global/fa-icon.vue";
 </template>
 
 <style scoped lang="scss">
-@import "./style.scss";
+@use "./style";
 
 .category-button {
   opacity: 0.5;

@@ -1,6 +1,6 @@
 import * as bootstrap from "bootstrap";
 
-import "./assets/main.css";
+import "./assets/main.scss";
 import "./utils/format";
 
 import { createApp } from "vue";

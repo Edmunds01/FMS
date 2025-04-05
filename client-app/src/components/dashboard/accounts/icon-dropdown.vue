@@ -39,7 +39,7 @@ defineEmits<{
 </template>
 
 <style scoped lang="scss">
-@import "../category-buttons/style.scss";
+@use "../category-buttons/style.scss";
 </style>
 
 <style lang="scss">
