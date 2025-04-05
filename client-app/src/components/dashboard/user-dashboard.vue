@@ -39,9 +39,9 @@ onMounted(async () => {
             <div class="col p-0 border-bottom">
               <DateSelect :start-date="startDate" :end-date="endDate" />
             </div>
-            <div class="col-1 p-0 border-bottom d-flex align-items-center justify-content-end me-3">
+            <div class="col-1 p-0 border-bottom d-flex align-items-center justify-content-end">
               <button title="Iziet" class="btn" @click="$router.push('/logout')">
-                <FaIcon icon-name="right-from-bracket" size="2x" />
+                <FaIcon icon-name="right-from-bracket" size="2x" class="me-3" />
               </button>
             </div>
           </div>
