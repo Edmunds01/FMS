@@ -81,7 +81,7 @@ th {
   z-index: 1;
   text-align: center;
   padding: 8px;
-  border: 1 solid;
+  border: 2px solid;
   border-color: #dae3eb;
 }
 
