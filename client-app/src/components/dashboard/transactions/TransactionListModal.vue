@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { api, type Category, type Transaction } from "@/api/auto-generated-client";
+import { api, CategoryType, type Category, type Transaction } from "@/api/auto-generated-client";
 import ModalWindow from "@/components/global/ModalWindow.vue";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import FaIcon from "@/components/global/FaIcon.vue";
 
 const props = defineProps<{
   id: string;
   category: Category;
+  transactionType: CategoryType;
 }>();
 
 const transactions = ref<Transaction[]>();
+const transactionClass = computed(() => props.transactionType === CategoryType.Expense ? "table-cell-expense" : "table-cell-income");
 
 async function fetchTransactions() {
   transactions.value = await api.categoryTransactions(props.category.categoryId);
@@ -33,7 +35,9 @@ onMounted(async () => {
           </div>
         </div>
         <div class="table-responsive d-block">
-          <table class="table table-bordered text-center table-striped table-bordered table-hover">
+          <table
+            class="table table-bordered text-center table-striped table-bordered table-hover"
+          >
             <thead>
               <tr>
                 <th class="position-sticky">Summa</th>
@@ -43,14 +47,14 @@ onMounted(async () => {
             </thead>
             <tbody v-if="transactions && transactions.length > 0">
               <tr v-for="transaction in transactions" :key="transaction.transactionId">
-                <td class="table-cell">{{ transaction.amount.toEurFormat() }}</td>
-                <td class="table-cell">{{ transaction.comment }}</td>
-                <td class="table-cell">{{ transaction.createdDateTime }}</td>
+                <td :class="transactionClass">{{ transaction.amount.toEurFormat() }}</td>
+                <td :class="transactionClass">{{ transaction.comment }}</td>
+                <td :class="transactionClass">{{ transaction.createdDateTime }}</td>
               </tr>
             </tbody>
             <tbody v-else>
               <tr>
-                <td colspan="3" class="">Tranzakciju pagaidām nav</td>
+                <td colspan="3">Tranzakciju pagaidām nav</td>
               </tr>
             </tbody>
           </table>
@@ -93,7 +97,11 @@ td {
   white-space: nowrap;
 }
 
-.table-cell {
+.table-cell-income {
+  background: linear-gradient(to bottom, #e1f4da, #eaf8ea, #ddf4da);
+}
+
+.table-cell-expense {
   background: linear-gradient(to bottom, #f4dada, #f6e4e4, #f4dada);
 }
 
@@ -106,7 +114,7 @@ td {
 
 .add-icon {
   border: 4px solid;
-  border-radius: 48%;
+  border-radius: 50%;
   padding: 0.35rem;
 }
 

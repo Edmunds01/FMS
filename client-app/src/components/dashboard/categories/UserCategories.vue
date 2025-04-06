@@ -149,6 +149,7 @@ function mapCategoryTypeName(category: CategoryType): string {
       v-if="selectedTransactionCategory"
       :id="transactionListModalId"
       :category="selectedTransactionCategory"
+      :transaction-type
     />
   </div>
 </template>
