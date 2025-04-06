@@ -14,7 +14,7 @@ public class TransactionController(ITransactionService transactionService) : Con
     public ActionResult<IEnumerable<Transaction>> GetTransaction(long categoryId) => Ok(_transactionService.GetUserTransactions(categoryId));
 
     [HttpPost("add-transaction")]
-    public async Task<IActionResult> AddTransaction([FromBody] Dtos.Transaction transaction)
+    public async Task<IActionResult> AddTransaction([FromBody] NewTransaction transaction)
     {
         await _transactionService.CreateNewTransactionAsync(transaction);
 

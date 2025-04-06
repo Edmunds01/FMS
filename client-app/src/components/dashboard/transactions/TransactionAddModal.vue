@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CategoryType, type Category, type Transaction } from "@/api/auto-generated-client";
+import { CategoryType, type Category, type NewTransaction } from "@/api/auto-generated-client";
 import ModalWindow from "@/components/global/ModalWindow.vue";
 import { computed, inject, onMounted, ref } from "vue";
 import { accountsKey, categoriesKey } from "@/utils/keys";
@@ -11,11 +11,14 @@ const props = defineProps<{
   fromCategory: Category;
 }>();
 
+const emit = defineEmits<{
+  (e: "add-transaction", transaction: NewTransaction): void;
+}>();
+
 const categories = inject(categoriesKey);
 const { accounts } = inject(accountsKey)!;
 
-const newTransaction = ref<Transaction>({
-  transactionId: 0,
+const newTransaction = ref<NewTransaction>({
   accountId: accounts.value[0].accountId,
   categoryId: props.fromCategory.categoryId,
   comment: "",
@@ -55,6 +58,19 @@ const secondCategories = computed(() => {
   return categories?.value.filter((category) => category.type !== firstCategoryType.value);
 });
 
+async function save() {
+  newTransaction.value.amount = amount.value.toNumberFromEurFormat();
+
+  const affectedCategory = categories?.value.filter(
+    (c) => c.categoryId === newTransaction.value.categoryId,
+  )[0];
+  if (affectedCategory) {
+    affectedCategory.sumOfTransactions += newTransaction.value.amount;
+  }
+
+  emit("add-transaction", newTransaction.value);
+}
+
 onMounted(() => {
   firstCategoryType.value = props.fromCategory.type;
 });
@@ -65,7 +81,10 @@ function onFocusLost() {
     .replace(",", ".")
     .replace(/(\..*?)\./g, "$1") // Remove all dots except first one
     .replace(/[a-zA-Z]/g, "");
-  amount.value = Number(amount.value).toEurFormat();
+
+  const number = Number(amount.value);
+
+  amount.value = (number || 0).toEurFormat();
 }
 
 function onFocus() {
@@ -75,7 +94,6 @@ function onFocus() {
 }
 
 function onKey(e: KeyboardEvent) {
-  console.log(e);
   if (e.key == "Enter") {
     amountInput.value?.blur();
   }
@@ -197,7 +215,9 @@ function onKey(e: KeyboardEvent) {
             "
           />
         </div>
-        <div class="col"><button class="btn btn-primary save">Saglabāt</button></div>
+        <div class="col">
+          <button class="btn btn-primary save" @click="save">Saglabāt</button>
+        </div>
       </div>
     </template>
   </ModalWindow>

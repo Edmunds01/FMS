@@ -8,6 +8,7 @@ namespace web_api.Services;
 public class AccountService(
     IAccountRepository accountRepository,
     ITransactionRepository transactionRepository,
+    ICategoryRepository categoryRepository,
     IHttpContextAccessor httpContextAccessor,
     IHostEnvironment env,
     IConfiguration configuration,
@@ -16,18 +17,20 @@ public class AccountService(
 {
     private readonly IAccountRepository _accountRepository = accountRepository;
     private readonly ITransactionRepository _transactionRepository = transactionRepository;
+    private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
     public IEnumerable<Dtos.Account> GetUserAccounts()
     {
         var accounts = _accountRepository.GetUserAccounts(UserId).ToList();
         var transactions = _transactionRepository.GetUserTransactions(UserId).ToList();
+        var categories = _categoryRepository.GetUserCategories(UserId).ToList();
 
         return accounts.Select(a => new Dtos.Account
         {
             AccountId = a.AccountId,
             Name = a.Name,
             Icon = a.Icon,
-            Balance = transactions.Where(t => t.AccountId == a.AccountId).Sum(t => t.Amount) + a.InitialBalance,
+            Balance = transactions.Where(t => t.AccountId == a.AccountId).Sum(t => categories.First(c => c.CategoryId == t.CategoryId).Type == 1 ? t.Amount : (-1 * t.Amount)) + a.InitialBalance,
             ShowDeleteButton = !transactions.Any(t => t.AccountId == a.AccountId)
         });
     }

@@ -649,7 +649,7 @@ export class Client extends AuthorizedApiBase {
      * @param body (optional) 
      * @return Success
      */
-    addTransaction(body: Transaction | undefined): Promise<void> {
+    addTransaction(body: NewTransaction | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/transaction/add-transaction";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -988,6 +988,14 @@ export interface NewCategory {
     name: string | undefined;
     icon: string | undefined;
     type: CategoryType;
+}
+
+export interface NewTransaction {
+    accountId: number;
+    categoryId: number;
+    comment: string | undefined;
+    amount: number;
+    createdDateTime: Date;
 }
 
 export interface ProblemDetails {

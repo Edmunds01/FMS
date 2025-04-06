@@ -12,10 +12,6 @@ const selectedAccount = ref<Account | null>(null);
 
 const { accounts, fetchAccounts } = inject(accountsKey)!;
 
-onMounted(async () => {
-  await fetchAccounts();
-});
-
 const newAccountModalId = "accountModal";
 const accountEditModalId = "accountEditModal";
 

@@ -15,7 +15,17 @@ export function openModal(id: string, onModalHidden: (() => void) | undefined = 
   }, 0);
 }
 
-export function closeModal(id: string) {
+export function closeModal(id: string, now: boolean = false) {
+  if (now) {
+    const modal = document.getElementById(id);
+    if (modal) {
+      const modalInstance = Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
+    return;
+  }
   setTimeout(() => {
     const modal = document.getElementById(id);
     if (modal) {

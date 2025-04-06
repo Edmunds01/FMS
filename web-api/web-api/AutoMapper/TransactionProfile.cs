@@ -8,6 +8,9 @@ public class TransactionProfile : Profile
     {
         CreateMap<Dtos.Transaction, Models.Transaction>()
             .ForMember(dest => dest.UserId, opt => opt.Ignore());
+        
+        CreateMap<Dtos.NewTransaction, Models.Transaction>()
+            .ForMember(dest => dest.UserId, opt => opt.Ignore());
 
         CreateMap<Models.Transaction, Dtos.Transaction>();
     }

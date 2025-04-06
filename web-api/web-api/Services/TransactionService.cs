@@ -24,13 +24,12 @@ public class TransactionService(
 
         return _mapper.Map<IEnumerable<Dtos.Transaction>>(transactions);
     }
-    public async Task CreateNewTransactionAsync(Dtos.Transaction transactionRaw)
+    public async Task CreateNewTransactionAsync(Dtos.NewTransaction transactionRaw)
     {
         await _accountService.ValidateIsUserAccountAsync(transactionRaw.AccountId);
 
         var transaction = _mapper.Map<Models.Transaction>(transactionRaw);
         transaction.UserId = UserId;
-        transaction.TransactionId = 0;
 
         await _transactionRepository.InsertAsync(transaction);
     }
@@ -40,7 +39,7 @@ public class TransactionService(
         await _accountService.ValidateIsUserAccountAsync(accountId);
 
         await SaveTransactionAsync(transactionId, transaction => transaction.AccountId = accountId);
-    }
+    }   
 
     public async Task SaveTransactionCategory(long transactionId, long categoryId)
     {
