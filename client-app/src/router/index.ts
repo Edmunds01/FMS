@@ -5,11 +5,19 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: "default",
+    meta: {
+      name: "dashboard",
+      requiresAuth: true,
+    },
     component: () => import("@/views/DashboardView.vue"),
   },
   {
     path: "/dashboard",
     name: "dashboard",
+    meta: {
+      name: "dashboard",
+      requiresAuth: true,
+    },
     component: () => import("@/views/DashboardView.vue"),
   },
   {
@@ -29,14 +37,6 @@ const routes: RouteRecordRaw[] = [
   },
 ];
 
-for (const route of routes) {
-  if (route.name !== "login" && route.name !== "register" && route.name !== "logout") {
-    route.meta = {
-      requiresAuth: true,
-    };
-  }
-}
-
 const router = createRouter({
   history: createWebHistory(),
   routes: routes,
@@ -46,20 +46,27 @@ router.beforeEach(async (to, from, next) => {
   console.log("to", to);
   console.log("from", from);
 
-  if (import.meta.env.NOT_REQUIRED_AUTH) {
+
+  if((from.name == "login" && to.meta.name == "dashboard") ||
+     (from.name == "register" && to.meta.name == "dashboard")) {
+      next();
+      return;
+  }
+
+  if (!to.meta.requiresAuth) {
     next();
     return;
   }
 
-  if (to.meta.requiresAuth) {
-    try {
-      await api.validateSession();
+  try {
+    const isSessionValid = await api.validateSession();
+    if (isSessionValid) {
       next();
-    } catch {
-      next("/login");
+      return;
     }
-  } else {
-    next();
+    // TODO: Add "Service Unavailable" page
+  } finally {
+    next("/login");
   }
 });
 

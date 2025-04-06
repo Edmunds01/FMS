@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json.Serialization;
+using web_api.Helper;
+using web_api.Helper.Interfaces;
 using web_api.Middleware;
 using web_api.Models;
 using web_api.Repository;
@@ -30,32 +31,7 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Please use a valid token"
-    });
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
-});
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<FMSContext>(options =>
 {
@@ -80,37 +56,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-    };
-
-    options.Events = new JwtBearerEvents
-    {
-        OnChallenge = context =>
-        {
-            context.HandleResponse();
-            context.Response.StatusCode = 401;
-            context.Response.ContentType = "application/json";
-            var result = System.Text.Json.JsonSerializer.Serialize(new { message = "You are not authorized" });
-            return context.Response.WriteAsync(result);
-        }
-    };
-});
-
 RegisterRepositoriesAndServices(builder.Services);
 
 builder.Configuration.AddEnvironmentVariables();
@@ -131,9 +76,6 @@ app.UseCors(CorsPolicyName);
 
 app.UseMiddleware<ConditionalAuthorizeMiddleware>();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -145,8 +87,6 @@ if (app.Environment.IsDevelopment())
 
 // TODO: check if this will work on deploy
 //app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 
@@ -164,6 +104,8 @@ void RegisterRepositoriesAndServices(IServiceCollection services)
     services.AddScoped<IAccountService, AccountService>();
     services.AddScoped<ITransactionService, TransactionService>();
     services.AddScoped<ICategoryService, CategoryService>();
+
+    services.AddSingleton<ITokenHelper, TokenHelper>();
 
     services.AddHttpContextAccessor();
 
