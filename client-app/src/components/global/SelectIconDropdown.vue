@@ -17,6 +17,7 @@ defineEmits<{
       type="button"
       class="btn dropdown-toggle icon-dropdown-toggle"
       data-bs-toggle="dropdown"
+      data-bs-display="static"
       aria-expanded="false"
     >
       <div class="icon-container">

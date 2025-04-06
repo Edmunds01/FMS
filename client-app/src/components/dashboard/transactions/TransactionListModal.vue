@@ -10,6 +10,10 @@ const props = defineProps<{
   transactionType: CategoryType;
 }>();
 
+defineEmits<{
+  (e: "add-transaction"): void;
+}>();
+
 const transactions = ref<Transaction[]>();
 const transactionClass = computed(() => props.transactionType === CategoryType.Expense ? "table-cell-expense" : "table-cell-income");
 
@@ -29,7 +33,11 @@ onMounted(async () => {
         <div class="align-items-center position-relative">
           <div class="text-center h1 category-name">
             {{ category.name }}
-            <button title="Pievienot tranzakciju" class="add-button">
+            <button
+              title="Pievienot tranzakciju"
+              class="add-button"
+              @click="$emit('add-transaction')"
+            >
               <FaIcon icon-name="plus" size="sm" class="add-icon" />
             </button>
           </div>

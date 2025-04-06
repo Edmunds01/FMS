@@ -1,3 +1,11 @@
+<script lang="ts">
+export function formatLatvianDate(date: Date) {
+  return format(date, "d. LLLL", { locale: lv }).replace(
+    /(\d+\.\s*)([a-z])/,
+    (_, p1, p2) => p1 + p2.toUpperCase()
+  );
+}
+</script>
 <script setup lang="ts">
 import { format } from "date-fns";
 import { lv } from "date-fns/locale";
@@ -11,11 +19,6 @@ const props = defineProps<{
 }>();
 
 const date = ref([props.startDate, props.endDate]);
-const formatLatvianDate = (date: Date) =>
-  format(date, "d. LLLL", { locale: lv }).replace(
-    /(\d+\.\s*)([a-z])/,
-    (_, p1, p2) => p1 + p2.toUpperCase(),
-  );
 
 function formatDate(dateRange: Date[]) {
   const startDate = dateRange[0];
@@ -33,13 +36,12 @@ const rangeConfig: RangeConfig = {
   <div class="date-container">
     <vue-date-picker
       v-model="date"
-      locale="lv"
-      multi-calendars
       :enable-time-picker="false"
       :format="formatDate"
-      style="width: auto; background-color: black"
       :range="rangeConfig"
       :clearable="false"
+      locale="lv"
+      multi-calendars
     />
   </div>
 </template>

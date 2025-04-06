@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import FaIcon from "@/components/global/FaIcon.vue";
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, inject, onMounted, onUnmounted, ref } from "vue";
 import AddAccountModal from "@/components/dashboard/accounts/AddAccountModal.vue";
 import EditAccountModal from "@/components/dashboard/accounts/EditAccountModal.vue";
 import { api, type Account, type NewAccount } from "@/api/auto-generated-client";
 import { closeModal, openModal } from "@/components/global/ModalWindow.vue";
 import { isConfirmModal } from "@/components/global/ConfirmAction.vue";
+import { accountsKey } from "@/utils/keys";
 
 const selectedAccount = ref<Account | null>(null);
-const accounts = ref<Account[]>([]);
+
+const { accounts, fetchAccounts } = inject(accountsKey)!;
 
 onMounted(async () => {
   await fetchAccounts();
@@ -16,10 +18,6 @@ onMounted(async () => {
 
 const newAccountModalId = "accountModal";
 const accountEditModalId = "accountEditModal";
-
-async function fetchAccounts() {
-  accounts.value = await api.accounts();
-}
 
 async function saveAccount(account?: NewAccount) {
   closeModal(newAccountModalId);
@@ -57,6 +55,8 @@ function openAccountModal(modelId: string, account?: Account) {
 
   openModal(modelId, onModalHidden);
 }
+
+
 // #region AccountNames
 const screenWidth = ref(window.innerWidth);
 
@@ -113,7 +113,10 @@ onUnmounted(() => {
       </button>
     </div>
     <div class="row no-gutters border border-end-0 border-top-0">
-      <button class="col text-center add-account" @click="openAccountModal(newAccountModalId)">
+      <button
+        class="col text-center add-account"
+        @click="openAccountModal(newAccountModalId)"
+      >
         <div>+ Pievienot</div>
       </button>
     </div>

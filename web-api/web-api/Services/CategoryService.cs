@@ -24,7 +24,7 @@ public class CategoryService(
 
         return categories.Select(category =>
         {
-            category.ShowDeleteButton = transactions.Any(t => t.CategoryId == category.CategoryId);
+            category.ShowDeleteButton = !transactions.Any(t => t.CategoryId == category.CategoryId);
             category.SumOfTransactions = transactions.Where(t => t.CategoryId == category.CategoryId).Sum(t => t.Amount);
 
             return category;
