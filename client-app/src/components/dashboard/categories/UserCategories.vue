@@ -4,11 +4,18 @@ import AddCategoryButton from "@/components/dashboard/categories/AddCategoryButt
 import { closeModal, openModal } from "@/components/global/ModalWindow.vue";
 import { computed, ref } from "vue";
 import { icons } from "@/components/global/FaIcon.vue";
-import { api, CategoryType, type Category, type NewCategory } from "@/api/auto-generated-client";
+import {
+  api,
+  CategoryType,
+  type Category,
+  type NewCategory,
+  type NewTransaction,
+} from "@/api/auto-generated-client";
 import AddCategoryModal from "@/components/dashboard/categories/AddCategoryModal.vue";
 import EditCategoryModal from "@/components/dashboard/categories/EditCategoryModal.vue";
 import { isConfirmModal } from "@/components/global/ConfirmAction.vue";
 import TransactionListModal from "../transactions/TransactionListModal.vue";
+import TransactionAddModal from "../transactions/TransactionAddModal.vue";
 
 const props = defineProps<{
   transactionType: CategoryType;
@@ -29,9 +36,13 @@ const newCategory = ref<NewCategory>({
 const selectedCategory = ref<Category | null>(null);
 const selectedTransactionCategory = ref<Category | null>(null);
 const isAddCategory = ref(false);
+const isAddTransaction = ref(false);
+const openedFromTransactionList = ref(false);
+const needToReload = ref(false);
 const addCategoryModalId = "addCategoryModal";
 const editCategoryModalId = "editCategoryModal";
 const transactionListModalId = "transactionListModal";
+const transactionAddModalId = "transactionAddModal";
 
 function showAddCategoryModal() {
   isAddCategory.value = true;
@@ -61,10 +72,47 @@ function showTransactionListModal(category: Category) {
   selectedTransactionCategory.value = category;
 
   const onModalHidden = () => {
-    selectedTransactionCategory.value = null;
+    if (!isAddTransaction.value) {
+      selectedTransactionCategory.value = null;
+    }
   };
 
   openModal(transactionListModalId, onModalHidden);
+}
+
+function showTransactionAddModal(category: Category | null = null) {
+  if (category) {
+    selectedTransactionCategory.value = category;
+  } else {
+    openedFromTransactionList.value = true;
+  }
+
+  isAddTransaction.value = true;
+  closeModal(transactionListModalId, true);
+
+  const onModalHidden = () => {
+    if (!openedFromTransactionList.value) {
+      selectedTransactionCategory.value = null;
+    }
+
+    openedFromTransactionList.value = false;
+    isAddTransaction.value = false;
+  };
+
+  openModal(transactionAddModalId, onModalHidden);
+}
+
+function addTransaction(transaction: NewTransaction) {
+  setTimeout(async () => {
+    await api.addTransaction(transaction);
+    needToReload.value = !needToReload.value;
+  }, 0);
+
+  closeModal(transactionAddModalId);
+
+  if (openedFromTransactionList.value) {
+    showTransactionListModal(selectedTransactionCategory.value!);
+  }
 }
 
 const transactionSum = computed(() => {
@@ -123,6 +171,7 @@ function mapCategoryTypeName(category: CategoryType): string {
             class="category-width user-select-none"
             @left-click="showTransactionListModal(category)"
             @right-click="showEditCategoryModal(category)"
+            @double-click="showTransactionAddModal(category)"
           />
           <AddCategoryButton
             :type="transactionType"
@@ -149,6 +198,15 @@ function mapCategoryTypeName(category: CategoryType): string {
       v-if="selectedTransactionCategory"
       :id="transactionListModalId"
       :category="selectedTransactionCategory"
+      :transaction-type
+      :need-to-reload
+      @add-transaction="showTransactionAddModal"
+    />
+    <TransactionAddModal
+      v-if="isAddTransaction"
+      :id="transactionAddModalId"
+      :from-category="selectedTransactionCategory!"
+      @add-transaction="addTransaction"
     />
   </div>
 </template>
@@ -187,7 +245,7 @@ function mapCategoryTypeName(category: CategoryType): string {
     flex: 0 0 calc(100% / 2 - 10px);
   }
 
-  @media (min-width: 1500px) {
+  @media (min-width: 1490px) {
     flex: 0 0 calc(100% / 3 - 10px);
   }
 

@@ -2,17 +2,34 @@
 import TheDateSelect from "./TheDateSelect.vue";
 import TheAccounts from "./accounts/TheAccounts.vue";
 import UserCategories from "./categories/UserCategories.vue";
-import { api, CategoryType, type Category, type NewCategory } from "@/api/auto-generated-client";
-import { computed, onMounted, ref } from "vue";
+import {
+  api,
+  CategoryType,
+  type Account,
+  type Category,
+  type NewCategory,
+} from "@/api/auto-generated-client";
+import { computed, onMounted, provide, ref } from "vue";
 import FaIcon from "@/components/global/FaIcon.vue";
+import { accountsKey, categoriesKey } from "@/utils/keys";
+
+// TODO: There is a bug when try to add transaction from transactionList modal
+// Open the Category dropdown and click outside the modal
+// Try to open the other category list
+// The wrong data will be displayed
 
 const startDate = ref(new Date());
 const endDate = ref(new Date(2025, 9, 1));
 
 const categories = ref<Category[]>([]);
+const accounts = ref<Account[]>([]);
 
 async function fetchCategories() {
   categories.value = await api.getCategories();
+}
+
+async function fetchAccounts() {
+  accounts.value = await api.accounts();
 }
 
 function addCategory(newCategory: NewCategory) {
@@ -38,8 +55,12 @@ const income = computed(() =>
   categories.value.filter((category) => category.type === CategoryType.Income),
 );
 
-onMounted(async () => {
-  await fetchCategories();
+provide(accountsKey, { accounts, fetchAccounts });
+provide(categoriesKey, categories);
+
+onMounted(() => {
+  fetchCategories();
+  fetchAccounts();
 });
 </script>
 
