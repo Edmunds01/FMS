@@ -64,8 +64,10 @@ router.beforeEach(async (to, from, next) => {
       next();
       return;
     }
+
+    next("/login");
     // TODO: Add "Service Unavailable" page
-  } finally {
+  } catch {
     next("/login");
   }
 });
