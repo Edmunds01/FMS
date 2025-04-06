@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
-using System.Text;
 using System.Text.Json.Serialization;
 using web_api.Helper;
 using web_api.Helper.Interfaces;
@@ -25,36 +22,28 @@ builder.Logging.AddDebug();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); // Convert Enums to Strings
-    });
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<FMSContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-        .EnableSensitiveDataLogging();
-});
+builder.Services.AddDbContext<FMSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .EnableSensitiveDataLogging());
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(CorsPolicyName, policy =>
+builder.Services.AddCors(options => options.AddPolicy(CorsPolicyName, policy =>
     {
         var allowedOrigin = builder.Configuration["ALLOWED_ORIGIN"];
 
         policy.AllowAnyMethod()
               .AllowCredentials()
               .AllowAnyHeader()
-              .SetIsOriginAllowed(origin => {
+              .SetIsOriginAllowed(origin =>
+              {
                   var host = new Uri(origin).Host;
 
                   return host == "localhost" || host == allowedOrigin;
               });
-    });
-});
+    }));
 
 RegisterRepositoriesAndServices(builder.Services);
 
@@ -79,10 +68,7 @@ app.UseMiddleware<ConditionalAuthorizeMiddleware>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-    });
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
 
 // TODO: check if this will work on deploy

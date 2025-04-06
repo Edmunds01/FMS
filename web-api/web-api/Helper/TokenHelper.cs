@@ -56,7 +56,7 @@ public class TokenHelper(IConfiguration configuration) : ITokenHelper
                 ValidIssuer = _configuration["Jwt:Issuer"],
                 ValidAudience = _configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(key)
-            }, out SecurityToken validatedToken);
+            }, out var validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
             var claims = new List<Claim>(jwtToken.Claims);

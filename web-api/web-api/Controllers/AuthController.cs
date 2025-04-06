@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using web_api.Dtos;
 using web_api.Helper.Interfaces;
 using web_api.Models;
@@ -55,7 +54,7 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
 
         return Ok();
     }
-    
+
     [HttpPost("logout")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Logout()
@@ -67,15 +66,8 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
 
     [HttpGet("validate-session")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<bool> ValidateSession()
-    {
-        if (HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated)
-        {
-            return Ok(true);
-        }
-
-        return Ok(false);
-    }
+    public ActionResult<bool> ValidateSession() =>
+        HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated ? Ok(true) : Ok(false);
 
     private void SetTokenCookie(User user)
     {

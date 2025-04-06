@@ -1,8 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using web_api.Helper.Interfaces;
+﻿using web_api.Helper.Interfaces;
 
 namespace web_api.Middleware;
 
@@ -47,12 +43,7 @@ public class ConditionalAuthorizeMiddleware(RequestDelegate next, ITokenHelper t
         return false;
     }
 
-    private static bool IsSwaggerRequest(HttpContext context)
-    {
-        return context.Request.Path.StartsWithSegments("/swagger");
-    }
-
-
+    private static bool IsSwaggerRequest(HttpContext context) => context.Request.Path.StartsWithSegments("/swagger");
 
     private static bool IsAuthenticated(HttpContext context)
     {

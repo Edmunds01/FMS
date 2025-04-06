@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Configuration;
-using System.Security.Claims;
 
 namespace web_api.Services;
 
@@ -18,8 +16,8 @@ public abstract class BaseService(IHttpContextAccessor httpContextAccessor, IMap
     {
         var isAuthenticated = _httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated;
         if (_env.IsProduction() && (!isAuthenticated.HasValue || !isAuthenticated.Value))
-        { 
-             throw new UnauthorizedAccessException("User ID claim not found");
+        {
+            throw new UnauthorizedAccessException("User ID claim not found");
         }
 
         var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("userId");

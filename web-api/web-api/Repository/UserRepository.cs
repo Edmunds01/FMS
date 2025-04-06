@@ -16,8 +16,5 @@ public class UserRepository(FMSContext context) : IUserRepository
         return user;
     }
 
-    public Task<User?> GetUserAsync(string email)
-    {
-        return _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-    }
+    public Task<User?> GetUserAsync(string email) => _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 }
