@@ -41,7 +41,6 @@ public class ConditionalAuthorizeMiddleware(RequestDelegate next, ITokenHelper t
         {
             var metadata = endpoint.Metadata.GetMetadata<Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor>();
             var controllerName = metadata?.ControllerName;
-            var actionName = metadata?.ActionName;
             return controllerName == "Auth";
         }
 
