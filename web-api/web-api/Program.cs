@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Diagnostics;
-using System.Text;
 using System.Text.Json.Serialization;
+using web_api.Helper;
+using web_api.Helper.Interfaces;
 using web_api.Middleware;
 using web_api.Models;
 using web_api.Repository;
@@ -16,100 +14,34 @@ const string CorsPolicyName = "SpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://0.0.0.0:5000");
-
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); // Convert Enums to Strings
-    });
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Please use a valid token"
-    });
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
-});
+builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<FMSContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-        .EnableSensitiveDataLogging();
-});
+builder.Services.AddDbContext<FMSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .EnableSensitiveDataLogging());
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(CorsPolicyName, policy =>
+builder.Services.AddCors(options => options.AddPolicy(CorsPolicyName, policy =>
     {
         var allowedOrigin = builder.Configuration["ALLOWED_ORIGIN"];
 
         policy.AllowAnyMethod()
               .AllowCredentials()
               .AllowAnyHeader()
-              .SetIsOriginAllowed(origin => {
+              .SetIsOriginAllowed(origin =>
+              {
                   var host = new Uri(origin).Host;
 
                   return host == "localhost" || host == allowedOrigin;
               });
-    });
-});
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-    };
-
-    options.Events = new JwtBearerEvents
-    {
-        OnChallenge = context =>
-        {
-            context.HandleResponse();
-            context.Response.StatusCode = 401;
-            context.Response.ContentType = "application/json";
-            var result = System.Text.Json.JsonSerializer.Serialize(new { message = "You are not authorized" });
-            return context.Response.WriteAsync(result);
-        }
-    };
-});
+    }));
 
 RegisterRepositoriesAndServices(builder.Services);
 
@@ -131,22 +63,14 @@ app.UseCors(CorsPolicyName);
 
 app.UseMiddleware<ConditionalAuthorizeMiddleware>();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-    });
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
 
 // TODO: check if this will work on deploy
 //app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 
@@ -164,6 +88,8 @@ void RegisterRepositoriesAndServices(IServiceCollection services)
     services.AddScoped<IAccountService, AccountService>();
     services.AddScoped<ITransactionService, TransactionService>();
     services.AddScoped<ICategoryService, CategoryService>();
+
+    services.AddSingleton<ITokenHelper, TokenHelper>();
 
     services.AddHttpContextAccessor();
 

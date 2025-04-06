@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using System.Text.Json;
 using web_api.Dtos;
+using web_api.Helper.Interfaces;
 using web_api.Models;
 using web_api.Repository.Interfaces;
 
@@ -11,29 +9,32 @@ namespace web_api.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(IConfiguration configuration, IUserRepository userRepository) : ControllerBase
+public class AuthController(IConfiguration configuration, IUserRepository userRepository, ITokenHelper tokenHelper) : ControllerBase
 {
-    private const string _authCookieName = "jwt";
     private readonly IConfiguration _configuration = configuration;
     private readonly IUserRepository _userRepository = userRepository;
+    private readonly ITokenHelper _tokenHelper = tokenHelper;
 
     [HttpPost("login")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] LoginRegisterDto loginDto)
     {
         var user = await _userRepository.GetUserAsync(loginDto.Username);
 
         if (user != null && Helper.PasswordHelper.ComparePasswords(user.PasswordHash, loginDto.Password))
         {
-            var token = GenerateJwtToken(user);
-            SetTokenCookie(token);
+            SetTokenCookie(user);
 
             return Ok();
         }
 
-        return Unauthorized("Invalid username or password");
+        return Unauthorized(JsonSerializer.Serialize("Invalid username or password"));
     }
 
     [HttpPost("register")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register([FromBody] LoginRegisterDto loginDto)
     {
         // TODO: Add data validation
@@ -49,34 +50,29 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
             PasswordHash = Helper.PasswordHelper.GenerateVarbinary64FromPassword(loginDto.Password)
         });
 
-        var token = GenerateJwtToken(user);
-        SetTokenCookie(token);
+        SetTokenCookie(user);
 
         return Ok();
     }
-    
+
     [HttpPost("logout")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Logout()
     {
-        Response.Cookies.Delete(_authCookieName);
+        Response.Cookies.Delete(_tokenHelper.JwtCookieName);
 
         return Ok();
     }
 
     [HttpGet("validate-session")]
-    public IActionResult ValidateSession()
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult<bool> ValidateSession() =>
+        HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated ? Ok(true) : Ok(false);
+
+    private void SetTokenCookie(User user)
     {
-        if (HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated)
-        {
-            return Ok();
-        }
+        var token = _tokenHelper.GenerateJwtToken(user);
 
-        return Unauthorized();
-    }
-
-
-    private void SetTokenCookie(string token)
-    {
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
@@ -89,28 +85,6 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
             cookieOptions.SameSite = SameSiteMode.None;
         }
 
-        Response.Cookies.Append(_authCookieName, token, cookieOptions);
-    }
-
-    private string GenerateJwtToken(User user)
-    {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-        var claims = new[]
-        {
-            new Claim("email", user.Email),
-            new Claim("userId", user.UserId.ToString()),
-        };
-
-        var token = new JwtSecurityToken(
-            _configuration["Jwt:Issuer"],
-            _configuration["Jwt:Audience"],
-            claims,
-            expires: DateTime.Now.AddDays(7),
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        Response.Cookies.Append(_tokenHelper.JwtCookieName, token, cookieOptions);
     }
 }

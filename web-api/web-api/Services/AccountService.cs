@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using web_api.Exceptions;
-using web_api.Repository;
 using web_api.Repository.Interfaces;
 using web_api.Services.Interfaces;
 
@@ -33,21 +32,9 @@ public class AccountService(
         });
     }
 
-    public async Task SaveAccountNameAsync(long accountId, string name)
-    {
-        await SaveAccountAsync(accountId, category =>
-        {
-            category.Name = name;
-        });
-    }
+    public async Task SaveAccountNameAsync(long accountId, string name) => await SaveAccountAsync(accountId, category => category.Name = name);
 
-    public async Task SaveAccountIconAsync(long accountId, string icon)
-    {
-        await SaveAccountAsync(accountId, category =>
-        {
-            category.Icon = icon;
-        });
-    }
+    public async Task SaveAccountIconAsync(long accountId, string icon) => await SaveAccountAsync(accountId, category => category.Icon = icon);
 
     public Task CreateNewAccountAsync(Dtos.NewAccount accountRaw)
     {

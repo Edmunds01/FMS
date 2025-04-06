@@ -13,10 +13,7 @@ public class AccountController(IAccountService accountService) : ControllerBase
     private readonly IAccountService _accountService = accountService;
 
     [HttpGet("accounts")]
-    public ActionResult<IEnumerable<Account>> GetAccounts()
-    {
-        return Ok(_accountService.GetUserAccounts());
-    }
+    public ActionResult<IEnumerable<Account>> GetAccounts() => Ok(_accountService.GetUserAccounts());
 
     [HttpPost("save-account-icon")]
     public async Task<IActionResult> SaveAccountIcon(long accountId, string accountIcon)

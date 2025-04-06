@@ -31,21 +31,11 @@ public class CategoryService(
         });
     }
 
-    public async Task SaveCategoryIconAsync(long categoryId, string icon)
-    {
-        await SaveCategoryAsync(categoryId, category =>
-        {
-            category.Icon = icon;
-        });
-    }
+    public async Task SaveCategoryIconAsync(long categoryId, string icon) =>
+        await SaveCategoryAsync(categoryId, category => category.Icon = icon);
 
-    public async Task SaveCategoryNameAsync(long categoryId, string name)
-    {
-        await SaveCategoryAsync(categoryId, category =>
-        {
-            category.Name = name;
-        });
-    }
+    public async Task SaveCategoryNameAsync(long categoryId, string name) =>
+        await SaveCategoryAsync(categoryId, category => category.Name = name);
 
     public Task CreateNewCategoryAsync(Dtos.NewCategory categoryRaw)
     {

@@ -19,7 +19,7 @@ public class TransactionService(
     private readonly ICategoryService _categoryService = categoryService;
 
     public IEnumerable<Dtos.Transaction> GetUserTransactions(long categoryId)
-    { 
+    {
         var transactions = _transactionRepository.GetUserTransactions(UserId, categoryId);
 
         return _mapper.Map<IEnumerable<Dtos.Transaction>>(transactions);
@@ -39,45 +39,21 @@ public class TransactionService(
     {
         await _accountService.ValidateIsUserAccountAsync(accountId);
 
-        await SaveTransactionAsync(transactionId, transaction =>
-        {
-            transaction.AccountId = accountId;
-        });
+        await SaveTransactionAsync(transactionId, transaction => transaction.AccountId = accountId);
     }
 
     public async Task SaveTransactionCategory(long transactionId, long categoryId)
     {
         await _categoryService.ValidateIsUserCategoryAsync(categoryId);
 
-        await SaveTransactionAsync(transactionId, transaction =>
-        {
-            transaction.CategoryId = categoryId;
-        });
+        await SaveTransactionAsync(transactionId, transaction => transaction.CategoryId = categoryId);
     }
 
-    public async Task SaveTransactionAmount(long transactionId, decimal amount)
-    {
-        await SaveTransactionAsync(transactionId, transaction =>
-        {
-            transaction.Amount = amount;
-        });
-    }
+    public async Task SaveTransactionAmount(long transactionId, decimal amount) => await SaveTransactionAsync(transactionId, transaction => transaction.Amount = amount);
 
-    public async Task SaveTransactionComment(long transactionId, string comment)
-    {
-        await SaveTransactionAsync(transactionId, transaction =>
-        {
-            transaction.Comment = comment;
-        });
-    }
+    public async Task SaveTransactionComment(long transactionId, string comment) => await SaveTransactionAsync(transactionId, transaction => transaction.Comment = comment);
 
-    public async Task SaveTransactionDate(long transactionId, DateTime newDate)
-    {
-        await SaveTransactionAsync(transactionId, transaction =>
-        {
-            transaction.CreatedDateTime = newDate;
-        });
-    }
+    public async Task SaveTransactionDate(long transactionId, DateTime newDate) => await SaveTransactionAsync(transactionId, transaction => transaction.CreatedDateTime = newDate);
 
     public async Task DeleteTransaction(long transactionId)
     {

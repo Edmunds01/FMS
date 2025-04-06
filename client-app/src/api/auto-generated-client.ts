@@ -261,6 +261,12 @@ export class Client extends AuthorizedApiBase {
             return response.text().then((_responseText) => {
             return;
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -300,6 +306,12 @@ export class Client extends AuthorizedApiBase {
         if (status === 200) {
             return response.text().then((_responseText) => {
             return;
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            result409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Conflict", status, _responseText, _headers, result409);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -347,13 +359,14 @@ export class Client extends AuthorizedApiBase {
     /**
      * @return Success
      */
-    validateSession(): Promise<void> {
+    validateSession(): Promise<boolean> {
         let url_ = this.baseUrl + "/api/auth/validate-session";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
             method: "GET",
             headers: {
+                "Accept": "text/plain"
             }
         };
 
@@ -364,19 +377,21 @@ export class Client extends AuthorizedApiBase {
         });
     }
 
-    protected processValidateSession(response: Response): Promise<void> {
+    protected processValidateSession(response: Response): Promise<boolean> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
-            return;
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as boolean;
+            return result200;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<boolean>(null as any);
     }
 
     /**
@@ -973,6 +988,16 @@ export interface NewCategory {
     name: string | undefined;
     icon: string | undefined;
     type: CategoryType;
+}
+
+export interface ProblemDetails {
+    type: string | undefined;
+    title: string | undefined;
+    status: number | undefined;
+    detail: string | undefined;
+    instance: string | undefined;
+
+    [key: string]: any;
 }
 
 export interface Transaction {

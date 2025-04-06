@@ -16,20 +16,11 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
 
     public Task SaveChanges() => _context.SaveChangesAsync();
 
-    public async Task<IEnumerable<T>> GetAllAsync()
-    {
-        return await _dbSet.ToListAsync();
-    }
+    public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
 
-    public async Task<T?> GetByIdAsync(object id)
-    {
-        return await _dbSet.FindAsync(id);
-    }
-    
-    public async Task<T> GetByIdStrictAsync(object id)
-    {
-        return await _dbSet.FindAsync(id) ?? throw new NotSupportedException("Use GetByIdAsync() if not sure that object exists in db");
-    }
+    public async Task<T?> GetByIdAsync(object id) => await _dbSet.FindAsync(id);
+
+    public async Task<T> GetByIdStrictAsync(object id) => await _dbSet.FindAsync(id) ?? throw new NotSupportedException("Use GetByIdAsync() if not sure that object exists in db");
 
     public async Task InsertAsync(T entity)
     {
