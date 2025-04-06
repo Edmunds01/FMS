@@ -2,7 +2,13 @@
 import TheDateSelect from "./TheDateSelect.vue";
 import TheAccounts from "./accounts/TheAccounts.vue";
 import UserCategories from "./categories/UserCategories.vue";
-import { api, CategoryType, type Account, type Category, type NewCategory } from "@/api/auto-generated-client";
+import {
+  api,
+  CategoryType,
+  type Account,
+  type Category,
+  type NewCategory,
+} from "@/api/auto-generated-client";
 import { computed, onMounted, provide, ref } from "vue";
 import FaIcon from "@/components/global/FaIcon.vue";
 import { accountsKey, categoriesKey } from "@/utils/keys";
@@ -66,9 +72,7 @@ onMounted(() => {
             <div class="col p-0 border-bottom">
               <TheDateSelect :start-date="startDate" :end-date="endDate" />
             </div>
-            <div
-              class="col-1 p-0 border-bottom d-flex align-items-center justify-content-end"
-            >
+            <div class="col-1 p-0 border-bottom d-flex align-items-center justify-content-end">
               <button title="Iziet" class="btn" @click="$router.push('/logout')">
                 <FaIcon icon-name="right-from-bracket" size="2x" class="me-3" />
               </button>

@@ -64,7 +64,7 @@ function showTransactionListModal(category: Category) {
   selectedTransactionCategory.value = category;
 
   const onModalHidden = () => {
-   if (!isAddTransaction.value) {
+    if (!isAddTransaction.value) {
       selectedTransactionCategory.value = null;
     }
   };

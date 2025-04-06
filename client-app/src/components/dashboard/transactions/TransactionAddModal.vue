@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {  CategoryType, type Category, type Transaction } from "@/api/auto-generated-client";
+import { CategoryType, type Category, type Transaction } from "@/api/auto-generated-client";
 import ModalWindow from "@/components/global/ModalWindow.vue";
 import { computed, inject, onMounted, ref } from "vue";
 import { accountsKey, categoriesKey } from "@/utils/keys";
@@ -7,20 +7,20 @@ import VueDatePicker from "@vuepic/vue-datepicker";
 import { formatLatvianDate } from "../TheDateSelect.vue";
 
 const props = defineProps<{
-    id: string;
-    fromCategory: Category;
+  id: string;
+  fromCategory: Category;
 }>();
 
 const categories = inject(categoriesKey);
 const { accounts } = inject(accountsKey)!;
 
 const newTransaction = ref<Transaction>({
-    transactionId: 0,
-    accountId: accounts.value[0].accountId,
-    categoryId: props.fromCategory.categoryId,
-    comment: "",
-    amount: 0,
-    createdDateTime: new Date(),
+  transactionId: 0,
+  accountId: accounts.value[0].accountId,
+  categoryId: props.fromCategory.categoryId,
+  comment: "",
+  amount: 0,
+  createdDateTime: new Date(),
 });
 
 const amountInput = ref<HTMLElement>();
@@ -28,57 +28,57 @@ const amount = ref((0).toEurFormat());
 const firstCategoryType = ref<CategoryType>(CategoryType.Expense);
 
 const selectedCategory = computed(() => {
-    return categories?.value.find((category) => category.categoryId === newTransaction.value.categoryId);
+  return categories?.value.find(
+    (category) => category.categoryId === newTransaction.value.categoryId,
+  );
 });
 
 const selectedAccount = computed(() => {
-    return accounts.value.find((account) => account.accountId === newTransaction.value.accountId);
+  return accounts.value.find((account) => account.accountId === newTransaction.value.accountId);
 });
 
 function formatDate(date: Date) {
-    return formatLatvianDate(date);
+  return formatLatvianDate(date);
 }
 
 const transactionClass = computed(() => getCategoryStyle(selectedCategory.value?.type));
 
 function getCategoryStyle(categoryType?: CategoryType) {
-    return categoryType === CategoryType.Expense ? "table-cell-expense" : "table-cell-income";
+  return categoryType === CategoryType.Expense ? "table-cell-expense" : "table-cell-income";
 }
 
 const firstCategories = computed(() => {
-    return categories?.value.filter((category) => category.type === firstCategoryType.value);
+  return categories?.value.filter((category) => category.type === firstCategoryType.value);
 });
 
 const secondCategories = computed(() => {
-    return categories?.value.filter((category) => category.type !== firstCategoryType.value);
+  return categories?.value.filter((category) => category.type !== firstCategoryType.value);
 });
 
 onMounted(() => {
-    firstCategoryType.value = props.fromCategory.type;
+  firstCategoryType.value = props.fromCategory.type;
 });
 
 // #region Focus
 function onFocusLost() {
-    amount.value = amount.value
-    .replace(',', '.')
-    .replace(/(\..*?)\./g, '$1') // Remove all dots except first one
-    .replace(/[a-zA-Z]/g, '');
-    amount.value = Number(amount.value).toEurFormat();
+  amount.value = amount.value
+    .replace(",", ".")
+    .replace(/(\..*?)\./g, "$1") // Remove all dots except first one
+    .replace(/[a-zA-Z]/g, "");
+  amount.value = Number(amount.value).toEurFormat();
 }
 
 function onFocus() {
-    const value = amount.value.toNumberFromEurFormat();
+  const value = amount.value.toNumberFromEurFormat();
 
-    amount.value = value === 0 ? "" : value.toString();
+  amount.value = value === 0 ? "" : value.toString();
 }
 
-function onKey(e: KeyboardEvent)
-{
-    console.log(e)
-    if(e.key == "Enter")
-    {
-        amountInput.value?.blur();
-    }
+function onKey(e: KeyboardEvent) {
+  console.log(e);
+  if (e.key == "Enter") {
+    amountInput.value?.blur();
+  }
 }
 
 // #endregion Focus
@@ -101,9 +101,7 @@ function onKey(e: KeyboardEvent)
 
               <ul class="dropdown-menu style-dropdown-menu dd-overflow">
                 <li>
-                  <span class="dropdown-header text-center" style="font-size: 1.6rem">
-                    Konts
-                  </span>
+                  <span class="dropdown-header text-center" style="font-size: 1.6rem"> Konts </span>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li v-for="account in accounts" :key="account.accountId">
@@ -191,7 +189,12 @@ function onKey(e: KeyboardEvent)
             placeholder="Komentārs..."
             type="text"
             class="comment-input"
-            @keyup="(event) => (event as KeyboardEvent).key === 'Enter' ? (event.target as HTMLElement).blur() : null"
+            @keyup="
+              (event) =>
+                (event as KeyboardEvent).key === 'Enter'
+                  ? (event.target as HTMLElement).blur()
+                  : null
+            "
           />
         </div>
         <div class="col"><button class="btn btn-primary save">Saglabāt</button></div>

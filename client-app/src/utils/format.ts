@@ -13,8 +13,7 @@ Number.prototype.toEurFormat = function () {
   );
 };
 
-
 String.prototype.toNumberFromEurFormat = function (): number {
-  const numericString = this.replace(/[^\d,-]/g, '').replace(',', '.');
+  const numericString = this.replace(/[^\d,-]/g, "").replace(",", ".");
   return parseFloat(numericString);
 };

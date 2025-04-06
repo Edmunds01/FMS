@@ -15,7 +15,9 @@ defineEmits<{
 }>();
 
 const transactions = ref<Transaction[]>();
-const transactionClass = computed(() => props.transactionType === CategoryType.Expense ? "table-cell-expense" : "table-cell-income");
+const transactionClass = computed(() =>
+  props.transactionType === CategoryType.Expense ? "table-cell-expense" : "table-cell-income",
+);
 
 async function fetchTransactions() {
   transactions.value = await api.categoryTransactions(props.category.categoryId);
@@ -43,9 +45,7 @@ onMounted(async () => {
           </div>
         </div>
         <div class="table-responsive d-block">
-          <table
-            class="table table-bordered text-center table-striped table-bordered table-hover"
-          >
+          <table class="table table-bordered text-center table-striped table-bordered table-hover">
             <thead>
               <tr>
                 <th class="position-sticky">Summa</th>

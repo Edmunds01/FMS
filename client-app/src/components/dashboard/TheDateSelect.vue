@@ -2,7 +2,7 @@
 export function formatLatvianDate(date: Date) {
   return format(date, "d. LLLL", { locale: lv }).replace(
     /(\d+\.\s*)([a-z])/,
-    (_, p1, p2) => p1 + p2.toUpperCase()
+    (_, p1, p2) => p1 + p2.toUpperCase(),
   );
 }
 </script>

@@ -56,7 +56,6 @@ function openAccountModal(modelId: string, account?: Account) {
   openModal(modelId, onModalHidden);
 }
 
-
 // #region AccountNames
 const screenWidth = ref(window.innerWidth);
 
@@ -113,10 +112,7 @@ onUnmounted(() => {
       </button>
     </div>
     <div class="row no-gutters border border-end-0 border-top-0">
-      <button
-        class="col text-center add-account"
-        @click="openAccountModal(newAccountModalId)"
-      >
+      <button class="col text-center add-account" @click="openAccountModal(newAccountModalId)">
         <div>+ Pievienot</div>
       </button>
     </div>
