@@ -28,9 +28,15 @@ ENV MSSQL_PID=Express
 EXPOSE 5000
 EXPOSE 1433
 
-# Wait for SQL Server to initialize before starting the .NET application
+# Copy the wait-for-sqlserver.sh script
 COPY wait-for-sqlserver.sh /app/wait-for-sqlserver.sh
+
+# Switch to root to modify permissions
+USER root
 RUN chmod +x /app/wait-for-sqlserver.sh
+
+# Switch back to the default user
+USER mssql
 
 # Start SQL Server and wait for it to initialize, then start the .NET app
 CMD /bin/bash -c "/opt/mssql/bin/sqlservr & /app/wait-for-sqlserver.sh && dotnet web-api.dll"
