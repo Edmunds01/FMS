@@ -649,8 +649,8 @@ export class Client extends AuthorizedApiBase {
      * @param body (optional) 
      * @return Success
      */
-    addTransaction(body: NewTransaction | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/transaction/add-transaction";
+    upsertTransaction(body: Transaction | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/transaction/upsert-transaction";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -666,11 +666,11 @@ export class Client extends AuthorizedApiBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processAddTransaction(_response);
+            return this.processUpsertTransaction(_response);
         });
     }
 
-    protected processAddTransaction(response: Response): Promise<void> {
+    protected processUpsertTransaction(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -990,14 +990,6 @@ export interface NewCategory {
     type: CategoryType;
 }
 
-export interface NewTransaction {
-    accountId: number;
-    categoryId: number;
-    comment: string | undefined;
-    amount: number;
-    createdDateTime: Date;
-}
-
 export interface ProblemDetails {
     type: string | undefined;
     title: string | undefined;
@@ -1009,7 +1001,7 @@ export interface ProblemDetails {
 }
 
 export interface Transaction {
-    transactionId: number;
+    transactionId: number | undefined;
     accountId: number;
     categoryId: number;
     comment: string | undefined;

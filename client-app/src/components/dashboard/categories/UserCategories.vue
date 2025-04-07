@@ -9,13 +9,18 @@ import {
   CategoryType,
   type Category,
   type NewCategory,
-  type NewTransaction,
+  type Transaction,
 } from "@/api/auto-generated-client";
 import AddCategoryModal from "@/components/dashboard/categories/AddCategoryModal.vue";
 import EditCategoryModal from "@/components/dashboard/categories/EditCategoryModal.vue";
 import { isConfirmModal } from "@/components/global/ConfirmAction.vue";
 import TransactionListModal from "../transactions/TransactionListModal.vue";
 import TransactionAddModal from "../transactions/TransactionAddModal.vue";
+
+const addCategoryModalId = "addCategoryModal";
+const editCategoryModalId = "editCategoryModal";
+const transactionListModalId = "transactionListModal";
+const transactionAddModalId = "transactionAddModal";
 
 const props = defineProps<{
   transactionType: CategoryType;
@@ -35,14 +40,12 @@ const newCategory = ref<NewCategory>({
 
 const selectedCategory = ref<Category | null>(null);
 const selectedTransactionCategory = ref<Category | null>(null);
+const selectedTransaction = ref<Transaction | null>(null);
+
 const isAddCategory = ref(false);
 const isAddTransaction = ref(false);
 const openedFromTransactionList = ref(false);
 const needToReload = ref(false);
-const addCategoryModalId = "addCategoryModal";
-const editCategoryModalId = "editCategoryModal";
-const transactionListModalId = "transactionListModal";
-const transactionAddModalId = "transactionAddModal";
 
 function showAddCategoryModal() {
   isAddCategory.value = true;
@@ -72,7 +75,7 @@ function showTransactionListModal(category: Category) {
   selectedTransactionCategory.value = category;
 
   const onModalHidden = () => {
-    if (!isAddTransaction.value) {
+    if (!isAddTransaction.value && !selectedTransaction.value) {
       selectedTransactionCategory.value = null;
     }
   };
@@ -102,9 +105,27 @@ function showTransactionAddModal(category: Category | null = null) {
   openModal(transactionAddModalId, onModalHidden);
 }
 
-function addTransaction(transaction: NewTransaction) {
+function showTransactionEditModal(transaction: Transaction) {
+  selectedTransaction.value = transaction;
+  openedFromTransactionList.value = true;
+
+  closeModal(transactionListModalId, true);
+
+  const onModalHidden = () => {
+    if (!openedFromTransactionList.value) {
+      selectedTransactionCategory.value = null;
+      selectedTransaction.value = null;
+    }
+
+    openedFromTransactionList.value = false;
+  };
+
+  openModal(transactionAddModalId, onModalHidden);
+}
+
+function addTransaction(transaction: Transaction) {
   setTimeout(async () => {
-    await api.addTransaction(transaction);
+    await api.upsertTransaction(transaction);
     needToReload.value = !needToReload.value;
   }, 0);
 
@@ -201,11 +222,13 @@ function mapCategoryTypeName(category: CategoryType): string {
       :transaction-type
       :need-to-reload
       @add-transaction="showTransactionAddModal"
+      @edit-transaction="showTransactionEditModal"
     />
     <TransactionAddModal
-      v-if="isAddTransaction"
+      v-if="isAddTransaction || selectedTransaction"
       :id="transactionAddModalId"
       :from-category="selectedTransactionCategory!"
+      :transaction="selectedTransaction"
       @add-transaction="addTransaction"
     />
   </div>

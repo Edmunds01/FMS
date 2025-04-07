@@ -13,10 +13,10 @@ public class TransactionController(ITransactionService transactionService) : Con
     [HttpGet("category-transactions")]
     public ActionResult<IEnumerable<Transaction>> GetTransaction(long categoryId) => Ok(_transactionService.GetUserTransactions(categoryId));
 
-    [HttpPost("add-transaction")]
-    public async Task<IActionResult> AddTransaction([FromBody] NewTransaction transaction)
+    [HttpPost("upsert-transaction")]
+    public async Task<IActionResult> UpsertTransaction([FromBody] Transaction transaction)
     {
-        await _transactionService.CreateNewTransactionAsync(transaction);
+        await _transactionService.UpsertTransactionAsync(transaction);
 
         return Ok();
     }

@@ -19,6 +19,7 @@ watch(
 
 defineEmits<{
   (e: "add-transaction"): void;
+  (e: "edit-transaction", transaction: Transaction): void;
 }>();
 
 const transactions = ref<Transaction[]>();
@@ -35,6 +36,23 @@ const transactionClass = computed(() =>
 
 async function fetchTransactions() {
   transactions.value = await api.categoryTransactions(props.category.categoryId);
+  sortByDate(false);
+}
+
+function sortByDate(isAscending: boolean) {
+  if (!transactions.value) return;
+  transactions.value.sort((a, b) => {
+    const dateA = new Date(a.createdDateTime);
+    dateA.setHours(0, 0, 0, 0);
+    const dateB = new Date(b.createdDateTime);
+    dateB.setHours(0, 0, 0, 0);
+
+    const dateComparison = isAscending
+      ? dateA.getTime() - dateB.getTime()
+      : dateB.getTime() - dateA.getTime();
+
+    return dateComparison || b.amount - a.amount;
+  });
 }
 
 watch(
@@ -61,20 +79,7 @@ watch(
         break;
 
       case 2:
-        transactions.value.sort((a, b) => {
-          // Extract date portion only (ignores time)
-          const dateA = new Date(a.createdDateTime);
-          dateA.setHours(0, 0, 0, 0);
-          const dateB = new Date(b.createdDateTime);
-          dateB.setHours(0, 0, 0, 0);
-
-          const dateComparison = isAscending
-            ? dateA.getTime() - dateB.getTime()
-            : dateB.getTime() - dateA.getTime();
-
-          // If dates are equal (same calendar day), sort by amount
-          return dateComparison || b.amount - a.amount;
-        });
+        sortByDate(isAscending);
         break;
     }
   },
@@ -103,7 +108,9 @@ onMounted(async () => {
           </div>
         </div>
         <div class="table-responsive d-block">
-          <table class="table table-bordered text-center table-striped table-bordered table-hover">
+          <table
+            class="table table-bordered text-center table-striped table-bordered table-hover"
+          >
             <thead>
               <tr>
                 <th
@@ -143,9 +150,25 @@ onMounted(async () => {
             </thead>
             <tbody v-if="transactions && transactions.length > 0">
               <tr v-for="transaction in transactions" :key="transaction.transactionId">
-                <td :class="transactionClass">{{ transaction.amount.toEurFormat() }}</td>
-                <td :class="transactionClass">{{ transaction.comment }}</td>
-                <td :class="transactionClass">
+                <td
+                  :class="transactionClass"
+                  class="clickable"
+                  @click="$emit('edit-transaction', transaction)"
+                >
+                  {{ transaction.amount.toEurFormat() }}
+                </td>
+                <td
+                  :class="transactionClass"
+                  class="clickable"
+                  @click="$emit('edit-transaction', transaction)"
+                >
+                  {{ transaction.comment }}
+                </td>
+                <td
+                  :class="transactionClass"
+                  class="clickable"
+                  @click="$emit('edit-transaction', transaction)"
+                >
                   {{ formatLatvianDate(transaction.createdDateTime) }}
                 </td>
               </tr>
@@ -219,5 +242,9 @@ td {
 .category-name {
   padding: 1rem 10rem;
   margin: 0;
+}
+
+.clickable {
+  cursor: pointer;
 }
 </style>

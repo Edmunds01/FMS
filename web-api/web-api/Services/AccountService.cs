@@ -72,6 +72,6 @@ public class AccountService(
 
         updateAccount(account);
 
-        await _transactionRepository.SaveChanges();
+        await _transactionRepository.SaveChangesAsync();
     }
 }

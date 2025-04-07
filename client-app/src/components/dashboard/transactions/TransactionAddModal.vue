@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { CategoryType, type Category, type NewTransaction } from "@/api/auto-generated-client";
+import {
+  CategoryType,
+  type Category,
+  type Transaction,
+} from "@/api/auto-generated-client";
 import ModalWindow from "@/components/global/ModalWindow.vue";
 import { computed, inject, onMounted, ref } from "vue";
 import { accountsKey, categoriesKey } from "@/utils/keys";
@@ -9,21 +13,23 @@ import { formatLatvianDate } from "../TheDateSelect.vue";
 const props = defineProps<{
   id: string;
   fromCategory: Category;
+  transaction?: Transaction | null;
 }>();
 
 const emit = defineEmits<{
-  (e: "add-transaction", transaction: NewTransaction): void;
+  (e: "add-transaction", transaction: Transaction): void;
 }>();
 
 const categories = inject(categoriesKey);
 const { accounts } = inject(accountsKey)!;
 
-const newTransaction = ref<NewTransaction>({
-  accountId: accounts.value[0].accountId,
-  categoryId: props.fromCategory.categoryId,
-  comment: "",
-  amount: 0,
-  createdDateTime: new Date(),
+const addEditTransaction = ref<Transaction>({
+  transactionId: props.transaction?.transactionId ?? undefined,
+  accountId: props.transaction?.accountId ?? accounts.value[0].accountId,
+  categoryId: props.transaction?.categoryId ?? props.fromCategory.categoryId,
+  comment: props.transaction?.comment ?? "",
+  amount: props.transaction?.amount ?? 0,
+  createdDateTime: props.transaction?.createdDateTime ?? new Date(),
 });
 
 const amountInput = ref<HTMLElement>();
@@ -32,17 +38,13 @@ const firstCategoryType = ref<CategoryType>(CategoryType.Expense);
 
 const selectedCategory = computed(() => {
   return categories?.value.find(
-    (category) => category.categoryId === newTransaction.value.categoryId,
+    (category) => category.categoryId === addEditTransaction.value.categoryId,
   );
 });
 
 const selectedAccount = computed(() => {
-  return accounts.value.find((account) => account.accountId === newTransaction.value.accountId);
+  return accounts.value.find((account) => account.accountId === addEditTransaction.value.accountId);
 });
-
-function formatDate(date: Date) {
-  return formatLatvianDate(date);
-}
 
 const transactionClass = computed(() => getCategoryStyle(selectedCategory.value?.type));
 
@@ -59,20 +61,22 @@ const secondCategories = computed(() => {
 });
 
 async function save() {
-  newTransaction.value.amount = amount.value.toNumberFromEurFormat();
+  addEditTransaction.value.amount = amount.value.toNumberFromEurFormat();
 
   const affectedCategory = categories?.value.filter(
-    (c) => c.categoryId === newTransaction.value.categoryId,
+    (c) => c.categoryId === addEditTransaction.value.categoryId,
   )[0];
   if (affectedCategory) {
-    affectedCategory.sumOfTransactions += newTransaction.value.amount;
+    affectedCategory.sumOfTransactions += addEditTransaction.value.amount;
   }
 
-  emit("add-transaction", newTransaction.value);
+  emit("add-transaction", addEditTransaction.value);
 }
 
 onMounted(() => {
   firstCategoryType.value = props.fromCategory.type;
+  amount.value = addEditTransaction.value.amount.toString();
+  onFocusLost();
 });
 
 // #region Focus
@@ -119,13 +123,15 @@ function onKey(e: KeyboardEvent) {
 
               <ul class="dropdown-menu style-dropdown-menu dd-overflow">
                 <li>
-                  <span class="dropdown-header text-center" style="font-size: 1.6rem"> Konts </span>
+                  <span class="dropdown-header text-center" style="font-size: 1.6rem">
+                    Konts
+                  </span>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li v-for="account in accounts" :key="account.accountId">
                   <a
                     class="dropdown-item text-center"
-                    @click="() => (newTransaction.accountId = account.accountId)"
+                    @click="() => (addEditTransaction.accountId = account.accountId)"
                   >
                     {{ account.name }}
                   </a>
@@ -155,7 +161,7 @@ function onKey(e: KeyboardEvent) {
                   <a
                     class="dropdown-item text-center"
                     :class="getCategoryStyle(category.type)"
-                    @click="() => (newTransaction.categoryId = category.categoryId)"
+                    @click="() => (addEditTransaction.categoryId = category.categoryId)"
                   >
                     {{ category.name }}
                   </a>
@@ -165,7 +171,7 @@ function onKey(e: KeyboardEvent) {
                   <a
                     class="dropdown-item text-center"
                     :class="getCategoryStyle(category.type)"
-                    @click="() => (newTransaction.categoryId = category.categoryId)"
+                    @click="() => (addEditTransaction.categoryId = category.categoryId)"
                   >
                     {{ category.name }}
                   </a>
@@ -190,10 +196,10 @@ function onKey(e: KeyboardEvent) {
           </div>
           <div class="col">
             <vue-date-picker
-              v-model="newTransaction.createdDateTime"
+              v-model="addEditTransaction.createdDateTime"
               :enable-time-picker="false"
               :clearable="false"
-              :format="formatDate"
+              :format="formatLatvianDate"
               :ui="{ input: 'date' }"
               auto-apply
               class="mt-4"
@@ -203,7 +209,7 @@ function onKey(e: KeyboardEvent) {
         </div>
         <div class="col-8">
           <input
-            v-model="newTransaction.comment"
+            v-model="addEditTransaction.comment"
             placeholder="Komentārs..."
             type="text"
             class="comment-input"

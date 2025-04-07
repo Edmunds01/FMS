@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using web_api.Exceptions;
 using web_api.Repository.Interfaces;
 using web_api.Services.Interfaces;
 
@@ -59,7 +60,7 @@ public class CategoryService(
 
         if (account == null || account.UserId != UserId)
         {
-            throw new NotSupportedException("Category not found or wrong user");
+            throw new NotAuthorizedException(nameof(Models.Category), categoryId);
         }
     }
 
@@ -71,6 +72,6 @@ public class CategoryService(
 
         updateCategory(category);
 
-        await _transactionRepository.SaveChanges();
+        await _transactionRepository.SaveChangesAsync();
     }
 }

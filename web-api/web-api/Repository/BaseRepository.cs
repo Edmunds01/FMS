@@ -14,7 +14,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
         _dbSet = _context.Set<T>();
     }
 
-    public Task SaveChanges() => _context.SaveChangesAsync();
+    public Task SaveChangesAsync() => _context.SaveChangesAsync();
 
     public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
 
