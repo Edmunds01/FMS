@@ -1,8 +1,5 @@
 /web-api/web-api/obj
-/web-api/web-api/bin/Debug
-/web-api/web-api/bin/Release
-!/web-api/web-api/bin/bash/wait-for-sqlserver.sh
-
+/web-api/web-api/bin
 /web-api/.vs
 
 .vscode/settings.json

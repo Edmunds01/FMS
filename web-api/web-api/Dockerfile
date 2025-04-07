@@ -11,26 +11,13 @@ COPY . ./
 RUN dotnet publish -c Release -o /out
 
 # Use the official .NET runtime image for running the application
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /out .
 
-# Install SQL Server
-FROM mcr.microsoft.com/mssql/server:2022-latest AS sqlserver
-WORKDIR /app
-
-# Set environment variables for SQL Server
-ENV ACCEPT_EULA=Y
-ENV SA_PASSWORD=YourStrongPassword123
-ENV MSSQL_PID=Express
-
-# Expose the ports for the application and SQL Server
+# Expose the port the application runs on
 EXPOSE 5000
-EXPOSE 1433
+#EXPOSE 5001
 
-# Wait for SQL Server to initialize before starting the .NET application
-COPY wait-for-sqlserver.sh /app/wait-for-sqlserver.sh
-RUN chmod +x /app/wait-for-sqlserver.sh
-
-# Start SQL Server and wait for it to initialize, then start the .NET app
-CMD /bin/bash -c "/opt/mssql/bin/sqlservr & /app/wait-for-sqlserver.sh && dotnet web-api.dll"
+# Set the entry point for the application
+ENTRYPOINT ["dotnet", "web-api.dll"]
