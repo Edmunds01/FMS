@@ -9,23 +9,14 @@ import ModalWindow, { closeModal, openModal } from "@/components/global/ModalWin
 const confirmModalId = "confirmModal";
 
 const visible = ref(false);
-const title = ref("");
 const message = ref("");
-const doNotReopenOnSuccess = ref(false);
 let resolver: ((value: boolean) => void) | null = null;
 
 const isConfirmed = ref(false);
 
-function open(
-  titleRaw: string,
-  messageRaw: string,
-  reopenModalId: string,
-  doNotReopenOnSuccessRaw: boolean = false,
-): Promise<boolean> {
-  title.value = titleRaw;
+function open(messageRaw: string, reopenModalId: string): Promise<boolean> {
   message.value = messageRaw;
   visible.value = true;
-  doNotReopenOnSuccess.value = doNotReopenOnSuccessRaw;
   isConfirmModal = true;
 
   closeModal(reopenModalId);
@@ -34,7 +25,7 @@ function open(
     visible.value = false;
     isConfirmModal = false;
 
-    if (!isConfirmed.value || !doNotReopenOnSuccess.value) {
+    if (!isConfirmed.value) {
       openModal(reopenModalId, () => {});
     }
   });
@@ -70,7 +61,7 @@ if (internal) {
 <template>
   <ModalWindow v-if="visible" :id="confirmModalId" :width="25">
     <template #header>
-      <h2 class="confirm-title">{{ title }}</h2>
+      <h2 class="confirm-title">{{ "Apsitpriniet" }}</h2>
     </template>
     <template #body>
       <div class="confirm-modal">

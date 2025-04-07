@@ -1,24 +1,43 @@
 <script setup lang="ts">
-import type { NewCategory } from "@/api/auto-generated-client";
-import { ref } from "vue";
+import { api, CategoryType, type Category, type NewCategory } from "@/api/auto-generated-client";
+import { inject, ref } from "vue";
 import SelectIconDropdown from "@/components/global/SelectIconDropdown.vue";
 import SaveOrCloseInModal from "@/components/global/SaveOrCloseInModal.vue";
-import ModalWindow from "@/components/global/ModalWindow.vue";
+import ModalWindow, { addCategoryModalId } from "@/components/global/ModalWindow.vue";
+import { categoriesKey, addCategoryKey } from "@/utils/keys";
 
-const props = defineProps<{
-  id: string;
-  newCategory: NewCategory;
-}>();
+const { categories, fetchCategories } = inject(categoriesKey)!;
 
-const newCategory = ref(props.newCategory);
+const defaultCategory = {
+  name: "",
+  icon: "wallet",
+  type: CategoryType.Expense,
+} as NewCategory;
 
-defineEmits<{
-  (e: "add-category"): void;
-}>();
+const newCategory = ref({ ...defaultCategory });
+
+const { close } = inject(addCategoryKey)!;
+
+// TODO: do not allow to save with empty name
+async function save() {
+  categories.value.push({
+    ...newCategory.value,
+    sumOfTransactions: 0,
+    showDeleteButton: true,
+  } as Category);
+
+  setTimeout(async () => {
+    await api.addCategory(newCategory.value);
+    await fetchCategories();
+    newCategory.value = { ...defaultCategory };
+  }, 0);
+
+  close();
+}
 </script>
 
 <template>
-  <ModalWindow :id="id" :height="6">
+  <ModalWindow :id="addCategoryModalId" :height="6">
     <template #body>
       <div class="d-flex align-items-center h-100">
         <SelectIconDropdown
@@ -36,10 +55,8 @@ defineEmits<{
             />
           </div>
         </div>
-        <SaveOrCloseInModal @save="$emit('add-category')" />
+        <SaveOrCloseInModal @save="save" />
       </div>
     </template>
   </ModalWindow>
 </template>
-
-<style scoped lang="scss"></style>

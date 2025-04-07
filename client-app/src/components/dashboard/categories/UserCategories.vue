@@ -1,140 +1,19 @@
 <script setup lang="ts">
 import CategoryButton from "@/components/dashboard/categories/CategoryButton.vue";
 import AddCategoryButton from "@/components/dashboard/categories/AddCategoryButton.vue";
-import { closeModal, openModal } from "@/components/global/ModalWindow.vue";
-import { computed, ref } from "vue";
-import { icons } from "@/components/global/FaIcon.vue";
+import { computed, inject } from "vue";
+import { CategoryType, type Category } from "@/api/auto-generated-client";
 import {
-  api,
-  CategoryType,
-  type Category,
-  type NewCategory,
-  type Transaction,
-} from "@/api/auto-generated-client";
-import AddCategoryModal from "@/components/dashboard/categories/AddCategoryModal.vue";
-import EditCategoryModal from "@/components/dashboard/categories/EditCategoryModal.vue";
-import { isConfirmModal } from "@/components/global/ConfirmAction.vue";
-import TransactionListModal from "../transactions/TransactionListModal.vue";
-import TransactionAddModal from "../transactions/TransactionAddModal.vue";
-
-const addCategoryModalId = "addCategoryModal";
-const editCategoryModalId = "editCategoryModal";
-const transactionListModalId = "transactionListModal";
-const transactionAddModalId = "transactionAddModal";
+  addCategoryKey,
+  addEditTransactionKey,
+  editCategoryKey,
+  transactionListKey,
+} from "@/utils/keys";
 
 const props = defineProps<{
-  transactionType: CategoryType;
+  categoryType: CategoryType;
   categories: Category[];
 }>();
-
-const emit = defineEmits<{
-  (e: "add-category", category: NewCategory): void;
-  (e: "delete-category", categoryId: number): void;
-}>();
-
-const newCategory = ref<NewCategory>({
-  name: "",
-  icon: icons[0],
-  type: CategoryType.Expense,
-});
-
-const selectedCategory = ref<Category | null>(null);
-const selectedTransactionCategory = ref<Category | null>(null);
-const selectedTransaction = ref<Transaction | null>(null);
-
-const isAddCategory = ref(false);
-const isAddTransaction = ref(false);
-const openedFromTransactionList = ref(false);
-const needToReload = ref(false);
-
-function showAddCategoryModal() {
-  isAddCategory.value = true;
-
-  const onModalHidden = () => {
-    isAddCategory.value = false;
-    newCategory.value.name = "";
-    newCategory.value.icon = icons[0];
-  };
-
-  openModal(addCategoryModalId, onModalHidden);
-}
-
-function showEditCategoryModal(category: Category) {
-  selectedCategory.value = category;
-
-  const onModalHidden = () => {
-    if (!isConfirmModal) {
-      selectedCategory.value = null;
-    }
-  };
-
-  openModal(editCategoryModalId, onModalHidden);
-}
-
-function showTransactionListModal(category: Category) {
-  selectedTransactionCategory.value = category;
-
-  const onModalHidden = () => {
-    if (!isAddTransaction.value && !selectedTransaction.value) {
-      selectedTransactionCategory.value = null;
-    }
-  };
-
-  openModal(transactionListModalId, onModalHidden);
-}
-
-function showTransactionAddModal(category: Category | null = null) {
-  if (category) {
-    selectedTransactionCategory.value = category;
-  } else {
-    openedFromTransactionList.value = true;
-  }
-
-  isAddTransaction.value = true;
-  closeModal(transactionListModalId, true);
-
-  const onModalHidden = () => {
-    if (!openedFromTransactionList.value) {
-      selectedTransactionCategory.value = null;
-    }
-
-    openedFromTransactionList.value = false;
-    isAddTransaction.value = false;
-  };
-
-  openModal(transactionAddModalId, onModalHidden);
-}
-
-function showTransactionEditModal(transaction: Transaction) {
-  selectedTransaction.value = transaction;
-  openedFromTransactionList.value = true;
-
-  closeModal(transactionListModalId, true);
-
-  const onModalHidden = () => {
-    if (!openedFromTransactionList.value) {
-      selectedTransactionCategory.value = null;
-      selectedTransaction.value = null;
-    }
-
-    openedFromTransactionList.value = false;
-  };
-
-  openModal(transactionAddModalId, onModalHidden);
-}
-
-function addTransaction(transaction: Transaction) {
-  setTimeout(async () => {
-    await api.upsertTransaction(transaction);
-    needToReload.value = !needToReload.value;
-  }, 0);
-
-  closeModal(transactionAddModalId);
-
-  if (openedFromTransactionList.value) {
-    showTransactionListModal(selectedTransactionCategory.value!);
-  }
-}
 
 const transactionSum = computed(() => {
   return (
@@ -144,26 +23,6 @@ const transactionSum = computed(() => {
   );
 });
 
-async function addCategory() {
-  const newCategoryData = {
-    ...newCategory.value,
-    type: props.transactionType,
-  };
-
-  newCategory.value.name = "";
-  newCategory.value.icon = icons[0];
-  emit("add-category", newCategoryData);
-  closeModal(addCategoryModalId);
-}
-
-async function deleteCategory(categoryId: number) {
-  closeModal(editCategoryModalId);
-
-  emit("delete-category", categoryId);
-
-  api.deleteCategory(categoryId);
-}
-
 function mapCategoryTypeName(category: CategoryType): string {
   switch (category) {
     case CategoryType.Expense:
@@ -172,13 +31,18 @@ function mapCategoryTypeName(category: CategoryType): string {
       return "Ienākumi";
   }
 }
+
+const { open: openAddCategory } = inject(addCategoryKey)!;
+const { open: openEditCategory } = inject(editCategoryKey)!;
+const { open: openTransactionList } = inject(transactionListKey)!;
+const { open: openAddTransaction } = inject(addEditTransactionKey)!;
 </script>
 
 <template>
   <div class="container-fluid transaction-container">
     <div class="row sticky-header second-row-height border-bottom border-end text-center">
       <div class="col text-center full-center-text fs-5">
-        <div>{{ mapCategoryTypeName(transactionType) }}</div>
+        <div>{{ mapCategoryTypeName(categoryType) }}</div>
         <div>{{ transactionSum.toEurFormat() }}</div>
       </div>
     </div>
@@ -190,47 +54,21 @@ function mapCategoryTypeName(category: CategoryType): string {
             :key="category.categoryId"
             :category="category"
             class="category-width user-select-none"
-            @left-click="showTransactionListModal(category)"
-            @right-click="showEditCategoryModal(category)"
-            @double-click="showTransactionAddModal(category)"
+            @left-click="(c) => openTransactionList(c, categoryType)"
+            @right-click="openEditCategory"
+            @double-click="
+              console.log('double click');
+              openAddTransaction(category, categoryType);
+            "
           />
           <AddCategoryButton
-            :type="transactionType"
+            :type="categoryType"
             class="category-width user-select-none"
-            @left-click="showAddCategoryModal"
+            @left-click="openAddCategory(categoryType)"
           />
         </div>
       </div>
     </div>
-    <AddCategoryModal
-      v-if="isAddCategory"
-      :id="addCategoryModalId"
-      :new-category="newCategory"
-      @add-category="addCategory"
-      @delete-category="deleteCategory"
-    />
-    <EditCategoryModal
-      v-if="selectedCategory"
-      :id="editCategoryModalId"
-      :category="selectedCategory"
-      @delete-category="deleteCategory"
-    />
-    <TransactionListModal
-      v-if="selectedTransactionCategory"
-      :id="transactionListModalId"
-      :category="selectedTransactionCategory"
-      :transaction-type
-      :need-to-reload
-      @add-transaction="showTransactionAddModal"
-      @edit-transaction="showTransactionEditModal"
-    />
-    <TransactionAddModal
-      v-if="isAddTransaction || selectedTransaction"
-      :id="transactionAddModalId"
-      :from-category="selectedTransactionCategory!"
-      :transaction="selectedTransaction"
-      @add-transaction="addTransaction"
-    />
   </div>
 </template>
 

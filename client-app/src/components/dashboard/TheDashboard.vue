@@ -2,16 +2,17 @@
 import TheDateSelect from "./TheDateSelect.vue";
 import TheAccounts from "./accounts/TheAccounts.vue";
 import UserCategories from "./categories/UserCategories.vue";
-import {
-  api,
-  CategoryType,
-  type Account,
-  type Category,
-  type NewCategory,
-} from "@/api/auto-generated-client";
+import { api, CategoryType, type Account, type Category } from "@/api/auto-generated-client";
 import { computed, onMounted, provide, ref } from "vue";
 import FaIcon from "@/components/global/FaIcon.vue";
 import { accountsKey, categoriesKey } from "@/utils/keys";
+import TheDashboardModals from "./TheDashboardModals.vue";
+import {
+  useAddCategoryModal,
+  useAddTransactionListModal,
+  useEditCategoryModal,
+  useTransactionListModal,
+} from "./modals";
 
 // TODO: There is a bug when try to add transaction from transactionList modal
 // Open the Category dropdown and click outside the modal
@@ -32,22 +33,6 @@ async function fetchAccounts() {
   accounts.value = await api.accounts();
 }
 
-function addCategory(newCategory: NewCategory) {
-  categories.value.push({
-    ...newCategory,
-    sumOfTransactions: 0,
-  } as Category);
-
-  setTimeout(async () => {
-    await api.addCategory(newCategory);
-    await fetchCategories();
-  }, 0);
-}
-
-function deleteCategory(categoryId: number) {
-  categories.value = categories.value.filter((category) => category.categoryId !== categoryId);
-}
-
 const expense = computed(() =>
   categories.value.filter((category) => category.type === CategoryType.Expense),
 );
@@ -56,7 +41,12 @@ const income = computed(() =>
 );
 
 provide(accountsKey, { accounts, fetchAccounts });
-provide(categoriesKey, categories);
+provide(categoriesKey, { categories, fetchCategories });
+
+useAddCategoryModal();
+useEditCategoryModal();
+useTransactionListModal();
+useAddTransactionListModal();
 
 onMounted(() => {
   fetchCategories();
@@ -66,6 +56,7 @@ onMounted(() => {
 
 <template>
   <div class="container-fluid vh-100 text-center">
+    <TheDashboardModals />
     <title>Vadības panelis</title>
     <div class="row vh-100">
       <div class="col-2 p-0 border-end bf-neutral">
@@ -85,20 +76,10 @@ onMounted(() => {
           </div>
           <div class="row vh-100">
             <div class="col-3 p-0 bg-expense">
-              <UserCategories
-                :transaction-type="CategoryType.Expense"
-                :categories="expense"
-                @add-category="addCategory"
-                @delete-category="deleteCategory"
-              />
+              <UserCategories :category-type="CategoryType.Expense" :categories="expense" />
             </div>
             <div class="col-3 p-0 bg-income">
-              <UserCategories
-                :transaction-type="CategoryType.Income"
-                :categories="income"
-                @add-category="addCategory"
-                @delete-category="deleteCategory"
-              />
+              <UserCategories :category-type="CategoryType.Income" :categories="income" />
             </div>
             <div class="col p-0 bf-neutral">Stats</div>
           </div>

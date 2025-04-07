@@ -1,26 +1,12 @@
 <script setup lang="ts">
-import { api, CategoryType, type Category, type Transaction } from "@/api/auto-generated-client";
-import ModalWindow from "@/components/global/ModalWindow.vue";
-import { computed, onMounted, ref, watch } from "vue";
+import { api, CategoryType, type Transaction } from "@/api/auto-generated-client";
+import ModalWindow, { transactionListModalId } from "@/components/global/ModalWindow.vue";
+import { computed, inject, onMounted, ref, watch } from "vue";
 import FaIcon from "@/components/global/FaIcon.vue";
 import { formatLatvianDate } from "../TheDateSelect.vue";
+import { transactionListKey } from "@/utils/keys";
 
-const props = defineProps<{
-  id: string;
-  category: Category;
-  transactionType: CategoryType;
-  needToReload: boolean;
-}>();
-
-watch(
-  () => props.needToReload,
-  () => fetchTransactions(),
-);
-
-defineEmits<{
-  (e: "add-transaction"): void;
-  (e: "edit-transaction", transaction: Transaction): void;
-}>();
+const { categoryType, category: category } = inject(transactionListKey)!;
 
 const transactions = ref<Transaction[]>();
 
@@ -31,11 +17,11 @@ type TransactionSortMode = {
 
 const sortMode = ref<TransactionSortMode>({ mode: 2, order: "desc" });
 const transactionClass = computed(() =>
-  props.transactionType === CategoryType.Expense ? "table-cell-expense" : "table-cell-income",
+  categoryType.value === CategoryType.Expense ? "table-cell-expense" : "table-cell-income",
 );
 
 async function fetchTransactions() {
-  transactions.value = await api.categoryTransactions(props.category.categoryId);
+  transactions.value = await api.categoryTransactions(category.value!.categoryId);
   sortByDate(false);
 }
 
@@ -87,17 +73,18 @@ watch(
 );
 
 onMounted(async () => {
+  console.log();
   await fetchTransactions();
 });
 </script>
 
 <template>
-  <ModalWindow :id remove-bottom-border-radius>
+  <ModalWindow :id="transactionListModalId" remove-bottom-border-radius>
     <template #body>
       <div>
         <div class="align-items-center position-relative">
           <div class="text-center h1 category-name">
-            {{ category.name }}
+            {{ category?.name }}
             <button
               title="Pievienot tranzakciju"
               class="add-button"

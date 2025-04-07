@@ -1,31 +1,24 @@
 <script setup lang="ts">
-import { CategoryType, type Category, type Transaction } from "@/api/auto-generated-client";
-import ModalWindow from "@/components/global/ModalWindow.vue";
+import { api, CategoryType, type Transaction } from "@/api/auto-generated-client";
+import ModalWindow, {
+  transactionAddModalId as transactionAddEditModalId,
+} from "@/components/global/ModalWindow.vue";
 import { computed, inject, onMounted, ref } from "vue";
-import { accountsKey, categoriesKey } from "@/utils/keys";
+import { accountsKey, addEditTransactionKey, categoriesKey } from "@/utils/keys";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import { formatLatvianDate } from "../TheDateSelect.vue";
 
-const props = defineProps<{
-  id: string;
-  fromCategory: Category;
-  transaction?: Transaction | null;
-}>();
-
-const emit = defineEmits<{
-  (e: "add-transaction", transaction: Transaction): void;
-}>();
-
-const categories = inject(categoriesKey);
+const { categories } = inject(categoriesKey)!;
 const { accounts } = inject(accountsKey)!;
+const { transaction: editTransaction, category, close } = inject(addEditTransactionKey)!;
 
-const addEditTransaction = ref<Transaction>({
-  transactionId: props.transaction?.transactionId ?? undefined,
-  accountId: props.transaction?.accountId ?? accounts.value[0].accountId,
-  categoryId: props.transaction?.categoryId ?? props.fromCategory.categoryId,
-  comment: props.transaction?.comment ?? "",
-  amount: props.transaction?.amount ?? 0,
-  createdDateTime: props.transaction?.createdDateTime ?? new Date(),
+const transaction = ref<Transaction>({
+  transactionId: editTransaction.value?.transactionId ?? undefined,
+  accountId: editTransaction.value?.accountId ?? accounts.value[0].accountId,
+  categoryId: editTransaction.value?.categoryId ?? category.value!.categoryId,
+  comment: editTransaction.value?.comment ?? "",
+  amount: editTransaction.value?.amount ?? 0,
+  createdDateTime: editTransaction.value?.createdDateTime ?? new Date(),
 });
 
 const amountInput = ref<HTMLElement>();
@@ -33,13 +26,11 @@ const amount = ref((0).toEurFormat());
 const firstCategoryType = ref<CategoryType>(CategoryType.Expense);
 
 const selectedCategory = computed(() => {
-  return categories?.value.find(
-    (category) => category.categoryId === addEditTransaction.value.categoryId,
-  );
+  return categories?.value.find((category) => category.categoryId === transaction.value.categoryId);
 });
 
 const selectedAccount = computed(() => {
-  return accounts.value.find((account) => account.accountId === addEditTransaction.value.accountId);
+  return accounts.value.find((account) => account.accountId === transaction.value.accountId);
 });
 
 const transactionClass = computed(() => getCategoryStyle(selectedCategory.value?.type));
@@ -57,21 +48,26 @@ const secondCategories = computed(() => {
 });
 
 async function save() {
-  addEditTransaction.value.amount = amount.value.toNumberFromEurFormat();
+  transaction.value.amount = amount.value.toNumberFromEurFormat();
 
   const affectedCategory = categories?.value.filter(
-    (c) => c.categoryId === addEditTransaction.value.categoryId,
+    (c) => c.categoryId === transaction.value.categoryId,
   )[0];
   if (affectedCategory) {
-    affectedCategory.sumOfTransactions += addEditTransaction.value.amount;
+    affectedCategory.sumOfTransactions += transaction.value.amount;
   }
 
-  emit("add-transaction", addEditTransaction.value);
+  setTimeout(async () => {
+    await api.upsertTransaction(transaction.value);
+  });
+
+  close();
 }
 
 onMounted(() => {
-  firstCategoryType.value = props.fromCategory.type;
-  amount.value = addEditTransaction.value.amount.toString();
+  console.log("TransactionAddModal mounted");
+  firstCategoryType.value = category.value!.type;
+  amount.value = transaction.value.amount.toString();
   onFocusLost();
 });
 
@@ -103,7 +99,7 @@ function onKey(e: KeyboardEvent) {
 </script>
 
 <template>
-  <ModalWindow :id>
+  <ModalWindow :id="transactionAddEditModalId">
     <template #body>
       <div class="row">
         <div class="col-6">
@@ -119,13 +115,15 @@ function onKey(e: KeyboardEvent) {
 
               <ul class="dropdown-menu style-dropdown-menu dd-overflow">
                 <li>
-                  <span class="dropdown-header text-center" style="font-size: 1.6rem"> Konts </span>
+                  <span class="dropdown-header text-center" style="font-size: 1.6rem">
+                    Konts
+                  </span>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li v-for="account in accounts" :key="account.accountId">
                   <a
                     class="dropdown-item text-center"
-                    @click="() => (addEditTransaction.accountId = account.accountId)"
+                    @click="() => (transaction.accountId = account.accountId)"
                   >
                     {{ account.name }}
                   </a>
@@ -155,7 +153,7 @@ function onKey(e: KeyboardEvent) {
                   <a
                     class="dropdown-item text-center"
                     :class="getCategoryStyle(category.type)"
-                    @click="() => (addEditTransaction.categoryId = category.categoryId)"
+                    @click="() => (transaction.categoryId = category.categoryId)"
                   >
                     {{ category.name }}
                   </a>
@@ -165,7 +163,7 @@ function onKey(e: KeyboardEvent) {
                   <a
                     class="dropdown-item text-center"
                     :class="getCategoryStyle(category.type)"
-                    @click="() => (addEditTransaction.categoryId = category.categoryId)"
+                    @click="() => (transaction.categoryId = category.categoryId)"
                   >
                     {{ category.name }}
                   </a>
@@ -190,7 +188,7 @@ function onKey(e: KeyboardEvent) {
           </div>
           <div class="col">
             <vue-date-picker
-              v-model="addEditTransaction.createdDateTime"
+              v-model="transaction.createdDateTime"
               :enable-time-picker="false"
               :clearable="false"
               :format="formatLatvianDate"
@@ -203,7 +201,7 @@ function onKey(e: KeyboardEvent) {
         </div>
         <div class="col-8">
           <input
-            v-model="addEditTransaction.comment"
+            v-model="transaction.comment"
             placeholder="Komentārs..."
             type="text"
             class="comment-input"

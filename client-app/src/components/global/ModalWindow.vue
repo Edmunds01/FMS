@@ -1,4 +1,9 @@
 <script lang="ts">
+export const addCategoryModalId = "addCategoryModal";
+export const editCategoryModalId = "editCategoryModal";
+export const transactionListModalId = "transactionListModal";
+export const transactionAddModalId = "transactionAddModal";
+
 export function openModal(id: string, onModalHidden: (() => void) | undefined = undefined) {
   setTimeout(() => {
     const modal = document.getElementById(id);

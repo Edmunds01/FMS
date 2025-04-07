@@ -34,7 +34,9 @@ public class TransactionService(
 
         if (transactionRaw.TransactionId == default || transactionRaw.TransactionId == 0)
         {
+            transaction.TransactionId = 0;
             transaction.UserId = UserId;
+
             await _transactionRepository.InsertAsync(transaction);
         }
         else
