@@ -39,7 +39,7 @@ EXPOSE 5000
 EXPOSE 1433
 
 # Switch back to the default user
-USER root
+USER mssql
 
 # Start SQL Server and the .NET application
 CMD /bin/bash -c "/opt/mssql/bin/sqlservr & sleep 10 && dotnet web-api.dll"
