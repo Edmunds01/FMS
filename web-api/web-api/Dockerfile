@@ -38,8 +38,14 @@ COPY --from=build /out .
 EXPOSE 5000
 EXPOSE 1433
 
+# Copy the wait-for-sqlserver.sh script
+COPY wait-for-sqlserver.sh /app/wait-for-sqlserver.sh
+
+# Modify permissions for the script
+RUN chmod +x /app/wait-for-sqlserver.sh
+
 # Switch back to the default user
 USER mssql
 
-# Start SQL Server and the .NET application
-CMD /bin/bash -c "/opt/mssql/bin/sqlservr & sleep 10 && dotnet web-api.dll"
+# Start SQL Server and wait for it to initialize, then start the .NET app
+CMD /bin/bash -c "/opt/mssql/bin/sqlservr & /app/wait-for-sqlserver.sh && dotnet web-api.dll"
