@@ -115,9 +115,7 @@ function onKey(e: KeyboardEvent) {
 
               <ul class="dropdown-menu style-dropdown-menu dd-overflow">
                 <li>
-                  <span class="dropdown-header text-center" style="font-size: 1.6rem">
-                    Konts
-                  </span>
+                  <span class="dropdown-header text-center" style="font-size: 1.6rem"> Konts </span>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li v-for="account in accounts" :key="account.accountId">

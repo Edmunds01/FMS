@@ -31,17 +31,3 @@ watch(isAddCategoryOpen, () => {
     <TransactionAddEditModal v-if="!!isAddTransactionOpen" />
   </div>
 </template>
-
-<style scoped>
-.bg-income {
-  background-color: #ecf5ea !important;
-}
-
-.bg-expense {
-  background-color: #f8e9e9 !important;
-}
-
-.bf-neutral {
-  background-color: #e4eef7 !important;
-}
-</style>
