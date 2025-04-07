@@ -10,26 +10,19 @@ RUN dotnet restore
 COPY . ./
 RUN dotnet publish -c Release -o /out
 
-# Use the SQL Server image as the base for the runtime
-FROM mcr.microsoft.com/mssql/server:2022-latest AS runtime
+# Use the official .NET runtime image for running the application
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
+COPY --from=build /out .
 
-# Install the .NET runtime
-RUN apt-get update && \
-    apt-get install -y wget && \
-    wget https://dot.net/v1/dotnet-install.sh && \
-    chmod +x dotnet-install.sh && \
-    ./dotnet-install.sh --channel 8.0 --runtime aspnetcore && \
-    rm dotnet-install.sh && \
-    apt-get clean
+# Install SQL Server
+FROM mcr.microsoft.com/mssql/server:2022-latest AS sqlserver
+WORKDIR /app
 
 # Set environment variables for SQL Server
 ENV ACCEPT_EULA=Y
 ENV SA_PASSWORD=YourStrongPassword123
 ENV MSSQL_PID=Express
-
-# Copy the published .NET application
-COPY --from=build /out .
 
 # Expose the ports for the application and SQL Server
 EXPOSE 5000
