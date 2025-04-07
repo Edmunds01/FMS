@@ -74,14 +74,14 @@ onMounted(() => {
               </button>
             </div>
           </div>
-          <div class="row vh-100">
-            <div class="col-3 p-0 bg-expense">
+          <div class="row categories-columns">
+            <div class="col-3 p-0 bg-expense categories-columns">
               <UserCategories :category-type="CategoryType.Expense" :categories="expense" />
             </div>
-            <div class="col-3 p-0 bg-income">
+            <div class="col-3 p-0 bg-income categories-columns">
               <UserCategories :category-type="CategoryType.Income" :categories="income" />
             </div>
-            <div class="col p-0 bf-neutral">Stats</div>
+            <div class="col p-0 bf-neutral categories-columns">Stats</div>
           </div>
         </div>
       </div>
@@ -100,5 +100,9 @@ onMounted(() => {
 
 .bf-neutral {
   background-color: #e4eef7 !important;
+}
+
+.categories-columns {
+  height: calc(100vh - 5rem);
 }
 </style>
