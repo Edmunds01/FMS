@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import { api, CategoryType, type Transaction } from "@/api/auto-generated-client";
 import ModalWindow, { transactionListModalId } from "@/components/global/ModalWindow.vue";
-import { computed, inject, onMounted, ref, watch } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import FaIcon from "@/components/global/FaIcon.vue";
 import { formatLatvianDate } from "../TheDateSelect.vue";
-import { transactionListKey } from "@/utils/keys";
+import { addEditTransactionKey, transactionListKey } from "@/utils/keys";
 
-const { categoryType, category: category } = inject(transactionListKey)!;
+const { categoryType, category: category, close } = inject(transactionListKey)!;
+const { openAdd: openAddTransactionModal, openEdit: openEditTransactionModal } =
+  inject(addEditTransactionKey)!;
+const { open: openTransactionList, boolForWatch } = inject(transactionListKey)!;
+
+function openEditTransaction(transaction: Transaction) {
+  close();
+  openEditTransactionModal(category.value!, categoryType.value!, transaction, openTransactionList);
+}
 
 const transactions = ref<Transaction[]>();
 
@@ -42,6 +50,15 @@ function sortByDate(isAscending: boolean) {
 }
 
 watch(
+  () => boolForWatch.value,
+  async () => {
+    console.log("boolChanges");
+    await fetchTransactions();
+  },
+  { immediate: true },
+);
+
+watch(
   () => sortMode.value,
   () => {
     if (!transactions.value) return;
@@ -71,11 +88,6 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(async () => {
-  console.log();
-  await fetchTransactions();
-});
 </script>
 
 <template>
@@ -88,7 +100,10 @@ onMounted(async () => {
             <button
               title="Pievienot tranzakciju"
               class="add-button"
-              @click="$emit('add-transaction')"
+              @click="
+                close();
+                openAddTransactionModal(category!, categoryType!, openTransactionList);
+              "
             >
               <FaIcon icon-name="plus" size="sm" class="add-icon" />
             </button>
@@ -138,21 +153,21 @@ onMounted(async () => {
                 <td
                   :class="transactionClass"
                   class="clickable"
-                  @click="$emit('edit-transaction', transaction)"
+                  @click="openEditTransaction(transaction)"
                 >
                   {{ transaction.amount.toEurFormat() }}
                 </td>
                 <td
                   :class="transactionClass"
                   class="clickable"
-                  @click="$emit('edit-transaction', transaction)"
+                  @click="openEditTransaction(transaction)"
                 >
                   {{ transaction.comment }}
                 </td>
                 <td
                   :class="transactionClass"
                   class="clickable"
-                  @click="$emit('edit-transaction', transaction)"
+                  @click="openEditTransaction(transaction)"
                 >
                   {{ formatLatvianDate(transaction.createdDateTime) }}
                 </td>

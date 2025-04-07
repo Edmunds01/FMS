@@ -35,7 +35,7 @@ function mapCategoryTypeName(category: CategoryType): string {
 const { open: openAddCategory } = inject(addCategoryKey)!;
 const { open: openEditCategory } = inject(editCategoryKey)!;
 const { open: openTransactionList } = inject(transactionListKey)!;
-const { open: openAddTransaction } = inject(addEditTransactionKey)!;
+const { openAdd: openAddTransaction } = inject(addEditTransactionKey)!;
 </script>
 
 <template>
@@ -56,10 +56,7 @@ const { open: openAddTransaction } = inject(addEditTransactionKey)!;
             class="category-width user-select-none"
             @left-click="(c) => openTransactionList(c, categoryType)"
             @right-click="openEditCategory"
-            @double-click="
-              console.log('double click');
-              openAddTransaction(category, categoryType);
-            "
+            @double-click="openAddTransaction(category, categoryType)"
           />
           <AddCategoryButton
             :type="categoryType"

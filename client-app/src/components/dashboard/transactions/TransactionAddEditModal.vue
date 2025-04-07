@@ -4,13 +4,19 @@ import ModalWindow, {
   transactionAddModalId as transactionAddEditModalId,
 } from "@/components/global/ModalWindow.vue";
 import { computed, inject, onMounted, ref } from "vue";
-import { accountsKey, addEditTransactionKey, categoriesKey } from "@/utils/keys";
+import {
+  accountsKey,
+  addEditTransactionKey,
+  categoriesKey,
+  transactionListKey,
+} from "@/utils/keys";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import { formatLatvianDate } from "../TheDateSelect.vue";
 
 const { categories } = inject(categoriesKey)!;
 const { accounts } = inject(accountsKey)!;
 const { transaction: editTransaction, category, close } = inject(addEditTransactionKey)!;
+const { fetchData } = inject(transactionListKey)!;
 
 const transaction = ref<Transaction>({
   transactionId: editTransaction.value?.transactionId ?? undefined,
@@ -59,13 +65,13 @@ async function save() {
 
   setTimeout(async () => {
     await api.upsertTransaction(transaction.value);
+    fetchData();
   });
 
   close();
 }
 
 onMounted(() => {
-  console.log("TransactionAddModal mounted");
   firstCategoryType.value = category.value!.type;
   amount.value = transaction.value.amount.toString();
   onFocusLost();

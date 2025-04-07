@@ -94,6 +94,7 @@ export function useEditCategoryModal() {
 export function useTransactionListModal() {
   const categoryType = ref<CategoryType | undefined>();
   const category = ref<Category | undefined>();
+  const boolForWatch = ref(false);
 
   function openTransactionList(categoryRaw: Category, categoryTypeRaw: CategoryType) {
     console.log("Open Transaction List");
@@ -114,15 +115,21 @@ export function useTransactionListModal() {
     }, 0);
   }
 
+  function fetchData() {
+    boolForWatch.value = !boolForWatch.value;
+  }
+
   provide(transactionListKey, {
     category,
     categoryType,
+    boolForWatch,
+    fetchData,
     open: openTransactionList,
     close: closeTransactionList,
   });
 }
 
-export function useAddTransactionListModal() {
+export function useAddEditTransactionListModal() {
   const categoryType = ref<CategoryType | undefined>();
   const category = ref<Category | undefined>();
   const transaction = ref<Transaction | undefined>();
@@ -130,7 +137,28 @@ export function useAddTransactionListModal() {
   function openTransactionList(
     categoryRaw: Category,
     categoryTypeRaw: CategoryType,
-    transactionRaw?: Transaction,
+    reopenFunction?: (categoryRaw: Category, categoryTypeRaw: CategoryType) => void,
+  ) {
+    console.log("Open Add Transaction");
+
+    category.value = categoryRaw;
+    categoryType.value = categoryTypeRaw;
+
+    const onModalHidden = () => {
+      closeTransactionList();
+      if (reopenFunction) {
+        reopenFunction(categoryRaw, categoryTypeRaw);
+      }
+    };
+
+    openModal(transactionAddEditModalId, onModalHidden);
+  }
+
+  function openEditTransactionList(
+    categoryRaw: Category,
+    categoryTypeRaw: CategoryType,
+    transactionRaw: Transaction,
+    reopenFunction: (categoryRaw: Category, categoryTypeRaw: CategoryType) => void,
   ) {
     console.log("Open Add Transaction");
 
@@ -138,7 +166,12 @@ export function useAddTransactionListModal() {
     categoryType.value = categoryTypeRaw;
     transaction.value = transactionRaw;
 
-    openModal(transactionAddEditModalId, closeTransactionList);
+    const onModalHidden = () => {
+      closeTransactionList();
+      reopenFunction(categoryRaw, categoryTypeRaw);
+    };
+
+    openModal(transactionAddEditModalId, onModalHidden);
   }
 
   function closeTransactionList() {
@@ -156,7 +189,8 @@ export function useAddTransactionListModal() {
     category,
     categoryType,
     transaction,
-    open: openTransactionList,
+    openAdd: openTransactionList,
+    openEdit: openEditTransactionList,
     close: closeTransactionList,
   });
 }

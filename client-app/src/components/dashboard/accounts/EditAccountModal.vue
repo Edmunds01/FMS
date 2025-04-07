@@ -22,12 +22,7 @@ const emit = defineEmits<{
 const confirm = useConfirm();
 
 async function deleteAccount() {
-  const result = await confirm(
-    "Apsitpriniet",
-    `Vēlaties izdzēst kontu "${editAccount.value.name}"`,
-    props.id,
-    true,
-  );
+  const result = await confirm(`Vēlaties izdzēst kontu "${editAccount.value.name}"`, props.id);
 
   if (result) {
     emit("delete-account", props.account.accountId);

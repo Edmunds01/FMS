@@ -9,7 +9,7 @@ import { accountsKey, categoriesKey } from "@/utils/keys";
 import TheDashboardModals from "./TheDashboardModals.vue";
 import {
   useAddCategoryModal,
-  useAddTransactionListModal,
+  useAddEditTransactionListModal,
   useEditCategoryModal,
   useTransactionListModal,
 } from "./modals";
@@ -46,7 +46,7 @@ provide(categoriesKey, { categories, fetchCategories });
 useAddCategoryModal();
 useEditCategoryModal();
 useTransactionListModal();
-useAddTransactionListModal();
+useAddEditTransactionListModal();
 
 onMounted(() => {
   fetchCategories();
