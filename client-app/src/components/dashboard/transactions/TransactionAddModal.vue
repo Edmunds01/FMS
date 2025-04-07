@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import {
-  CategoryType,
-  type Category,
-  type Transaction,
-} from "@/api/auto-generated-client";
+import { CategoryType, type Category, type Transaction } from "@/api/auto-generated-client";
 import ModalWindow from "@/components/global/ModalWindow.vue";
 import { computed, inject, onMounted, ref } from "vue";
 import { accountsKey, categoriesKey } from "@/utils/keys";
@@ -123,9 +119,7 @@ function onKey(e: KeyboardEvent) {
 
               <ul class="dropdown-menu style-dropdown-menu dd-overflow">
                 <li>
-                  <span class="dropdown-header text-center" style="font-size: 1.6rem">
-                    Konts
-                  </span>
+                  <span class="dropdown-header text-center" style="font-size: 1.6rem"> Konts </span>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li v-for="account in accounts" :key="account.accountId">
