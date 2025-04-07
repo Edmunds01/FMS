@@ -14,6 +14,9 @@ RUN dotnet publish -c Release -o /out
 FROM mcr.microsoft.com/mssql/server:2022-latest AS runtime
 WORKDIR /app
 
+# Switch to root to install .NET runtime
+USER root
+
 # Install the .NET runtime
 RUN apt-get update && \
     apt-get install -y wget && \
@@ -38,8 +41,7 @@ EXPOSE 1433
 # Copy the wait-for-sqlserver.sh script
 COPY wait-for-sqlserver.sh /app/wait-for-sqlserver.sh
 
-# Switch to root to modify permissions
-USER root
+# Modify permissions for the script
 RUN chmod +x /app/wait-for-sqlserver.sh
 
 # Switch back to the default user
