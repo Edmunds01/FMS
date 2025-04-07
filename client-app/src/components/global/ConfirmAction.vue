@@ -61,7 +61,7 @@ if (internal) {
 <template>
   <ModalWindow v-if="visible" :id="confirmModalId" :width="25">
     <template #header>
-      <h2 class="confirm-title">{{ "Apsitpriniet" }}</h2>
+      <h2 class="confirm-title">{{ "Apstipriniet" }}</h2>
     </template>
     <template #body>
       <div class="confirm-modal">

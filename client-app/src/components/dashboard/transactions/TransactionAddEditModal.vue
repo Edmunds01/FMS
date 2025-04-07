@@ -12,10 +12,16 @@ import {
 } from "@/utils/keys";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import { formatLatvianDate } from "../TheDateSelect.vue";
+import FaIcon from "@/components/global/FaIcon.vue";
 
 const { categories } = inject(categoriesKey)!;
 const { accounts } = inject(accountsKey)!;
-const { transaction: editTransaction, category, close } = inject(addEditTransactionKey)!;
+const {
+  transaction: editTransaction,
+  category,
+  close,
+  openConfirmModal,
+} = inject(addEditTransactionKey)!;
 const { fetchData } = inject(transactionListKey)!;
 
 const transaction = ref<Transaction>({
@@ -37,6 +43,10 @@ const selectedCategory = computed(() => {
 
 const selectedAccount = computed(() => {
   return accounts.value.find((account) => account.accountId === transaction.value.accountId);
+});
+
+const isEdit = computed(() => {
+  return !!transaction.value.transactionId;
 });
 
 const transactionClass = computed(() => getCategoryStyle(selectedCategory.value?.type));
@@ -69,6 +79,21 @@ async function save() {
   });
 
   close();
+}
+
+async function deleteTransaction() {
+  const result = await openConfirmModal(
+    `Vēlaties izdzēst traszakciju uz summu ${transaction.value.amount.toEurFormat()}?`,
+  );
+
+  if (result) {
+    setTimeout(async () => {
+      await api.deleteTransaction(transaction.value.transactionId!);
+      fetchData();
+    }, 0);
+
+    close();
+  }
 }
 
 onMounted(() => {
@@ -218,7 +243,12 @@ function onKey(e: KeyboardEvent) {
           />
         </div>
         <div class="col">
-          <button class="btn btn-primary save" @click="save">Saglabāt</button>
+          <div class="row">
+            <button class="btn btn-primary save col" @click="save">Saglabāt</button>
+            <button v-if="isEdit" class="col-2 mt-2" @click="deleteTransaction">
+              <FaIcon icon-name="trash" size="xl" class="add-icon" />
+            </button>
+          </div>
         </div>
       </div>
     </template>

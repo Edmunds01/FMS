@@ -55,6 +55,7 @@ export const addEditTransactionKey = Symbol() as InjectionKey<{
   category: Ref<Category | undefined>;
   categoryType: Ref<CategoryType | undefined>;
   transaction: Ref<Transaction | undefined>;
+  openConfirmModal: (text: string) => Promise<boolean>;
   openAdd: (
     categoryRaw: Category,
     categoryTypeRaw: CategoryType,

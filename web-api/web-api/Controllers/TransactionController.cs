@@ -21,21 +21,11 @@ public class TransactionController(ITransactionService transactionService) : Con
         return Ok();
     }
 
-    [HttpPost("save-transaction-account")]
-    public Task<IActionResult> SaveTransactionAccount(long transactionId, long newAccountId) => throw new NotImplementedException();
-
-    [HttpPost("save-transaction-category")]
-    public Task<IActionResult> SaveTransactionCategory(long transactionId, long newCategoryId) => throw new NotImplementedException();
-
-    [HttpPost("save-transaction-amount")]
-    public Task<IActionResult> SaveTransactionAmount(long transactionId, decimal newAmount) => throw new NotImplementedException();
-
-    [HttpPost("save-transaction-comment")]
-    public Task<IActionResult> SaveTransactionComment(long transactionId, string newComment) => throw new NotImplementedException();
-
-    [HttpPost("save-transaction-date")]
-    public Task<IActionResult> SaveTransactionDate(long transactionId, DateTime newDate) => throw new NotImplementedException();
-
     [HttpDelete("delete-transaction")]
-    public Task<IActionResult> DeleteTransaction(long transactionId) => throw new NotImplementedException();
+    public async Task<IActionResult> DeleteTransaction(long transactionId)
+    {
+        await _transactionService.DeleteTransactionAsync(transactionId);
+
+        return Ok();
+    }
 }
