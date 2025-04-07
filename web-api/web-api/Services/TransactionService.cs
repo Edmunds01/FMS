@@ -67,7 +67,7 @@ public class TransactionService(
 
     public async Task SaveTransactionDate(long transactionId, DateTime newDate) => await SaveTransactionAsync(transactionId, transaction => transaction.CreatedDateTime = newDate);
 
-    public async Task DeleteTransaction(long transactionId)
+    public async Task DeleteTransactionAsync(long transactionId)
     {
         await ValidateIsUserTransactionAsync(transactionId);
 

@@ -52,7 +52,6 @@ function sortByDate(isAscending: boolean) {
 watch(
   () => boolForWatch.value,
   async () => {
-    console.log("boolChanges");
     await fetchTransactions();
   },
   { immediate: true },

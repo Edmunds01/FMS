@@ -14,11 +14,6 @@ import {
   useTransactionListModal,
 } from "./modals";
 
-// TODO: There is a bug when try to add transaction from transactionList modal
-// Open the Category dropdown and click outside the modal
-// Try to open the other category list
-// The wrong data will be displayed
-
 const startDate = ref(new Date());
 const endDate = ref(new Date(2025, 9, 1));
 
@@ -68,20 +63,25 @@ onMounted(() => {
             <div class="col p-0 border-bottom">
               <TheDateSelect :start-date="startDate" :end-date="endDate" />
             </div>
-            <div class="col-1 p-0 border-bottom d-flex align-items-center justify-content-end">
+            <div
+              class="col-1 p-0 border-bottom d-flex align-items-center justify-content-end"
+            >
               <button title="Iziet" class="btn" @click="$router.push('/logout')">
                 <FaIcon icon-name="right-from-bracket" size="2x" class="me-3" />
               </button>
             </div>
           </div>
-          <div class="row vh-100">
-            <div class="col-3 p-0 bg-expense">
-              <UserCategories :category-type="CategoryType.Expense" :categories="expense" />
+          <div class="row categories-columns">
+            <div class="col-3 p-0 bg-expense categories-columns">
+              <UserCategories
+                :category-type="CategoryType.Expense"
+                :categories="expense"
+              />
             </div>
-            <div class="col-3 p-0 bg-income">
+            <div class="col-3 p-0 bg-income categories-columns">
               <UserCategories :category-type="CategoryType.Income" :categories="income" />
             </div>
-            <div class="col p-0 bf-neutral">Stats</div>
+            <div class="col p-0 bf-neutral categories-columns">Stats</div>
           </div>
         </div>
       </div>
@@ -100,5 +100,9 @@ onMounted(() => {
 
 .bf-neutral {
   background-color: #e4eef7 !important;
+}
+
+.categories-columns {
+  height: calc(100vh - 5rem);
 }
 </style>

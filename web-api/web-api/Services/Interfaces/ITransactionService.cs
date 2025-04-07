@@ -16,5 +16,5 @@ public interface ITransactionService
 
     Task SaveTransactionDate(long transactionId, DateTime newDate);
 
-    Task DeleteTransaction(long transactionId);
+    Task DeleteTransactionAsync(long transactionId);
 }

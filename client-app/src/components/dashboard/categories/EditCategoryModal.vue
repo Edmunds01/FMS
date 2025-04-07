@@ -6,16 +6,14 @@ import FaIcon from "@/components/global/FaIcon.vue";
 import ModalWindow, { editCategoryModalId } from "@/components/global/ModalWindow.vue";
 import { categoriesKey, editCategoryKey } from "@/utils/keys";
 
-const { category: category, close, openConfirmModal } = inject(editCategoryKey)!;
+const { category, close, openConfirmModal } = inject(editCategoryKey)!;
 const { categories, fetchCategories } = inject(categoriesKey)!;
 
 const isEditMode = ref(false);
 const newName = ref(category.value?.name ?? "");
 
 async function deleteCategory() {
-  const result = await openConfirmModal(
-    `Vēlaties izdzēst kategoriju "${category.value?.name ?? ""}?"`,
-  );
+  const result = await openConfirmModal(`Vēlaties izdzēst kategoriju "${category.value!.name}?"`);
 
   if (result) {
     categories.value = categories.value.filter((c) => c.categoryId !== category.value!.categoryId);

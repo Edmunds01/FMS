@@ -36,7 +36,6 @@ export function useAddCategoryModal() {
   }
 
   function closeAddCategory() {
-    console.log("Close add category");
     closeModal(addCategoryModalId);
 
     setTimeout(() => {
@@ -57,8 +56,6 @@ export function useEditCategoryModal() {
   const category = ref<Category | undefined>();
 
   function openEditCategory(categoryRaw: Category) {
-    console.log("Open Edit Category");
-
     category.value = categoryRaw;
 
     const onModalHidden = () => {
@@ -69,7 +66,6 @@ export function useEditCategoryModal() {
   }
 
   function closeEditCategory() {
-    console.log("Close edit category");
     closeModal(editCategoryModalId);
 
     setTimeout(() => {
@@ -97,8 +93,6 @@ export function useTransactionListModal() {
   const boolForWatch = ref(false);
 
   function openTransactionList(categoryRaw: Category, categoryTypeRaw: CategoryType) {
-    console.log("Open Transaction List");
-
     category.value = categoryRaw;
     categoryType.value = categoryTypeRaw;
 
@@ -106,7 +100,6 @@ export function useTransactionListModal() {
   }
 
   function closeTransactionList() {
-    console.log("Close transaction list");
     closeModal(transactionListModalId);
 
     setTimeout(() => {
@@ -134,13 +127,14 @@ export function useAddEditTransactionListModal() {
   const category = ref<Category | undefined>();
   const transaction = ref<Transaction | undefined>();
 
+  const reopenFunctionToCall =
+    ref<(categoryRaw: Category, categoryTypeRaw: CategoryType) => void | undefined>();
+
   function openTransactionList(
     categoryRaw: Category,
     categoryTypeRaw: CategoryType,
     reopenFunction?: (categoryRaw: Category, categoryTypeRaw: CategoryType) => void,
   ) {
-    console.log("Open Add Transaction");
-
     category.value = categoryRaw;
     categoryType.value = categoryTypeRaw;
 
@@ -160,35 +154,44 @@ export function useAddEditTransactionListModal() {
     transactionRaw: Transaction,
     reopenFunction: (categoryRaw: Category, categoryTypeRaw: CategoryType) => void,
   ) {
-    console.log("Open Add Transaction");
-
     category.value = categoryRaw;
     categoryType.value = categoryTypeRaw;
     transaction.value = transactionRaw;
+    reopenFunctionToCall.value = reopenFunction;
 
     const onModalHidden = () => {
       closeTransactionList();
-      reopenFunction(categoryRaw, categoryTypeRaw);
     };
 
     openModal(transactionAddEditModalId, onModalHidden);
   }
 
   function closeTransactionList() {
-    console.log("Close Add Transaction");
     closeModal(transactionAddEditModalId);
 
     setTimeout(() => {
+      if (isConfirmModal) return;
+
+      if (reopenFunctionToCall.value) {
+        reopenFunctionToCall.value(category.value!, categoryType.value!);
+        reopenFunctionToCall.value = undefined;
+      }
+
       categoryType.value = undefined;
       category.value = undefined;
       transaction.value = undefined;
     }, 0);
   }
 
+  async function confirmDelete(text: string) {
+    return await openConfirmModal(text, transactionAddEditModalId);
+  }
+
   provide(addEditTransactionKey, {
     category,
     categoryType,
     transaction,
+    openConfirmModal: confirmDelete,
     openAdd: openTransactionList,
     openEdit: openEditTransactionList,
     close: closeTransactionList,
