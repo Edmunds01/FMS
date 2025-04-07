@@ -17,10 +17,6 @@ const { isOpened: isAddCategoryOpen } = inject(addCategoryKey)!;
 const { category: isEditCategoryOpen } = inject(editCategoryKey)!;
 const { category: isTransactionListOpen } = inject(transactionListKey)!;
 const { category: isAddTransactionOpen } = inject(addEditTransactionKey)!;
-
-watch(isAddCategoryOpen, () => {
-  console.log("isAddCategoryOpen", isAddCategoryOpen);
-});
 </script>
 
 <template>
