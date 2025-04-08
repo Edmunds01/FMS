@@ -63,9 +63,7 @@ onMounted(() => {
             <div class="col p-0 border-bottom">
               <TheDateSelect :start-date="startDate" :end-date="endDate" />
             </div>
-            <div
-              class="col-1 p-0 border-bottom d-flex align-items-center justify-content-end"
-            >
+            <div class="col-1 p-0 border-bottom d-flex align-items-center justify-content-end">
               <button title="Iziet" class="btn" @click="$router.push('/logout')">
                 <FaIcon icon-name="right-from-bracket" size="2x" class="me-3" />
               </button>
@@ -73,10 +71,7 @@ onMounted(() => {
           </div>
           <div class="row categories-columns">
             <div class="col-3 p-0 bg-expense categories-columns">
-              <UserCategories
-                :category-type="CategoryType.Expense"
-                :categories="expense"
-              />
+              <UserCategories :category-type="CategoryType.Expense" :categories="expense" />
             </div>
             <div class="col-3 p-0 bg-income categories-columns">
               <UserCategories :category-type="CategoryType.Income" :categories="income" />
