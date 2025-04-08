@@ -50,7 +50,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <ModalWindow :id="id" :height="10">
+  <ModalWindow :id="id" :height="10" title="Jauna konta pievienošana">
     <template #body>
       <div class="d-flex align-items-center h-100">
         <SelectIconDropdown

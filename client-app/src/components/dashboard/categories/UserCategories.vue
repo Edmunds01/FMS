@@ -79,12 +79,6 @@ const { openAdd: openAddTransaction } = inject(addEditTransactionKey)!;
         </div>
       </div>
     </div>
-    <TransactionAddModal
-      v-if="isAddTransaction"
-      :id="transactionAddModalId"
-      :from-category="selectedTransactionCategory!"
-      @add-transaction="addTransaction"
-    />
   </div>
 </template>
 

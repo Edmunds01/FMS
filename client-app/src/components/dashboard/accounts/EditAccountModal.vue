@@ -44,7 +44,7 @@ async function iconNameSaved() {
 </script>
 
 <template>
-  <ModalWindow :id="id">
+  <ModalWindow :id="id" title="Konta rediģēšana">
     <template #body>
       <div class="d-flex align-items-center h-100">
         <SelectIconDropdown

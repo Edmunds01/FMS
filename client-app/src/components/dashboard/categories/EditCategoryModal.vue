@@ -40,7 +40,7 @@ async function nameChanged() {
 </script>
 
 <template>
-  <ModalWindow :id="editCategoryModalId" :height="6">
+  <ModalWindow :id="editCategoryModalId" :height="6" title="Kategorijas rediģēšana">
     <template #body>
       <div class="d-flex align-items-center h-100">
         <SelectIconDropdown

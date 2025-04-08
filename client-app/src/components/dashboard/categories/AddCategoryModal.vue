@@ -37,7 +37,7 @@ async function save() {
 </script>
 
 <template>
-  <ModalWindow :id="addCategoryModalId" :height="6">
+  <ModalWindow :id="addCategoryModalId" :height="6" title="Jaunas kategorijas pievienošana">
     <template #body>
       <div class="d-flex align-items-center h-100">
         <SelectIconDropdown

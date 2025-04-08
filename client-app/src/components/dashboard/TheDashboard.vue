@@ -60,10 +60,12 @@ onMounted(() => {
       <div class="col p-0">
         <div class="container-fluid text-center">
           <div class="row first-row-height">
-            <div class="col p-0 border-bottom">
+            <div class="col p-0 border-top border-bottom">
               <TheDateSelect :start-date="startDate" :end-date="endDate" />
             </div>
-            <div class="col-1 p-0 border-bottom d-flex align-items-center justify-content-end">
+            <div
+              class="col-1 p-0 border-bottom border-top d-flex align-items-center justify-content-end"
+            >
               <button title="Iziet" class="btn" @click="$router.push('/logout')">
                 <FaIcon icon-name="right-from-bracket" size="2x" class="me-3" />
               </button>
