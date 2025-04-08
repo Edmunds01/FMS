@@ -765,6 +765,14 @@ export interface NewCategory {
     type: CategoryType;
 }
 
+export interface NewTransaction {
+    accountId: number;
+    categoryId: number;
+    comment: string | undefined;
+    amount: number;
+    createdDateTime: Date;
+}
+
 export interface ProblemDetails {
     type: string | undefined;
     title: string | undefined;
