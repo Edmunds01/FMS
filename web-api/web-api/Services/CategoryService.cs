@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using web_api.Exceptions;
 using web_api.Repository.Interfaces;
 using web_api.Services.Interfaces;
 
@@ -50,7 +51,8 @@ public class CategoryService(
     {
         await ValidateIsUserCategoryAsync(categoryId);
 
-        await _categoryRepository.DeleteAsync(categoryId);
+        // TODO: Add validation so it should be impossible to delete category if any Transaction is assigned to it!
+        await _categoryRepository.DeleteAsync(categoryId);  
     }
 
     public async Task ValidateIsUserCategoryAsync(long categoryId)
@@ -59,7 +61,7 @@ public class CategoryService(
 
         if (account == null || account.UserId != UserId)
         {
-            throw new NotSupportedException("Category not found or wrong user");
+            throw new NotAuthorizedException(nameof(Models.Category), categoryId);
         }
     }
 
@@ -71,6 +73,6 @@ public class CategoryService(
 
         updateCategory(category);
 
-        await _transactionRepository.SaveChanges();
+        await _transactionRepository.SaveChangesAsync();
     }
 }

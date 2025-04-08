@@ -2,7 +2,7 @@
 
 public interface IBaseRepository<T> where T : class
 {
-    Task SaveChanges();
+    Task SaveChangesAsync();
     Task<IEnumerable<T>> GetAllAsync();
     Task<T?> GetByIdAsync(object id);
     Task<T> GetByIdStrictAsync(object id);

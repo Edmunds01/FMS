@@ -1,25 +1,20 @@
 <script setup lang="ts">
-import { api, CategoryType, type Category, type Transaction } from "@/api/auto-generated-client";
-import ModalWindow from "@/components/global/ModalWindow.vue";
-import { computed, onMounted, ref, watch } from "vue";
+import { api, CategoryType, type Transaction } from "@/api/auto-generated-client";
+import ModalWindow, { transactionListModalId } from "@/components/global/ModalWindow.vue";
+import { computed, inject, ref, watch } from "vue";
 import FaIcon from "@/components/global/FaIcon.vue";
 import { formatLatvianDate } from "../TheDateSelect.vue";
+import { addEditTransactionKey, transactionListKey } from "@/utils/keys";
 
-const props = defineProps<{
-  id: string;
-  category: Category;
-  transactionType: CategoryType;
-  needToReload: boolean;
-}>();
+const { categoryType, category: category, close } = inject(transactionListKey)!;
+const { openAdd: openAddTransactionModal, openEdit: openEditTransactionModal } =
+  inject(addEditTransactionKey)!;
+const { open: openTransactionList, boolForWatch } = inject(transactionListKey)!;
 
-watch(
-  () => props.needToReload,
-  () => fetchTransactions(),
-);
-
-defineEmits<{
-  (e: "add-transaction"): void;
-}>();
+function openEditTransaction(transaction: Transaction) {
+  close();
+  openEditTransactionModal(category.value!, categoryType.value!, transaction, openTransactionList);
+}
 
 const transactions = ref<Transaction[]>();
 
@@ -30,12 +25,37 @@ type TransactionSortMode = {
 
 const sortMode = ref<TransactionSortMode>({ mode: 2, order: "desc" });
 const transactionClass = computed(() =>
-  props.transactionType === CategoryType.Expense ? "table-cell-expense" : "table-cell-income",
+  categoryType.value === CategoryType.Expense ? "table-cell-expense" : "table-cell-income",
 );
 
 async function fetchTransactions() {
-  transactions.value = await api.categoryTransactions(props.category.categoryId);
+  transactions.value = await api.categoryTransactions(category.value!.categoryId);
+  sortByDate(false);
 }
+
+function sortByDate(isAscending: boolean) {
+  if (!transactions.value) return;
+  transactions.value.sort((a, b) => {
+    const dateA = new Date(a.createdDateTime);
+    dateA.setHours(0, 0, 0, 0);
+    const dateB = new Date(b.createdDateTime);
+    dateB.setHours(0, 0, 0, 0);
+
+    const dateComparison = isAscending
+      ? dateA.getTime() - dateB.getTime()
+      : dateB.getTime() - dateA.getTime();
+
+    return dateComparison || b.amount - a.amount;
+  });
+}
+
+watch(
+  () => boolForWatch.value,
+  async () => {
+    await fetchTransactions();
+  },
+  { immediate: true },
+);
 
 watch(
   () => sortMode.value,
@@ -61,42 +81,28 @@ watch(
         break;
 
       case 2:
-        transactions.value.sort((a, b) => {
-          // Extract date portion only (ignores time)
-          const dateA = new Date(a.createdDateTime);
-          dateA.setHours(0, 0, 0, 0);
-          const dateB = new Date(b.createdDateTime);
-          dateB.setHours(0, 0, 0, 0);
-
-          const dateComparison = isAscending
-            ? dateA.getTime() - dateB.getTime()
-            : dateB.getTime() - dateA.getTime();
-
-          // If dates are equal (same calendar day), sort by amount
-          return dateComparison || b.amount - a.amount;
-        });
+        sortByDate(isAscending);
         break;
     }
   },
   { immediate: true },
 );
-
-onMounted(async () => {
-  await fetchTransactions();
-});
 </script>
 
 <template>
-  <ModalWindow :id remove-bottom-border-radius>
+  <ModalWindow :id="transactionListModalId" remove-bottom-border-radius>
     <template #body>
       <div>
         <div class="align-items-center position-relative">
           <div class="text-center h1 category-name">
-            {{ category.name }}
+            {{ category?.name }}
             <button
               title="Pievienot tranzakciju"
               class="add-button"
-              @click="$emit('add-transaction')"
+              @click="
+                close();
+                openAddTransactionModal(category!, categoryType!, openTransactionList);
+              "
             >
               <FaIcon icon-name="plus" size="sm" class="add-icon" />
             </button>
@@ -143,9 +149,25 @@ onMounted(async () => {
             </thead>
             <tbody v-if="transactions && transactions.length > 0">
               <tr v-for="transaction in transactions" :key="transaction.transactionId">
-                <td :class="transactionClass">{{ transaction.amount.toEurFormat() }}</td>
-                <td :class="transactionClass">{{ transaction.comment }}</td>
-                <td :class="transactionClass">
+                <td
+                  :class="transactionClass"
+                  class="clickable"
+                  @click="openEditTransaction(transaction)"
+                >
+                  {{ transaction.amount.toEurFormat() }}
+                </td>
+                <td
+                  :class="transactionClass"
+                  class="clickable"
+                  @click="openEditTransaction(transaction)"
+                >
+                  {{ transaction.comment }}
+                </td>
+                <td
+                  :class="transactionClass"
+                  class="clickable"
+                  @click="openEditTransaction(transaction)"
+                >
                   {{ formatLatvianDate(transaction.createdDateTime) }}
                 </td>
               </tr>
@@ -219,5 +241,9 @@ td {
 .category-name {
   padding: 1rem 10rem;
   margin: 0;
+}
+
+.clickable {
+  cursor: pointer;
 }
 </style>

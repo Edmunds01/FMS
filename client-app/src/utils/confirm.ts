@@ -4,12 +4,7 @@ import ConfirmDialog from "@/components/global/ConfirmAction.vue";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let instance: any = null;
 
-export function useConfirm(): (
-  title: string,
-  message: string,
-  reopenModalId: string,
-  doNotReopenOnSuccessRaw: boolean,
-) => Promise<boolean> {
+export function useConfirm(): (message: string, reopenModalId: string) => Promise<boolean> {
   if (!instance) {
     const container = document.createElement("div");
     document.body.appendChild(container);
@@ -20,12 +15,7 @@ export function useConfirm(): (
     instance = vnode.component?.proxy;
   }
 
-  return (
-    title: string,
-    message: string,
-    reopenModalId: string,
-    doNotReopenOnSuccessRaw: boolean = false,
-  ) => {
-    return instance.open(title, message, reopenModalId, doNotReopenOnSuccessRaw);
+  return (message: string, reopenModalId: string) => {
+    return instance.open(message, reopenModalId);
   };
 }

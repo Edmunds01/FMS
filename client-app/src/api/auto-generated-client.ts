@@ -649,8 +649,8 @@ export class Client extends AuthorizedApiBase {
      * @param body (optional) 
      * @return Success
      */
-    addTransaction(body: NewTransaction | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/transaction/add-transaction";
+    upsertTransaction(body: Transaction | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/transaction/upsert-transaction";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -666,236 +666,11 @@ export class Client extends AuthorizedApiBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processAddTransaction(_response);
+            return this.processUpsertTransaction(_response);
         });
     }
 
-    protected processAddTransaction(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * @param transactionId (optional) 
-     * @param newAccountId (optional) 
-     * @return Success
-     */
-    saveTransactionAccount(transactionId: number | undefined, newAccountId: number | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/transaction/save-transaction-account?";
-        if (transactionId === null)
-            throw new Error("The parameter 'transactionId' cannot be null.");
-        else if (transactionId !== undefined)
-            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
-        if (newAccountId === null)
-            throw new Error("The parameter 'newAccountId' cannot be null.");
-        else if (newAccountId !== undefined)
-            url_ += "newAccountId=" + encodeURIComponent("" + newAccountId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "POST",
-            headers: {
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processSaveTransactionAccount(_response);
-        });
-    }
-
-    protected processSaveTransactionAccount(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * @param transactionId (optional) 
-     * @param newCategoryId (optional) 
-     * @return Success
-     */
-    saveTransactionCategory(transactionId: number | undefined, newCategoryId: number | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/transaction/save-transaction-category?";
-        if (transactionId === null)
-            throw new Error("The parameter 'transactionId' cannot be null.");
-        else if (transactionId !== undefined)
-            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
-        if (newCategoryId === null)
-            throw new Error("The parameter 'newCategoryId' cannot be null.");
-        else if (newCategoryId !== undefined)
-            url_ += "newCategoryId=" + encodeURIComponent("" + newCategoryId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "POST",
-            headers: {
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processSaveTransactionCategory(_response);
-        });
-    }
-
-    protected processSaveTransactionCategory(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * @param transactionId (optional) 
-     * @param newAmount (optional) 
-     * @return Success
-     */
-    saveTransactionAmount(transactionId: number | undefined, newAmount: number | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/transaction/save-transaction-amount?";
-        if (transactionId === null)
-            throw new Error("The parameter 'transactionId' cannot be null.");
-        else if (transactionId !== undefined)
-            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
-        if (newAmount === null)
-            throw new Error("The parameter 'newAmount' cannot be null.");
-        else if (newAmount !== undefined)
-            url_ += "newAmount=" + encodeURIComponent("" + newAmount) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "POST",
-            headers: {
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processSaveTransactionAmount(_response);
-        });
-    }
-
-    protected processSaveTransactionAmount(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * @param transactionId (optional) 
-     * @param newComment (optional) 
-     * @return Success
-     */
-    saveTransactionComment(transactionId: number | undefined, newComment: string | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/transaction/save-transaction-comment?";
-        if (transactionId === null)
-            throw new Error("The parameter 'transactionId' cannot be null.");
-        else if (transactionId !== undefined)
-            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
-        if (newComment === null)
-            throw new Error("The parameter 'newComment' cannot be null.");
-        else if (newComment !== undefined)
-            url_ += "newComment=" + encodeURIComponent("" + newComment) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "POST",
-            headers: {
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processSaveTransactionComment(_response);
-        });
-    }
-
-    protected processSaveTransactionComment(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * @param transactionId (optional) 
-     * @param newDate (optional) 
-     * @return Success
-     */
-    saveTransactionDate(transactionId: number | undefined, newDate: Date | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/transaction/save-transaction-date?";
-        if (transactionId === null)
-            throw new Error("The parameter 'transactionId' cannot be null.");
-        else if (transactionId !== undefined)
-            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&";
-        if (newDate === null)
-            throw new Error("The parameter 'newDate' cannot be null.");
-        else if (newDate !== undefined)
-            url_ += "newDate=" + encodeURIComponent(newDate ? "" + newDate.toISOString() : "") + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "POST",
-            headers: {
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processSaveTransactionDate(_response);
-        });
-    }
-
-    protected processSaveTransactionDate(response: Response): Promise<void> {
+    protected processUpsertTransaction(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -990,14 +765,6 @@ export interface NewCategory {
     type: CategoryType;
 }
 
-export interface NewTransaction {
-    accountId: number;
-    categoryId: number;
-    comment: string | undefined;
-    amount: number;
-    createdDateTime: Date;
-}
-
 export interface ProblemDetails {
     type: string | undefined;
     title: string | undefined;
@@ -1009,7 +776,7 @@ export interface ProblemDetails {
 }
 
 export interface Transaction {
-    transactionId: number;
+    transactionId: number | undefined;
     accountId: number;
     categoryId: number;
     comment: string | undefined;

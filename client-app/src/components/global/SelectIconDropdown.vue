@@ -46,6 +46,7 @@ defineEmits<{
 <style lang="scss">
 .icon-dropdown-toggle {
   border-top-right-radius: 0;
+  border-top-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 

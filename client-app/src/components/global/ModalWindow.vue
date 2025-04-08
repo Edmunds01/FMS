@@ -1,4 +1,9 @@
 <script lang="ts">
+export const addCategoryModalId = "addCategoryModal";
+export const editCategoryModalId = "editCategoryModal";
+export const transactionListModalId = "transactionListModal";
+export const transactionAddModalId = "transactionAddModal";
+
 export function openModal(id: string, onModalHidden: (() => void) | undefined = undefined) {
   setTimeout(() => {
     const modal = document.getElementById(id);
@@ -47,6 +52,7 @@ const props = defineProps<{
   width?: number;
   height?: number;
   removeBottomBorderRadius?: boolean;
+  title?: string;
 }>();
 
 const bottomBorderRadius = computed(() => {
@@ -63,6 +69,9 @@ const bottomBorderRadius = computed(() => {
         <div v-if="$slots.header" class="modal-header">
           <slot name="header" />
         </div>
+        <div v-if="title" class="modal-header">
+          {{ title }}
+        </div>
         <div v-if="$slots.body" class="modal-body p-0" :style="`height: ${height}rem`">
           <slot name="body" />
         </div>
@@ -74,4 +83,9 @@ const bottomBorderRadius = computed(() => {
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.modal-header {
+  padding-top: 0.8rem !important;
+  padding-bottom: 0.5rem !important;
+}
+</style>

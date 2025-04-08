@@ -1,57 +1,50 @@
 <script setup lang="ts">
-import { api, type Category } from "@/api/auto-generated-client";
-import { ref } from "vue";
+import { api } from "@/api/auto-generated-client";
+import { inject, ref } from "vue";
 import SelectIconDropdown from "@/components/global/SelectIconDropdown.vue";
-import ModalWindow from "@/components/global/ModalWindow.vue";
 import FaIcon from "@/components/global/FaIcon.vue";
-import { useConfirm } from "@/utils/confirm";
+import ModalWindow, { editCategoryModalId } from "@/components/global/ModalWindow.vue";
+import { categoriesKey, editCategoryKey } from "@/utils/keys";
 
-const props = defineProps<{
-  id: string;
-  category: Category;
-}>();
+const { category, close, openConfirmModal } = inject(editCategoryKey)!;
+const { categories, fetchCategories } = inject(categoriesKey)!;
 
-const category = ref(props.category);
 const isEditMode = ref(false);
-const newName = ref(category.value.name);
-
-const emit = defineEmits<{
-  (e: "delete-category", categoryId: number): void;
-}>();
-
-const confirm = useConfirm();
+const newName = ref(category.value?.name ?? "");
 
 async function deleteCategory() {
-  const result = await confirm(
-    "Apsitpriniet",
-    `Vēlaties izdzēst kategoriju "${category.value.name}"`,
-    props.id,
-    true,
-  );
+  const result = await openConfirmModal(`Vēlaties izdzēst kategoriju "${category.value!.name}?"`);
 
   if (result) {
-    emit("delete-category", category.value.categoryId);
+    categories.value = categories.value.filter((c) => c.categoryId !== category.value!.categoryId);
+
+    setTimeout(async () => {
+      await api.deleteCategory(category.value!.categoryId);
+      await fetchCategories();
+    }, 0);
+
+    close();
   }
 }
 
 async function iconChanged(icon: string) {
-  category.value.icon = icon;
-  await api.saveCategoryIcon(category.value.categoryId, icon);
+  category.value!.icon = icon;
+  await api.saveCategoryIcon(category.value!.categoryId, icon);
 }
 
 async function nameChanged() {
   isEditMode.value = false;
-  category.value.name = newName.value;
-  await api.saveCategoryName(category.value.categoryId, newName.value);
+  category.value!.name = newName.value;
+  await api.saveCategoryName(category.value!.categoryId, newName.value);
 }
 </script>
 
 <template>
-  <ModalWindow :id="id" :height="6">
+  <ModalWindow :id="editCategoryModalId" :height="6" title="Kategorijas rediģēšana">
     <template #body>
       <div class="d-flex align-items-center h-100">
         <SelectIconDropdown
-          :icon-name="category.icon ?? ''"
+          :icon-name="category!.icon"
           @select-icon="(icon) => iconChanged(icon)"
         />
         <div class="row flex-grow-1">
@@ -69,21 +62,21 @@ async function nameChanged() {
               class="p-0 ms-4"
               @click="
                 isEditMode = false;
-                newName = category.name;
+                newName = category!.name ?? '';
               "
             >
               <FaIcon icon-name="xmark" size="lg" />
             </button>
           </div>
           <div v-else class="col d-flex align-items-center justify-content-center">
-            <div class="p-0 me-5">{{ category.name }}</div>
+            <div class="p-0 me-5">{{ category!.name }}</div>
             <button class="p-0" @click="isEditMode = true">
               <FaIcon icon-name="pen" size="lg" />
             </button>
           </div>
         </div>
         <div class="d-flex justify-content-between align-items-center">
-          <button v-if="category.showDeleteButton" class="p-0" @click="deleteCategory">
+          <button v-if="category!.showDeleteButton" class="p-0" @click="deleteCategory">
             <FaIcon icon-name="trash" size="lg" />
           </button>
           <button
@@ -97,5 +90,3 @@ async function nameChanged() {
     </template>
   </ModalWindow>
 </template>
-
-<style scoped lang="scss"></style>

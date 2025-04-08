@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using web_api.Exceptions;
 using web_api.Repository.Interfaces;
 using web_api.Services.Interfaces;
 
@@ -24,14 +25,26 @@ public class TransactionService(
 
         return _mapper.Map<IEnumerable<Dtos.Transaction>>(transactions);
     }
-    public async Task CreateNewTransactionAsync(Dtos.NewTransaction transactionRaw)
+    public async Task UpsertTransactionAsync(Dtos.Transaction transactionRaw)
     {
         await _accountService.ValidateIsUserAccountAsync(transactionRaw.AccountId);
+        await _categoryService.ValidateIsUserCategoryAsync(transactionRaw.CategoryId);
 
         var transaction = _mapper.Map<Models.Transaction>(transactionRaw);
-        transaction.UserId = UserId;
 
-        await _transactionRepository.InsertAsync(transaction);
+        if (transactionRaw.TransactionId == default || transactionRaw.TransactionId == 0)
+        {
+            transaction.TransactionId = 0;
+            transaction.UserId = UserId;
+
+            await _transactionRepository.InsertAsync(transaction);
+        }
+        else
+        {
+            await ValidateIsUserTransactionAsync(transactionRaw.TransactionId!.Value);
+
+            await _transactionRepository.UpdateTransaction(transaction);
+        }
     }
 
     public async Task SaveTransactionAccount(long transactionId, long accountId)
@@ -39,7 +52,7 @@ public class TransactionService(
         await _accountService.ValidateIsUserAccountAsync(accountId);
 
         await SaveTransactionAsync(transactionId, transaction => transaction.AccountId = accountId);
-    }   
+    }
 
     public async Task SaveTransactionCategory(long transactionId, long categoryId)
     {
@@ -54,7 +67,7 @@ public class TransactionService(
 
     public async Task SaveTransactionDate(long transactionId, DateTime newDate) => await SaveTransactionAsync(transactionId, transaction => transaction.CreatedDateTime = newDate);
 
-    public async Task DeleteTransaction(long transactionId)
+    public async Task DeleteTransactionAsync(long transactionId)
     {
         await ValidateIsUserTransactionAsync(transactionId);
 
@@ -69,7 +82,7 @@ public class TransactionService(
 
         updateTransaction(transaction);
 
-        await _transactionRepository.SaveChanges();
+        await _transactionRepository.SaveChangesAsync();
     }
 
     private async Task ValidateIsUserTransactionAsync(long transactionId)
@@ -78,7 +91,7 @@ public class TransactionService(
 
         if (transaction == null || transaction.UserId != UserId)
         {
-            throw new NotSupportedException("Transaction not found or wrong user");
+            throw new NotAuthorizedException(nameof(Models.Transaction), transactionId);
         }
     }
 }

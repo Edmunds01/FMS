@@ -4,7 +4,7 @@ public interface ITransactionService
 {
     IEnumerable<Dtos.Transaction> GetUserTransactions(long categoryId);
 
-    Task CreateNewTransactionAsync(Dtos.NewTransaction transactionRaw);
+    Task UpsertTransactionAsync(Dtos.Transaction transactionRaw);
 
     Task SaveTransactionAccount(long transactionId, long accountId);
 
@@ -16,5 +16,5 @@ public interface ITransactionService
 
     Task SaveTransactionDate(long transactionId, DateTime newDate);
 
-    Task DeleteTransaction(long transactionId);
+    Task DeleteTransactionAsync(long transactionId);
 }

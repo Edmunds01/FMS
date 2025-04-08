@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { api } from "@/api/auto-generated-client";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -24,6 +24,10 @@ const handleLogin = async () => {
     password.value = "";
   }
 };
+
+onMounted(() => {
+  api.logout();
+});
 </script>
 
 <template>

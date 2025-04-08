@@ -3,10 +3,10 @@ import { RouterView } from "vue-router";
 </script>
 
 <template>
-  <RouterView />
+  <RouterView class="app-container" />
 </template>
 
-<style>
+<style lang="scss" scoped>
 :root {
   /* bootstrap */
   --bs-body-font-size: 1rem;
@@ -22,6 +22,13 @@ h1 {
   margin: 0;
   margin-block-end: 0;
   margin-block-start: 0;
+}
+
+.app-container {
+  @media (max-width: 1920px) {
+    width: 1920px;
+    overflow: auto;
+  }
 }
 </style>
 
