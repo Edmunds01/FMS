@@ -14,6 +14,11 @@ import {
   useTransactionListModal,
 } from "./modals";
 
+// TODO: There is a bug when try to add transaction from transactionList modal
+// Open the Category dropdown and click outside the modal
+// Try to open the other category list
+// The wrong data will be displayed
+
 const startDate = ref(new Date());
 const endDate = ref(new Date(2025, 9, 1));
 
