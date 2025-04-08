@@ -125,7 +125,6 @@ function onKey(e: KeyboardEvent) {
     amountInput.value?.blur();
   }
 }
-
 // #endregion Focus
 </script>
 
@@ -178,23 +177,23 @@ function onKey(e: KeyboardEvent) {
                   </span>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
-                <li v-for="category in firstCategories" :key="category.categoryId">
+                <li v-for="cat in firstCategories" :key="cat.categoryId">
                   <a
                     class="dropdown-item text-center"
-                    :class="getCategoryStyle(category.type)"
-                    @click="() => (transaction.categoryId = category.categoryId)"
+                    :class="getCategoryStyle(cat.type)"
+                    @click="() => (transaction.categoryId = cat.categoryId)"
                   >
-                    {{ category.name }}
+                    {{ cat.name }}
                   </a>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
-                <li v-for="category in secondCategories" :key="category.categoryId">
+                <li v-for="cat in secondCategories" :key="cat.categoryId">
                   <a
                     class="dropdown-item text-center"
-                    :class="getCategoryStyle(category.type)"
-                    @click="() => (transaction.categoryId = category.categoryId)"
+                    :class="getCategoryStyle(cat.type)"
+                    @click="() => (transaction.categoryId = cat.categoryId)"
                   >
-                    {{ category.name }}
+                    {{ cat.name }}
                   </a>
                 </li>
               </ul>

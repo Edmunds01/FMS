@@ -1,6 +1,5 @@
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { inject, watch } from "vue";
+import { inject } from "vue";
 import {
   addCategoryKey,
   addEditTransactionKey,

@@ -8,7 +8,13 @@ public class TransactionRepository(FMSContext context) : BaseRepository<Transact
 {
     private new readonly FMSContext _context = context;
 
-    public IEnumerable<Transaction> GetUserTransactions(int userId, long categoryId) => GetUserTransactions(userId).Where(t => t.CategoryId == categoryId);
+    public IEnumerable<Transaction> GetUserTransactions(int userId, long categoryId, DateTime startDate, DateTime endDate)
+    {
+        startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day, 0, 0, 0, DateTimeKind.Utc);
+        endDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 59, DateTimeKind.Utc);
+
+        return GetUserTransactions(userId).Where(t => t.CategoryId == categoryId && t.CreatedDateTime >= startDate && t.CreatedDateTime <= endDate);
+    }
 
     public IEnumerable<Transaction> GetUserTransactions(int userId) => _context.Transactions.Where(t => t.UserId == userId);
 

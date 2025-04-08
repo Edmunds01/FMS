@@ -3,9 +3,9 @@ import TheDateSelect from "./TheDateSelect.vue";
 import TheAccounts from "./accounts/TheAccounts.vue";
 import UserCategories from "./categories/UserCategories.vue";
 import { api, CategoryType, type Account, type Category } from "@/api/auto-generated-client";
-import { computed, onMounted, provide, ref } from "vue";
+import { computed, onMounted, provide, ref, watch } from "vue";
 import FaIcon from "@/components/global/FaIcon.vue";
-import { accountsKey, categoriesKey } from "@/utils/keys";
+import { accountsKey, categoriesKey, selectedDatesKey } from "@/utils/keys";
 import TheDashboardModals from "./TheDashboardModals.vue";
 import {
   useAddCategoryModal,
@@ -14,14 +14,15 @@ import {
   useTransactionListModal,
 } from "./modals";
 
-const startDate = ref(new Date());
-const endDate = ref(new Date(2025, 9, 1));
+const now = new Date();
+const startDate = ref(new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)));
+const endDate = ref(new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0)));
 
 const categories = ref<Category[]>([]);
 const accounts = ref<Account[]>([]);
 
 async function fetchCategories() {
-  categories.value = await api.getCategories();
+  categories.value = await api.categories(startDate.value, endDate.value);
 }
 
 async function fetchAccounts() {
@@ -35,6 +36,7 @@ const income = computed(() =>
   categories.value.filter((category) => category.type === CategoryType.Income),
 );
 
+provide(selectedDatesKey, { startDate, endDate });
 provide(accountsKey, { accounts, fetchAccounts });
 provide(categoriesKey, { categories, fetchCategories });
 
@@ -46,6 +48,10 @@ useAddEditTransactionListModal();
 onMounted(() => {
   fetchCategories();
   fetchAccounts();
+});
+
+watch([startDate, endDate], () => {
+  fetchCategories();
 });
 </script>
 
