@@ -15,6 +15,19 @@ const props = defineProps<{
   categories: Category[];
 }>();
 
+function addTransaction(transaction: NewTransaction) {
+  setTimeout(async () => {
+    await api.addTransaction(transaction);
+    needToReload.value = !needToReload.value;
+  }, 0);
+
+  closeModal(transactionAddModalId);
+
+  if (openedFromTransactionList.value) {
+    showTransactionListModal(selectedTransactionCategory.value!);
+  }
+}
+
 const transactionSum = computed(() => {
   return (
     props.categories.reduce((sum, category) => {
@@ -66,6 +79,12 @@ const { openAdd: openAddTransaction } = inject(addEditTransactionKey)!;
         </div>
       </div>
     </div>
+    <TransactionAddModal
+      v-if="isAddTransaction"
+      :id="transactionAddModalId"
+      :from-category="selectedTransactionCategory!"
+      @add-transaction="addTransaction"
+    />
   </div>
 </template>
 
