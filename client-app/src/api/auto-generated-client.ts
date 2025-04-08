@@ -435,10 +435,20 @@ export class Client extends AuthorizedApiBase {
     }
 
     /**
+     * @param startDate (optional) 
+     * @param endDate (optional) 
      * @return Success
      */
-    getCategories(): Promise<Category[]> {
-        let url_ = this.baseUrl + "/api/category/get-categories";
+    categories(startDate: Date | undefined, endDate: Date | undefined): Promise<Category[]> {
+        let url_ = this.baseUrl + "/api/category/categories?";
+        if (startDate === null)
+            throw new Error("The parameter 'startDate' cannot be null.");
+        else if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toISOString() : "") + "&";
+        if (endDate === null)
+            throw new Error("The parameter 'endDate' cannot be null.");
+        else if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent(endDate ? "" + endDate.toISOString() : "") + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -451,11 +461,11 @@ export class Client extends AuthorizedApiBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processGetCategories(_response);
+            return this.processCategories(_response);
         });
     }
 
-    protected processGetCategories(response: Response): Promise<Category[]> {
+    protected processCategories(response: Response): Promise<Category[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -604,14 +614,24 @@ export class Client extends AuthorizedApiBase {
 
     /**
      * @param categoryId (optional) 
+     * @param startDate (optional) 
+     * @param endDate (optional) 
      * @return Success
      */
-    categoryTransactions(categoryId: number | undefined): Promise<Transaction[]> {
+    categoryTransactions(categoryId: number | undefined, startDate: Date | undefined, endDate: Date | undefined): Promise<Transaction[]> {
         let url_ = this.baseUrl + "/api/transaction/category-transactions?";
         if (categoryId === null)
             throw new Error("The parameter 'categoryId' cannot be null.");
         else if (categoryId !== undefined)
             url_ += "categoryId=" + encodeURIComponent("" + categoryId) + "&";
+        if (startDate === null)
+            throw new Error("The parameter 'startDate' cannot be null.");
+        else if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toISOString() : "") + "&";
+        if (endDate === null)
+            throw new Error("The parameter 'endDate' cannot be null.");
+        else if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent(endDate ? "" + endDate.toISOString() : "") + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {

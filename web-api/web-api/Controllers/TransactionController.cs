@@ -10,8 +10,9 @@ public class TransactionController(ITransactionService transactionService) : Con
 {
     private readonly ITransactionService _transactionService = transactionService;
 
+    // TODO: Add startDate and endDate to filter transactions by date
     [HttpGet("category-transactions")]
-    public ActionResult<IEnumerable<Transaction>> GetTransaction(long categoryId) => Ok(_transactionService.GetUserTransactions(categoryId));
+    public ActionResult<IEnumerable<Transaction>> GetTransactions(long categoryId, DateTime startDate, DateTime endDate) => Ok(_transactionService.GetUserTransactions(categoryId, startDate, endDate));
 
     [HttpPost("upsert-transaction")]
     public async Task<IActionResult> UpsertTransaction([FromBody] Transaction transaction)

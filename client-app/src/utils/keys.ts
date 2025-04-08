@@ -1,6 +1,11 @@
 import type { Account, Category, CategoryType, Transaction } from "@/api/auto-generated-client";
 import { type InjectionKey, type Ref } from "vue";
 
+export const selectedDatesKey = Symbol() as InjectionKey<{
+  startDate: Ref<Date>;
+  endDate: Ref<Date>;
+}>;
+
 export const accountsKey = Symbol() as InjectionKey<{
   accounts: Ref<Account[]>;
   fetchAccounts: () => Promise<void>;

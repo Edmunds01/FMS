@@ -25,7 +25,8 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<FMSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+var foo = "Server=localhost\\SQLEXPRESS;Database=FMS;Trusted_Connection=True;TrustServerCertificate=True;";
+builder.Services.AddDbContext<FMSContext>(options => options.UseSqlServer(foo)
         .EnableSensitiveDataLogging());
 
 builder.Services.AddCors(options => options.AddPolicy(CorsPolicyName, policy =>

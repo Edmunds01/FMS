@@ -4,7 +4,7 @@ import ModalWindow, { transactionListModalId } from "@/components/global/ModalWi
 import { computed, inject, ref, watch } from "vue";
 import FaIcon from "@/components/global/FaIcon.vue";
 import { formatLatvianDate } from "../TheDateSelect.vue";
-import { addEditTransactionKey, transactionListKey } from "@/utils/keys";
+import { addEditTransactionKey, selectedDatesKey, transactionListKey } from "@/utils/keys";
 
 const { categoryType, category: category, close } = inject(transactionListKey)!;
 const { openAdd: openAddTransactionModal, openEdit: openEditTransactionModal } =
@@ -28,8 +28,14 @@ const transactionClass = computed(() =>
   categoryType.value === CategoryType.Expense ? "table-cell-expense" : "table-cell-income",
 );
 
+const dates = inject(selectedDatesKey)!;
+
 async function fetchTransactions() {
-  transactions.value = await api.categoryTransactions(category.value!.categoryId);
+  transactions.value = await api.categoryTransactions(
+    category.value!.categoryId,
+    dates.startDate.value,
+    dates.endDate.value,
+  );
   sortByDate(false);
 }
 

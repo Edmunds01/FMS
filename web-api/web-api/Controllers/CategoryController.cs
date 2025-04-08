@@ -18,8 +18,9 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
         return Ok();
     }
 
-    [HttpGet("get-categories")]
-    public ActionResult<IEnumerable<Category>> GetCategories() => Ok(_categoryService.GetUserCategories());
+    // TODO: add start and end date
+    [HttpGet("categories")]
+    public ActionResult<IEnumerable<Category>> GetCategories(DateTime startDate, DateTime endDate) => Ok(_categoryService.GetUserCategories(startDate, endDate));
 
     [HttpPost("save-category-icon")]
     public async Task<IActionResult> SaveCategoryIcon(long categoryId, string icon)

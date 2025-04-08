@@ -19,9 +19,9 @@ public class TransactionService(
     private readonly IAccountService _accountService = accountService;
     private readonly ICategoryService _categoryService = categoryService;
 
-    public IEnumerable<Dtos.Transaction> GetUserTransactions(long categoryId)
+    public IEnumerable<Dtos.Transaction> GetUserTransactions(long categoryId, DateTime startDate, DateTime endDate)
     {
-        var transactions = _transactionRepository.GetUserTransactions(UserId, categoryId);
+        var transactions = _transactionRepository.GetUserTransactions(UserId, categoryId, startDate, endDate);
 
         return _mapper.Map<IEnumerable<Dtos.Transaction>>(transactions);
     }

@@ -2,7 +2,7 @@
 
 public interface ITransactionService
 {
-    IEnumerable<Dtos.Transaction> GetUserTransactions(long categoryId);
+    IEnumerable<Dtos.Transaction> GetUserTransactions(long categoryId, DateTime startDate, DateTime endDate);
 
     Task UpsertTransactionAsync(Dtos.Transaction transactionRaw);
 

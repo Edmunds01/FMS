@@ -17,8 +17,11 @@ public class CategoryService(
     private readonly ITransactionRepository _transactionRepository = transactionRepository;
     private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
-    public IEnumerable<Dtos.Category> GetUserCategories()
+    public IEnumerable<Dtos.Category> GetUserCategories(DateTime startDate, DateTime endDate)
     {
+        startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day, 0, 0, 0, DateTimeKind.Utc);
+        endDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 59, DateTimeKind.Utc);
+
         var categoriesRaw = _categoryRepository.GetUserCategories(UserId).ToList();
         var transactions = _transactionRepository.GetUserTransactions(UserId).ToList();
         var categories = _mapper.Map<IEnumerable<Dtos.Category>>(categoriesRaw);
@@ -26,7 +29,7 @@ public class CategoryService(
         return categories.Select(category =>
         {
             category.ShowDeleteButton = !transactions.Any(t => t.CategoryId == category.CategoryId);
-            category.SumOfTransactions = transactions.Where(t => t.CategoryId == category.CategoryId).Sum(t => t.Amount);
+            category.SumOfTransactions = transactions.Where(t => t.CategoryId == category.CategoryId && t.CreatedDateTime >= startDate && t.CreatedDateTime <= endDate).Sum(t => t.Amount);
 
             return category;
         });

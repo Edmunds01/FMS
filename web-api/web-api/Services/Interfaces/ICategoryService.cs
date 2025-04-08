@@ -4,7 +4,7 @@ public interface ICategoryService
 {
     Task CreateNewCategoryAsync(Dtos.NewCategory categoryRaw);
 
-    IEnumerable<Dtos.Category> GetUserCategories();
+    IEnumerable<Dtos.Category> GetUserCategories(DateTime startDate, DateTime endDate);
 
     Task ValidateIsUserCategoryAsync(long categoryId);
 
