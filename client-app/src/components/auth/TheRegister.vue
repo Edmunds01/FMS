@@ -1,3 +1,29 @@
+<script lang="ts">
+export function validatePassword(passwordRaw: string) {
+  const minLength = 10;
+  const hasNumber = /\d/;
+  const hasUpperCase = /[A-Z]/;
+  const hasLowerCase = /[a-z]/;
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
+
+  let passwordError = "";
+
+  if (passwordRaw.length < minLength) {
+    passwordError = `Parolei jābūt vismaz ${minLength} simbolu garam.`;
+  } else if (!hasNumber.test(passwordRaw) && !hasSpecialChar.test(passwordRaw)) {
+    passwordError = "Parolei jābūt vismaz vienam ciparam vai speciālam simbolam.";
+  } else if (!hasUpperCase.test(passwordRaw)) {
+    passwordError = "Parolei jābūt vismaz vienam lielajam burtam.";
+  } else if (!hasLowerCase.test(passwordRaw)) {
+    passwordError = "Parolei jābūt vismaz vienam mazajam burtam.";
+  } else {
+    passwordError = "";
+  }
+
+  return passwordError;
+}
+</script>
+
 <script setup lang="ts">
 // TODO: Add unsuccessful register alert
 // TODO: Change redirection link
@@ -6,6 +32,7 @@ import { api } from "@/api/auto-generated-client";
 import { useNotification } from "@kyvg/vue3-notification";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import FaIcon from "@/components/global/FaIcon.vue";
 
 const notification = useNotification();
 
@@ -18,26 +45,6 @@ const username = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 
-const validatePassword = () => {
-  const minLength = 10;
-  const hasNumber = /\d/;
-  const hasUpperCase = /[A-Z]/;
-  const hasLowerCase = /[a-z]/;
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
-
-  if (password.value.length < minLength) {
-    passwordError.value = `Parolei jābūt vismaz ${minLength} simbolu garam.`;
-  } else if (!hasNumber.test(password.value) && !hasSpecialChar.test(password.value)) {
-    passwordError.value = "Parolei jābūt vismaz vienam ciparam vai speciālam simbolam.";
-  } else if (!hasUpperCase.test(password.value)) {
-    passwordError.value = "Parolei jābūt vismaz vienam lielajam burtam.";
-  } else if (!hasLowerCase.test(password.value)) {
-    passwordError.value = "Parolei jābūt vismaz vienam mazajam burtam.";
-  } else {
-    passwordError.value = "";
-  }
-};
-
 const validateConfirmPassword = () => {
   if (confirmPassword.value !== password.value) {
     confirmPasswordError.value = "Paroles nesakrīt.";
@@ -47,7 +54,7 @@ const validateConfirmPassword = () => {
 };
 
 const validateForm = async () => {
-  validatePassword();
+  validatePassword(password.value);
   validateConfirmPassword();
   if (!passwordError.value && !confirmPasswordError.value) {
     await handleRegister();
@@ -86,7 +93,7 @@ const handleRegister = async () => {
           href="login"
           class="text-reset text-decoration-none d-flex align-items-center justify-content-center"
         >
-          <fa-icon icon="fa-solid fa-xmark" class="ms-auto" size="2xl" />
+          <FaIcon icon="fa-solid fa-xmark" class="ms-auto" size="2xl" />
         </a>
       </div>
       <form class="container" @submit.prevent="validateForm">

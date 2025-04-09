@@ -2,7 +2,7 @@
 
 namespace web_api.Repository.Interfaces;
 
-public interface IUserRepository
+public interface IUserRepository: IBaseRepository<User>
 {
     Task<User> AddUserAsync(User user);
 

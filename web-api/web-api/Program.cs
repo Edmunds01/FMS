@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
+using web_api.Controllers;
 using web_api.Helper;
 using web_api.Helper.Interfaces;
 using web_api.Middleware;
@@ -90,6 +91,7 @@ void RegisterRepositoriesAndServices(IServiceCollection services)
     services.AddScoped<ITransactionService, TransactionService>();
     services.AddScoped<ICategoryService, CategoryService>();
 
+    services.AddSingleton<IRecoverHelper, RecoverHelper>();
     services.AddSingleton<ITokenHelper, TokenHelper>();
 
     services.AddHttpContextAccessor();

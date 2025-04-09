@@ -35,6 +35,16 @@ const routes: RouteRecordRaw[] = [
     name: "logout",
     component: () => import("@/views/auth/LogoutView.vue"),
   },
+  {
+    path: "/recover",
+    name: "recover",
+    component: () => import("@/views/auth/RecoverStepOne.vue"),
+  },
+  {
+    path: "/change-password",
+    name: "change-password",
+    component: () => import("@/views/auth/RecoverStepTwo.vue"),
+  },
 ];
 
 const router = createRouter({
