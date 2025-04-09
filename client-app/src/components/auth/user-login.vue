@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { api } from "@/api/auto-generated-client";
+import { useNotification } from "@kyvg/vue3-notification";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
+const notification = useNotification();
 const router = useRouter();
 
 const username = ref("");
@@ -22,6 +24,12 @@ const handleLogin = async () => {
     loading.value = false;
     username.value = "";
     password.value = "";
+    notification.notify({
+      title: "Kļūda",
+      text: "Parole vai e-pasts ir nepareizs",
+      type: "error",
+      duration: 3000,
+    });
   }
 };
 
@@ -40,7 +48,6 @@ onMounted(() => {
         <div class="row mb-1 mt-4">
           <label for="username" class="form-label col-3">E-pasts</label>
           <input
-            id="username"
             v-model="username"
             type="email"
             class="form-control col w-auto"
@@ -51,7 +58,6 @@ onMounted(() => {
         <div class="row mb-1">
           <label for="password" class="form-label col-3">Parole</label>
           <input
-            id="password"
             v-model="password"
             class="form-control col"
             type="password"
@@ -66,7 +72,7 @@ onMounted(() => {
         <div class="row">
           <div class="col-3"></div>
           <button type="submit" class="btn btn-primary col">Ieiet</button>
-          <a type="button" href="register" class="btn btn-primary ms-2 col">Registrēties</a>
+          <a type="button" href="register" class="btn btn-primary ms-2 col"> Registrēties </a>
         </div>
       </form>
     </div>

@@ -5,11 +5,14 @@ import { ref } from "vue";
 import FaIcon, { type IconName } from "@/components/global/FaIcon.vue";
 import { api, type Account } from "@/api/auto-generated-client";
 import { useConfirm } from "@/utils/confirm";
+import { useNotification } from "@kyvg/vue3-notification";
 
 const props = defineProps<{
   id: string;
   account: Account;
 }>();
+
+const notification = useNotification();
 
 const editAccount = ref<Account>(props.account);
 const isEditMode = ref(false);
@@ -33,6 +36,13 @@ async function iconChanged(icon: IconName) {
   editAccount.value.icon = icon;
 
   await api.saveAccountIcon(editAccount.value.accountId, icon);
+
+  notification.notify({
+    title: "Ikona mainīta",
+    text: `Ikona saglabāta.`,
+    duration: 4000,
+    type: "success",
+  });
 }
 
 async function iconNameSaved() {
@@ -40,6 +50,13 @@ async function iconNameSaved() {
 
   editAccount.value.name = newName.value;
   await api.saveAccountName(editAccount.value.accountId, newName.value);
+
+  notification.notify({
+    title: "Nosaukums mainīts",
+    text: `Nosaukums saglabāts.`,
+    duration: 4000,
+    type: "success",
+  });
 }
 </script>
 

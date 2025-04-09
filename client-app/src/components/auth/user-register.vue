@@ -3,8 +3,11 @@
 // TODO: Change redirection link
 
 import { api } from "@/api/auto-generated-client";
+import { useNotification } from "@kyvg/vue3-notification";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+
+const notification = useNotification();
 
 const router = useRouter();
 
@@ -23,7 +26,7 @@ const validatePassword = () => {
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
 
   if (password.value.length < minLength) {
-    passwordError.value = `PParolei jābūt vismaz ${minLength} simbolu garam.`;
+    passwordError.value = `Parolei jābūt vismaz ${minLength} simbolu garam.`;
   } else if (!hasNumber.test(password.value) && !hasSpecialChar.test(password.value)) {
     passwordError.value = "Parolei jābūt vismaz vienam ciparam vai speciālam simbolam.";
   } else if (!hasUpperCase.test(password.value)) {
@@ -56,6 +59,12 @@ const handleRegister = async () => {
     await api.register({
       username: username.value,
       password: password.value,
+    });
+    notification.notify({
+      title: "Reģistrācija",
+      text: "Reģistrācija veiksmīga.",
+      duration: 4000,
+      type: "success",
     });
     router.push("/");
   } catch {

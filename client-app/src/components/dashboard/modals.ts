@@ -92,9 +92,8 @@ export function useTransactionListModal() {
   const category = ref<Category | undefined>();
   const boolForWatch = ref(false);
 
-  function openTransactionList(categoryRaw: Category, categoryTypeRaw: CategoryType) {
+  function openTransactionList(categoryRaw: Category) {
     category.value = categoryRaw;
-    categoryType.value = categoryTypeRaw;
 
     openModal(transactionListModalId, closeTransactionList);
   }
@@ -114,7 +113,6 @@ export function useTransactionListModal() {
 
   provide(transactionListKey, {
     category,
-    categoryType,
     boolForWatch,
     fetchData,
     open: openTransactionList,
@@ -123,25 +121,21 @@ export function useTransactionListModal() {
 }
 
 export function useAddEditTransactionListModal() {
-  const categoryType = ref<CategoryType | undefined>();
   const category = ref<Category | undefined>();
   const transaction = ref<Transaction | undefined>();
 
-  const reopenFunctionToCall =
-    ref<(categoryRaw: Category, categoryTypeRaw: CategoryType) => void | undefined>();
+  const reopenFunctionToCall = ref<(categoryRaw: Category) => void | undefined>();
 
   function openTransactionList(
     categoryRaw: Category,
-    categoryTypeRaw: CategoryType,
-    reopenFunction?: (categoryRaw: Category, categoryTypeRaw: CategoryType) => void,
+    reopenFunction?: (categoryRaw: Category) => void,
   ) {
     category.value = categoryRaw;
-    categoryType.value = categoryTypeRaw;
 
     const onModalHidden = () => {
       closeTransactionList();
       if (reopenFunction) {
-        reopenFunction(categoryRaw, categoryTypeRaw);
+        reopenFunction(categoryRaw);
       }
     };
 
@@ -150,12 +144,10 @@ export function useAddEditTransactionListModal() {
 
   function openEditTransactionList(
     categoryRaw: Category,
-    categoryTypeRaw: CategoryType,
     transactionRaw: Transaction,
-    reopenFunction: (categoryRaw: Category, categoryTypeRaw: CategoryType) => void,
+    reopenFunction: (categoryRaw: Category) => void,
   ) {
     category.value = categoryRaw;
-    categoryType.value = categoryTypeRaw;
     transaction.value = transactionRaw;
     reopenFunctionToCall.value = reopenFunction;
 
@@ -173,11 +165,10 @@ export function useAddEditTransactionListModal() {
       if (isConfirmModal) return;
 
       if (reopenFunctionToCall.value) {
-        reopenFunctionToCall.value(category.value!, categoryType.value!);
+        reopenFunctionToCall.value(category.value!);
         reopenFunctionToCall.value = undefined;
       }
 
-      categoryType.value = undefined;
       category.value = undefined;
       transaction.value = undefined;
     }, 0);
@@ -189,7 +180,6 @@ export function useAddEditTransactionListModal() {
 
   provide(addEditTransactionKey, {
     category,
-    categoryType,
     transaction,
     openConfirmModal: confirmDelete,
     openAdd: openTransactionList,

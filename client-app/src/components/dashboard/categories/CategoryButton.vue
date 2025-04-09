@@ -2,14 +2,14 @@
 import type { Category } from "@/api/auto-generated-client";
 import FaIcon from "@/components/global/FaIcon.vue";
 
-const props = defineProps<{
+defineProps<{
   category: Category;
 }>();
 
 const emit = defineEmits<{
-  (e: "left-click", category: Category): void;
-  (e: "right-click", category: Category): void;
-  (e: "double-click", category: Category): void;
+  (e: "left-click"): void;
+  (e: "right-click"): void;
+  (e: "double-click"): void;
 }>();
 
 let clicks = 0;
@@ -21,7 +21,7 @@ function onClick() {
   if (clicks === 1) {
     timer = setTimeout(() => {
       clicks = 0;
-      emit("left-click", props.category);
+      emit("left-click");
     }, 200);
   } else {
     clearTimeout(timer);
@@ -34,8 +34,8 @@ function onClick() {
   <button
     class="category-button text-center"
     @click="onClick"
-    @contextmenu.prevent="$emit('right-click', category)"
-    @dblclick.prevent="$emit('double-click', category)"
+    @contextmenu.prevent="$emit('right-click')"
+    @dblclick.prevent="$emit('double-click')"
   >
     <div class="amount">{{ category.sumOfTransactions.toEurFormat() }}</div>
     <div class="icon-container">

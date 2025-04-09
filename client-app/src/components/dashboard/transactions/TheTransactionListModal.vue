@@ -6,14 +6,14 @@ import FaIcon from "@/components/global/FaIcon.vue";
 import { formatLatvianDate } from "../TheDateSelect.vue";
 import { addEditTransactionKey, selectedDatesKey, transactionListKey } from "@/utils/keys";
 
-const { categoryType, category: category, close } = inject(transactionListKey)!;
+const { category, close } = inject(transactionListKey)!;
 const { openAdd: openAddTransactionModal, openEdit: openEditTransactionModal } =
   inject(addEditTransactionKey)!;
 const { open: openTransactionList, boolForWatch } = inject(transactionListKey)!;
 
 function openEditTransaction(transaction: Transaction) {
   close();
-  openEditTransactionModal(category.value!, categoryType.value!, transaction, openTransactionList);
+  openEditTransactionModal(category.value!, transaction, openTransactionList);
 }
 
 const transactions = ref<Transaction[]>();
@@ -25,7 +25,7 @@ type TransactionSortMode = {
 
 const sortMode = ref<TransactionSortMode>({ mode: 2, order: "desc" });
 const transactionClass = computed(() =>
-  categoryType.value === CategoryType.Expense ? "table-cell-expense" : "table-cell-income",
+  category.value!.type === CategoryType.Expense ? "table-cell-expense" : "table-cell-income",
 );
 
 const dates = inject(selectedDatesKey)!;
@@ -107,7 +107,7 @@ watch(
               class="add-button"
               @click="
                 close();
-                openAddTransactionModal(category!, categoryType!, openTransactionList);
+                openAddTransactionModal(category!, openTransactionList);
               "
             >
               <FaIcon icon-name="plus" size="sm" class="add-icon" />

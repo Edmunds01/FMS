@@ -13,7 +13,9 @@ import {
 import VueDatePicker from "@vuepic/vue-datepicker";
 import { formatLatvianDate } from "../TheDateSelect.vue";
 import FaIcon from "@/components/global/FaIcon.vue";
+import { useNotification } from "@kyvg/vue3-notification";
 
+const notification = useNotification();
 const { categories } = inject(categoriesKey)!;
 const { accounts } = inject(accountsKey)!;
 const {
@@ -76,6 +78,12 @@ async function save() {
   setTimeout(async () => {
     await api.upsertTransaction(transaction.value);
     fetchData();
+    notification.notify({
+      title: isEdit.value ? "Transakcija labota" : "Transakcija pievienota",
+      text: `Transakcija ${isEdit.value ? "labota" : "pievienota"} veiksmīgi.`,
+      duration: 4000,
+      type: "success",
+    });
   });
 
   close();
@@ -90,6 +98,12 @@ async function deleteTransaction() {
     setTimeout(async () => {
       await api.deleteTransaction(transaction.value.transactionId!);
       fetchData();
+      notification.notify({
+        title: "Transakcija izdzēsta",
+        text: `Transakcija izdzēsta veiksmīgi.`,
+        duration: 4000,
+        type: "success",
+      });
     }, 0);
 
     close();

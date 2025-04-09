@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { api, CategoryType, type Category, type NewCategory } from "@/api/auto-generated-client";
+import { api, type Category, type NewCategory } from "@/api/auto-generated-client";
 import { inject, ref } from "vue";
 import SelectIconDropdown from "@/components/global/SelectIconDropdown.vue";
 import SaveOrCloseInModal from "@/components/global/SaveOrCloseInModal.vue";
 import ModalWindow, { addCategoryModalId } from "@/components/global/ModalWindow.vue";
 import { categoriesKey, addCategoryKey } from "@/utils/keys";
+import { useNotification } from "@kyvg/vue3-notification";
 
+const notification = useNotification();
 const { categories, fetchCategories } = inject(categoriesKey)!;
+const { categoryType } = inject(addCategoryKey)!;
 
 const defaultCategory = {
   name: "",
   icon: "wallet",
-  type: CategoryType.Expense,
+  type: categoryType.value,
 } as NewCategory;
 
 const newCategory = ref({ ...defaultCategory });
@@ -29,6 +32,13 @@ async function save() {
   setTimeout(async () => {
     await api.addCategory(newCategory.value);
     await fetchCategories();
+
+    notification.notify({
+      title: "Jauna kategorija pievienota",
+      text: `Jauna kategorija "${newCategory.value.name}" ir pievienota.`,
+      duration: 4000,
+      type: "success",
+    });
     newCategory.value = { ...defaultCategory };
   }, 0);
 

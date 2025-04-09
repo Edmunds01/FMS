@@ -13,6 +13,10 @@ import {
   useEditCategoryModal,
   useTransactionListModal,
 } from "./modals";
+import { useNotification } from "@kyvg/vue3-notification";
+import router from "@/router";
+
+const notification = useNotification();
 
 const now = new Date();
 const startDate = ref(new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)));
@@ -35,6 +39,17 @@ const expense = computed(() =>
 const income = computed(() =>
   categories.value.filter((category) => category.type === CategoryType.Income),
 );
+
+function logout() {
+  notification.notify({
+    title: "Iziet",
+    text: "Jūs esat izrakstījies.",
+    duration: 4000,
+    type: "success",
+  });
+
+  router.push("/logout");
+}
 
 provide(selectedDatesKey, { startDate, endDate });
 provide(accountsKey, { accounts, fetchAccounts });
@@ -72,7 +87,7 @@ watch([startDate, endDate], () => {
             <div
               class="col-1 p-0 border-bottom border-top d-flex align-items-center justify-content-end"
             >
-              <button title="Iziet" class="btn" @click="$router.push('/logout')">
+              <button title="Iziet" class="btn" @click="logout">
                 <FaIcon icon-name="right-from-bracket" size="2x" class="me-3" />
               </button>
             </div>

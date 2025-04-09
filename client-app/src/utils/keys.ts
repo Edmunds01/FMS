@@ -46,10 +46,9 @@ export const editCategoryKey = Symbol() as InjectionKey<{
  */
 export const transactionListKey = Symbol() as InjectionKey<{
   category: Ref<Category | undefined>;
-  categoryType: Ref<CategoryType | undefined>;
   boolForWatch: Ref<boolean>;
   fetchData: () => void;
-  open: (categoryRaw: Category, categoryTypeRaw: CategoryType) => void;
+  open: (categoryRaw: Category) => void;
   close: () => void;
 }>;
 
@@ -58,19 +57,13 @@ export const transactionListKey = Symbol() as InjectionKey<{
  */
 export const addEditTransactionKey = Symbol() as InjectionKey<{
   category: Ref<Category | undefined>;
-  categoryType: Ref<CategoryType | undefined>;
   transaction: Ref<Transaction | undefined>;
   openConfirmModal: (text: string) => Promise<boolean>;
-  openAdd: (
-    categoryRaw: Category,
-    categoryTypeRaw: CategoryType,
-    reopenFunction?: (categoryRaw: Category, categoryTypeRaw: CategoryType) => void,
-  ) => void;
+  openAdd: (categoryRaw: Category, reopenFunction?: (categoryRaw: Category) => void) => void;
   openEdit: (
     categoryRaw: Category,
-    categoryTypeRaw: CategoryType,
     transactionRaw: Transaction,
-    reopenFunction: (categoryRaw: Category, categoryTypeRaw: CategoryType) => void,
+    reopenFunction: (categoryRaw: Category) => void,
   ) => void;
   close: () => void;
 }>;

@@ -32,7 +32,7 @@ function formatDate(dateRange: Date[]) {
   const startDate = dateRange[0];
   const endDate = dateRange[1];
 
-  return `${formatLatvianDate(startDate)} - ${formatLatvianDate(endDate)}`;
+  return `${formatLatvianDate(startDate)}` + (endDate ? ` - ${formatLatvianDate(endDate)}` : "");
 }
 
 const rangeConfig: RangeConfig = {

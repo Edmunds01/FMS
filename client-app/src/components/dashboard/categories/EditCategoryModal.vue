@@ -5,7 +5,9 @@ import SelectIconDropdown from "@/components/global/SelectIconDropdown.vue";
 import FaIcon from "@/components/global/FaIcon.vue";
 import ModalWindow, { editCategoryModalId } from "@/components/global/ModalWindow.vue";
 import { categoriesKey, editCategoryKey } from "@/utils/keys";
+import { useNotification } from "@kyvg/vue3-notification";
 
+const notification = useNotification();
 const { category, close, openConfirmModal } = inject(editCategoryKey)!;
 const { categories, fetchCategories } = inject(categoriesKey)!;
 
@@ -17,10 +19,17 @@ async function deleteCategory() {
 
   if (result) {
     categories.value = categories.value.filter((c) => c.categoryId !== category.value!.categoryId);
+    const name = category.value?.name;
 
     setTimeout(async () => {
       await api.deleteCategory(category.value!.categoryId);
       await fetchCategories();
+      notification.notify({
+        title: "Kategorija izdzēsta",
+        text: `Kategorija "${name}" ir izdzēsta.`,
+        duration: 4000,
+        type: "success",
+      });
     }, 0);
 
     close();
@@ -30,12 +39,26 @@ async function deleteCategory() {
 async function iconChanged(icon: string) {
   category.value!.icon = icon;
   await api.saveCategoryIcon(category.value!.categoryId, icon);
+
+  notification.notify({
+    title: "Ikona mainīta",
+    text: `Ikona saglabāta.`,
+    duration: 4000,
+    type: "success",
+  });
 }
 
 async function nameChanged() {
   isEditMode.value = false;
   category.value!.name = newName.value;
   await api.saveCategoryName(category.value!.categoryId, newName.value);
+
+  notification.notify({
+    title: "Nosaukums mainīts",
+    text: `Nosaukums saglabāts.`,
+    duration: 4000,
+    type: "success",
+  });
 }
 </script>
 

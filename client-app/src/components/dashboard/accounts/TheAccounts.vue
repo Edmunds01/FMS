@@ -7,7 +7,9 @@ import { api, type Account, type NewAccount } from "@/api/auto-generated-client"
 import { closeModal, openModal } from "@/components/global/ModalWindow.vue";
 import { isConfirmModal } from "@/components/global/ConfirmAction.vue";
 import { accountsKey } from "@/utils/keys";
+import { useNotification } from "@kyvg/vue3-notification";
 
+const notification = useNotification();
 const selectedAccount = ref<Account | null>(null);
 
 const { accounts, fetchAccounts } = inject(accountsKey)!;
@@ -25,15 +27,29 @@ async function saveAccount(account?: NewAccount) {
   if (account) {
     await api.addAccount(account);
     await fetchAccounts();
+    notification.notify({
+      title: "Jauns konts pievienots",
+      text: `Jauns konts "${account.name}" ir pievienots.`,
+      duration: 4000,
+      type: "success",
+    });
   }
 }
 
 async function deleteAccount(accountId?: number) {
   closeModal(accountEditModalId);
-  setTimeout(() => {
+  setTimeout(async () => {
+    const name = selectedAccount.value?.name;
     selectedAccount.value = null;
+    await api.deleteAccount(accountId);
+
+    notification.notify({
+      title: "Konts izdzēsts",
+      text: `Konts "${name}" ir izdzēsts.`,
+      duration: 4000,
+      type: "success",
+    });
   }, 0);
-  api.deleteAccount(accountId);
 
   accounts.value = accounts.value.filter((account) => account.accountId !== accountId);
 }
