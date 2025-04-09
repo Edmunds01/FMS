@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using web_api.Dtos;
+using web_api.Helper;
 using web_api.Helper.Interfaces;
 using web_api.Models;
 using web_api.Repository.Interfaces;
@@ -9,15 +11,15 @@ namespace web_api.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(IConfiguration configuration, IUserRepository userRepository, ITokenHelper tokenHelper) : ControllerBase
+public class AuthController(IConfiguration configuration, IUserRepository userRepository, ITokenHelper tokenHelper, IRecoverHelper recoverHelper) : ControllerBase
 {
     private readonly IConfiguration _configuration = configuration;
     private readonly IUserRepository _userRepository = userRepository;
     private readonly ITokenHelper _tokenHelper = tokenHelper;
+    private readonly IRecoverHelper _recoverHelper = recoverHelper;
 
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] LoginRegisterDto loginDto)
     {
         var user = await _userRepository.GetUserAsync(loginDto.Username);
@@ -29,7 +31,7 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
             return Ok();
         }
 
-        return Unauthorized(JsonSerializer.Serialize("Invalid username or password"));
+        return BadRequest(JsonSerializer.Serialize("Invalid username or password"));
     }
 
     [HttpPost("register")]
@@ -47,7 +49,7 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
         var user = await _userRepository.AddUserAsync(new User
         {
             Email = loginDto.Username,
-            PasswordHash = Helper.PasswordHelper.GenerateVarbinary64FromPassword(loginDto.Password)
+            PasswordHash = PasswordHelper.GenerateVarbinary64FromPassword(loginDto.Password)
         });
 
         SetTokenCookie(user);
@@ -68,6 +70,38 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<bool> ValidateSession() =>
         HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated ? Ok(true) : Ok(false);
+
+    [HttpPost("recover")]
+    public async Task<IActionResult> Recover([EmailAddress] string email)
+    {
+        var user = await _userRepository.GetUserAsync(email);
+        if (user == null)
+        {
+            return BadRequest("User with this email does not exist");
+        }
+
+        _recoverHelper.SendRecoveryEmail(email);
+
+        return Ok();
+    }
+    
+    [HttpPost("recover-change-password")]
+    public async Task<IActionResult> RecoverChangePassword(Guid token, string password)
+    {
+        var isValid = _recoverHelper.ValidateRecoveryToken(token, out var email);
+
+        if (!isValid)
+        {
+            return BadRequest("Invalid token");
+        }
+
+        var user = await _userRepository.GetUserAsync(email!) ?? throw new NotSupportedException();
+
+        user.PasswordHash = PasswordHelper.GenerateVarbinary64FromPassword(password);
+        await _userRepository.SaveChangesAsync();
+
+        return Ok();
+    }
 
     private void SetTokenCookie(User user)
     {

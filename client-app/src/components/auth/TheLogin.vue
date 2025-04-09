@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { api } from "@/api/auto-generated-client";
+import { useNotification } from "@kyvg/vue3-notification";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
+const notification = useNotification();
 const router = useRouter();
 
 const username = ref("");
 const password = ref("");
+const showPassword = ref(false); // New state for toggling password visibility
 
 const loading = ref(false);
 
@@ -18,10 +21,16 @@ const handleLogin = async () => {
     loading.value = true;
     await api.login({ username: username.value, password: password.value });
     router.push("/");
-  } finally {
+  } catch {
     loading.value = false;
     username.value = "";
     password.value = "";
+    notification.notify({
+      title: "Kļūda",
+      text: "Parole vai e-pasts ir nepareizs",
+      type: "error",
+      duration: 3000,
+    });
   }
 };
 
@@ -40,7 +49,6 @@ onMounted(() => {
         <div class="row mb-1 mt-4">
           <label for="username" class="form-label col-3">E-pasts</label>
           <input
-            id="username"
             v-model="username"
             type="email"
             class="form-control col w-auto"
@@ -50,23 +58,33 @@ onMounted(() => {
         </div>
         <div class="row mb-1">
           <label for="password" class="form-label col-3">Parole</label>
-          <input
-            id="password"
-            v-model="password"
-            class="form-control col"
-            type="password"
-            autocomplete="current-password"
-          />
+          <div class="input-group col p-0">
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              class="form-control"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              @click="showPassword = !showPassword"
+            >
+              {{ showPassword ? "Slēpt" : "Rādīt" }}
+            </button>
+          </div>
         </div>
         <div class="row text-center">
           <div class="col-3"></div>
           <div class="col"></div>
-          <a href="#" class="recover link-primary ms-2 col">Atjaunot paroli</a>
+          <a class="recover link-primary ms-2 col" @click.prevent="$router.push('/recover')"
+            >Atjaunot paroli</a
+          >
         </div>
         <div class="row">
           <div class="col-3"></div>
           <button type="submit" class="btn btn-primary col">Ieiet</button>
-          <a type="button" href="register" class="btn btn-primary ms-2 col">Registrēties</a>
+          <a type="button" href="register" class="btn btn-primary ms-2 col"> Registrēties </a>
         </div>
       </form>
     </div>
@@ -83,5 +101,11 @@ onMounted(() => {
 
 .recover {
   font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
 }
 </style>

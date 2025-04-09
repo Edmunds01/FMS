@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
+import { Notifications } from "@kyvg/vue3-notification";
 </script>
 
 <template>
+  <Notifications position="bottom right" style="font-size: 1.2rem !important" />
   <RouterView class="app-container" />
 </template>
 
@@ -25,11 +27,15 @@ h1 {
 }
 
 .app-container {
-  @media (max-width: 1920px) {
+  @media (max-width: 1200px) {
     width: 1920px;
     overflow: auto;
   }
 }
 </style>
 
-<style scoped></style>
+<style>
+.vue-notification {
+  font-size: 1.5rem !important;
+}
+</style>

@@ -4,9 +4,9 @@ using web_api.Repository.Interfaces;
 
 namespace web_api.Repository;
 
-public class UserRepository(FMSContext context) : IUserRepository
+public class UserRepository(FMSContext context) : BaseRepository<User>(context), IUserRepository
 {
-    private readonly FMSContext _context = context;
+    private new readonly FMSContext _context = context;
 
     public async Task<User> AddUserAsync(User user)
     {

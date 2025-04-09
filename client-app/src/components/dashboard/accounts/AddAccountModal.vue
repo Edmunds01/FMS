@@ -16,11 +16,33 @@ const defaultAccount = {
 };
 
 const newAccount = ref<NewAccount>({ ...defaultAccount });
-const error = ref<string>();
+const errorName = ref<string>();
+const errorBalance = ref<string>();
 
 const validateForm = () => {
-  error.value = !newAccount.value.name ? "Name is required" : undefined;
-  return !error.value;
+  let isValid = true;
+
+  if (!newAccount.value.name) {
+    errorName.value = "Konta nosaukums ir obligāts.";
+    isValid = false;
+  } else if ((newAccount.value.name?.length ?? 0) > 15) {
+    errorName.value = "Konta nosaukums nedrīkst pārsniegt 15 rakstzīmes.";
+    isValid = false;
+  } else {
+    errorName.value = undefined;
+  }
+
+  if (newAccount.value.balance > 10_000_000) {
+    errorBalance.value = "Sākotnējā summa nedrīkst pārsniegt 10 000 000.";
+    isValid = false;
+  } else if (newAccount.value.balance < 0) {
+    errorBalance.value = "Sākotnējā summa nedrīkst būt negatīva.";
+    isValid = false;
+  } else {
+    errorBalance.value = undefined;
+  }
+
+  return isValid;
 };
 
 const addNewAccount = () => {
@@ -31,7 +53,7 @@ const addNewAccount = () => {
 };
 
 watch(
-  () => newAccount.value.name,
+  () => [newAccount.value.name, newAccount.value.balance],
   () => {
     validateForm();
   },
@@ -40,7 +62,8 @@ watch(
 function clearData() {
   newAccount.value = { ...defaultAccount };
   setTimeout(() => {
-    error.value = undefined;
+    errorName.value = undefined;
+    errorBalance.value = undefined;
   }, 0);
 }
 
@@ -59,27 +82,35 @@ const emit = defineEmits<{
         />
         <div class="flex-grow-1 pe-3 account-details">
           <div class="mb-1 row">
-            <label for="staticEmail" class="col-5 col-form-label text-start align-bottom"
-              >Konta nosaukums:</label
-            >
+            <label for="staticEmail" class="col-5 col-form-label text-start align-bottom">
+              Konta nosaukums:
+            </label>
             <div class="col-7">
-              <div v-if="error" class="text-danger mt-1 error">
-                {{ error }}
+              <div v-if="errorName" class="text-danger mt-1 error">
+                {{ errorName }}
               </div>
               <input
                 v-model="newAccount.name"
                 type="text"
                 class="form-control"
-                :class="{ 'is-invalid': error }"
+                :class="{ 'is-invalid': errorName }"
               />
             </div>
           </div>
           <div class="row">
-            <label for="inputPassword" class="col-5 col-form-label text-start align-bottom"
-              >Konta sakotnēja summa:</label
-            >
+            <label for="inputPassword" class="col-5 col-form-label text-start align-bottom">
+              Konta sakotnēja summa:
+            </label>
             <div class="col-7">
-              <input v-model="newAccount.balance" type="number" class="form-control" />
+              <div v-if="errorBalance && !errorName" class="text-danger mt-1 error">
+                {{ errorBalance }}
+              </div>
+              <input
+                v-model="newAccount.balance"
+                type="number"
+                class="form-control"
+                :class="{ 'is-invalid': errorBalance }"
+              />
             </div>
           </div>
         </div>

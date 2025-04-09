@@ -54,9 +54,9 @@ const { openAdd: openAddTransaction } = inject(addEditTransactionKey)!;
             :key="category.categoryId"
             :category="category"
             class="category-width user-select-none"
-            @left-click="(c) => openTransactionList(c, categoryType)"
-            @right-click="openEditCategory"
-            @double-click="openAddTransaction(category, categoryType)"
+            @left-click="openTransactionList(category)"
+            @right-click="openEditCategory(category)"
+            @double-click="openAddTransaction(category)"
           />
           <AddCategoryButton
             :type="categoryType"

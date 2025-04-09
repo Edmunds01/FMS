@@ -1,19 +1,23 @@
 <script setup lang="ts">
 import ModalWindow from "@/components/global/ModalWindow.vue";
 import SelectIconDropdown from "@/components/global/SelectIconDropdown.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import FaIcon, { type IconName } from "@/components/global/FaIcon.vue";
 import { api, type Account } from "@/api/auto-generated-client";
 import { useConfirm } from "@/utils/confirm";
+import { useNotification } from "@kyvg/vue3-notification";
 
 const props = defineProps<{
   id: string;
   account: Account;
 }>();
 
+const notification = useNotification();
+
 const editAccount = ref<Account>(props.account);
 const isEditMode = ref(false);
 const newName = ref(editAccount.value.name);
+const errorName = ref<string>();
 
 const emit = defineEmits<{
   (e: "delete-account", accountId?: number): void;
@@ -33,14 +37,52 @@ async function iconChanged(icon: IconName) {
   editAccount.value.icon = icon;
 
   await api.saveAccountIcon(editAccount.value.accountId, icon);
+
+  notification.notify({
+    title: "Ikona mainīta",
+    text: `Ikona saglabāta.`,
+    duration: 4000,
+    type: "success",
+  });
+}
+
+function validateName(): boolean {
+  if (!newName.value) {
+    errorName.value = "Konta nosaukums ir obligāts.";
+    return false;
+  } else if ((newName.value?.length ?? 0) > 15) {
+    errorName.value = "Konta nosaukums nedrīkst pārsniegt 15 rakstzīmes.";
+    return false;
+  } else {
+    errorName.value = undefined;
+    return true;
+  }
 }
 
 async function iconNameSaved() {
+  if (!validateName()) {
+    return;
+  }
+
   isEditMode.value = false;
 
   editAccount.value.name = newName.value;
   await api.saveAccountName(editAccount.value.accountId, newName.value);
+
+  notification.notify({
+    title: "Nosaukums mainīts",
+    text: `Nosaukums saglabāts.`,
+    duration: 4000,
+    type: "success",
+  });
 }
+
+watch(
+  () => newName.value,
+  () => {
+    validateName();
+  },
+);
 </script>
 
 <template>
@@ -53,12 +95,18 @@ async function iconNameSaved() {
         />
         <div class="row flex-grow-1">
           <div v-if="isEditMode" class="col d-flex align-items-center justify-content-center">
-            <input
-              v-model="newName"
-              type="text"
-              class="form-control form-control-sm me-4"
-              style="width: 30rem"
-            />
+            <div>
+              <input
+                v-model="newName"
+                type="text"
+                class="form-control form-control-sm me-2"
+                :class="{ 'is-invalid': errorName }"
+                style="width: 30rem"
+              />
+              <div v-if="errorName" class="text-danger mt-1">
+                {{ errorName }}
+              </div>
+            </div>
             <button class="p-0" @click="iconNameSaved()">
               <FaIcon icon-name="floppy-disk" size="lg" />
             </button>
@@ -67,6 +115,7 @@ async function iconNameSaved() {
               @click="
                 isEditMode = false;
                 newName = editAccount.name;
+                errorName = undefined;
               "
             >
               <FaIcon icon-name="xmark" size="lg" />
@@ -111,5 +160,10 @@ async function iconNameSaved() {
 .btn-close:hover {
   background-color: #f0f0f0;
   border-radius: 50%;
+}
+
+.is-invalid {
+  border-color: red;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
 }
 </style>

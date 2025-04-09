@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import RegisterView from "@/components/auth/user-register.vue";
+import RegisterView from "@/components/auth/TheRegister.vue";
 </script>
 
 <template>

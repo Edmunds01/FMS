@@ -3,7 +3,7 @@ import { api, CategoryType, type Transaction } from "@/api/auto-generated-client
 import ModalWindow, {
   transactionAddModalId as transactionAddEditModalId,
 } from "@/components/global/ModalWindow.vue";
-import { computed, inject, onMounted, ref } from "vue";
+import { computed, inject, onMounted, ref, watch } from "vue";
 import {
   accountsKey,
   addEditTransactionKey,
@@ -13,7 +13,9 @@ import {
 import VueDatePicker from "@vuepic/vue-datepicker";
 import { formatLatvianDate } from "../TheDateSelect.vue";
 import FaIcon from "@/components/global/FaIcon.vue";
+import { useNotification } from "@kyvg/vue3-notification";
 
+const notification = useNotification();
 const { categories } = inject(categoriesKey)!;
 const { accounts } = inject(accountsKey)!;
 const {
@@ -36,6 +38,8 @@ const transaction = ref<Transaction>({
 const amountInput = ref<HTMLElement>();
 const amount = ref((0).toEurFormat());
 const firstCategoryType = ref<CategoryType>(CategoryType.Expense);
+
+const errorComment = ref<string>();
 
 const selectedCategory = computed(() => {
   return categories?.value.find((category) => category.categoryId === transaction.value.categoryId);
@@ -63,12 +67,39 @@ const secondCategories = computed(() => {
   return categories?.value.filter((category) => category.type !== firstCategoryType.value);
 });
 
+const errorAmount = ref<string>();
+
+function validateAmount(): boolean {
+  const number = amount.value.toNumberFromEurFormat();
+  if (number < 0.01) {
+    errorAmount.value = "Summai jābūt vismaz 0.01";
+    return false;
+  } else {
+    errorAmount.value = undefined;
+    return true;
+  }
+}
+
+function validateComment(): boolean {
+  if ((transaction.value.comment?.length ?? 0) > 50) {
+    errorComment.value = "Komentārs nedrīkst pārsniegt 50 rakstzīmes.";
+    return false;
+  } else {
+    errorComment.value = undefined;
+    return true;
+  }
+}
+
 async function save() {
+  if (!validateComment() || !validateAmount()) {
+    return;
+  }
+
   transaction.value.amount = amount.value.toNumberFromEurFormat();
 
-  const affectedCategory = categories?.value.filter(
+  const affectedCategory = categories?.value.find(
     (c) => c.categoryId === transaction.value.categoryId,
-  )[0];
+  );
   if (affectedCategory) {
     affectedCategory.sumOfTransactions += transaction.value.amount;
   }
@@ -76,6 +107,12 @@ async function save() {
   setTimeout(async () => {
     await api.upsertTransaction(transaction.value);
     fetchData();
+    notification.notify({
+      title: isEdit.value ? "Transakcija labota" : "Transakcija pievienota",
+      text: `Transakcija ${isEdit.value ? "labota" : "pievienota"} veiksmīgi.`,
+      duration: 4000,
+      type: "success",
+    });
   });
 
   close();
@@ -87,9 +124,22 @@ async function deleteTransaction() {
   );
 
   if (result) {
+    const affectedCategory = categories?.value.find(
+      (c) => c.categoryId === transaction.value.categoryId,
+    );
+    if (affectedCategory) {
+      affectedCategory.sumOfTransactions -= transaction.value.amount;
+    }
+
     setTimeout(async () => {
       await api.deleteTransaction(transaction.value.transactionId!);
       fetchData();
+      notification.notify({
+        title: "Transakcija izdzēsta",
+        text: `Transakcija izdzēsta veiksmīgi.`,
+        duration: 4000,
+        type: "success",
+      });
     }, 0);
 
     close();
@@ -102,6 +152,19 @@ onMounted(() => {
   onFocusLost();
 });
 
+watch(
+  () => transaction.value.comment,
+  () => {
+    validateComment();
+  },
+);
+watch(
+  () => amount.value,
+  () => {
+    validateAmount();
+  },
+);
+
 // #region Focus
 function onFocusLost() {
   amount.value = amount.value
@@ -109,7 +172,9 @@ function onFocusLost() {
     .replace(/(\..*?)\./g, "$1") // Remove all dots except first one
     .replace(/[a-zA-Z]/g, "");
 
-  const number = Number(amount.value);
+  let number = Number(amount.value);
+
+  number = number > 10_000_000 ? 10_000_000 : number;
 
   amount.value = (number || 0).toEurFormat();
 }
@@ -204,11 +269,15 @@ function onKey(e: KeyboardEvent) {
       <div class="row">
         <div class="row">
           <div class="col-8">
+            <div v-if="errorAmount" class="text-danger mt-1">
+              {{ errorAmount }}
+            </div>
             <input
               ref="amountInput"
               v-model="amount"
               type="text"
               class="sum-input"
+              :class="{ 'is-invalid': errorAmount }"
               @focusout="onFocusLost"
               @focusin="onFocus"
               @keyup="onKey"
@@ -227,12 +296,13 @@ function onKey(e: KeyboardEvent) {
             />
           </div>
         </div>
-        <div class="col-8">
+        <div class="col-8" :class="{ 'comment-row-height': errorComment }">
           <input
             v-model="transaction.comment"
             placeholder="Komentārs..."
             type="text"
             class="comment-input"
+            :class="{ 'is-invalid': errorComment, 'comment-input-height': errorComment }"
             @keyup="
               (event) =>
                 (event as KeyboardEvent).key === 'Enter'
@@ -240,6 +310,9 @@ function onKey(e: KeyboardEvent) {
                   : null
             "
           />
+          <div v-if="errorComment" class="text-danger mt-1">
+            {{ errorComment }}
+          </div>
         </div>
         <div class="col">
           <div class="row">
@@ -345,5 +418,22 @@ function onKey(e: KeyboardEvent) {
   width: 100%;
   padding-left: 0;
   padding-right: 0;
+}
+
+.comment-row-height {
+  height: 5rem;
+}
+
+.comment-input-height {
+  height: 50%;
+}
+
+.is-invalid {
+  border-color: red;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+}
+
+.text-danger {
+  font-size: 0.875rem;
 }
 </style>
