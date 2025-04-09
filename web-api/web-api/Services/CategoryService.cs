@@ -55,7 +55,7 @@ public class CategoryService(
         await ValidateIsUserCategoryAsync(categoryId);
 
         // TODO: Add validation so it should be impossible to delete category if any Transaction is assigned to it!
-        await _categoryRepository.DeleteAsync(categoryId);  
+        await _categoryRepository.DeleteAsync(categoryId);
     }
 
     public async Task ValidateIsUserCategoryAsync(long categoryId)

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using web_api.Models;
 
@@ -11,9 +12,11 @@ using web_api.Models;
 namespace web_api.Migrations
 {
     [DbContext(typeof(FMSContext))]
-    partial class FMSContextModelSnapshot : ModelSnapshot
+    [Migration("20250409184508_MigrateAuditLogActionDttm")]
+    partial class MigrateAuditLogActionDttm
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,6 +77,7 @@ namespace web_api.Migrations
                         .HasComment("Log text");
 
                     b.Property<DateTime>("ActionDttm")
+                        .IsConcurrencyToken()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("IpAdress")

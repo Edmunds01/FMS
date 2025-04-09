@@ -64,10 +64,9 @@ public partial class FMSContext : DbContext
                 .IsRequired()
                 .HasMaxLength(15)
                 .IsUnicode(false);
-            entity.Property(e => e.Timespam)
+            entity.Property(e => e.ActionDttm)
                 .IsRequired()
-                .IsRowVersion()
-                .IsConcurrencyToken();
+                .ValueGeneratedNever();
             entity.Property(e => e.UserId).HasComment("Log creation DateTime");
 
             entity.HasOne(d => d.User).WithMany(p => p.AuditLogs)

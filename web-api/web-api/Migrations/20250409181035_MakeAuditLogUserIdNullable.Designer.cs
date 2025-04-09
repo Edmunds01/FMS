@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using web_api.Models;
 
@@ -11,9 +12,11 @@ using web_api.Models;
 namespace web_api.Migrations
 {
     [DbContext(typeof(FMSContext))]
-    partial class FMSContextModelSnapshot : ModelSnapshot
+    [Migration("20250409181035_MakeAuditLogUserIdNullable")]
+    partial class MakeAuditLogUserIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,14 +76,17 @@ namespace web_api.Migrations
                         .HasColumnType("nvarchar(1024)")
                         .HasComment("Log text");
 
-                    b.Property<DateTime>("ActionDttm")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("IpAdress")
                         .IsRequired()
                         .HasMaxLength(15)
                         .IsUnicode(false)
                         .HasColumnType("varchar(15)");
+
+                    b.Property<byte[]>("Timespam")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int")

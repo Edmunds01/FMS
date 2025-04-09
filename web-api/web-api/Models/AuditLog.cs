@@ -13,16 +13,19 @@ public partial class AuditLog
     public long LogId { get; set; }
 
     /// <summary>
-    /// Log creation DateTime
+    /// User unique identification
     /// </summary>
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
 
     /// <summary>
     /// Log text
     /// </summary>
     public string Action { get; set; }
 
-    public byte[] Timespam { get; set; }
+    /// <summary>
+    /// Log creation DateTime
+    /// </summary>
+    public required DateTime ActionDttm { get; set; }
 
     public string IpAdress { get; set; }
 
