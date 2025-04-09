@@ -112,14 +112,14 @@ onUnmounted(() => {
       class="row no-gutters border border-end-0 border-top-0 dashed-bottom-border"
     >
       <button class="col d-flex" @click="openAccountModal(accountEditModalId, account)">
-        <div class="account-details">
+        <div class="account-details position-relative">
           <div class="full-center-text text-ellipsis fs-5" :title="account.name">
             {{ trimName(account.name ?? "") }}
           </div>
           <div class="full-center-text">{{ account.balance.toEurFormat() }}</div>
-        </div>
-        <div class="icon full-center-text">
-          <FaIcon :icon-name="account.icon" size="lg" />
+          <div class="icon account-icon">
+            <FaIcon :icon-name="account.icon" size="lg" />
+          </div>
         </div>
       </button>
     </div>
@@ -146,7 +146,6 @@ onUnmounted(() => {
 
 .account-details {
   flex: 1;
-  margin-left: 3rem;
 }
 
 .no-gutters {
@@ -158,6 +157,13 @@ onUnmounted(() => {
     padding-right: 0;
     padding-left: 0;
   }
+}
+
+.account-icon {
+  position: absolute;
+  top: 50%;
+  right: 10%;
+  transform: translateY(-42%);
 }
 
 .full-center-text {
@@ -176,12 +182,5 @@ onUnmounted(() => {
   text-overflow: ellipsis;
   padding: 0 5px;
   text-align: left !important;
-}
-
-.icon {
-  flex: 0 0 20%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 </style>

@@ -9,6 +9,7 @@ const router = useRouter();
 
 const username = ref("");
 const password = ref("");
+const showPassword = ref(false); // New state for toggling password visibility
 
 const loading = ref(false);
 
@@ -57,12 +58,21 @@ onMounted(() => {
         </div>
         <div class="row mb-1">
           <label for="password" class="form-label col-3">Parole</label>
-          <input
-            v-model="password"
-            class="form-control col"
-            type="password"
-            autocomplete="current-password"
-          />
+          <div class="input-group col p-0">
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              class="form-control"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              @click="showPassword = !showPassword"
+            >
+              {{ showPassword ? "Slēpt" : "Rādīt" }}
+            </button>
+          </div>
         </div>
         <div class="row text-center">
           <div class="col-3"></div>
@@ -92,5 +102,10 @@ onMounted(() => {
 .recover {
   font-size: 0.8rem;
   cursor: pointer;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
 }
 </style>

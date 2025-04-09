@@ -13,6 +13,8 @@ const password = ref("");
 const confirmPassword = ref("");
 const passwordError = ref("");
 const confirmPasswordError = ref("");
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 
 const notification = useNotification();
 
@@ -70,26 +72,44 @@ onMounted(() => {
         <div class="row mb-1">
           <label for="password" class="form-label col-4">Parole</label>
           <div class="col">
-            <input
-              id="password"
-              v-model="password"
-              class="form-control"
-              type="password"
-              autocomplete="current-password"
-            />
+            <div class="input-group">
+              <input
+                id="password"
+                v-model="password"
+                class="form-control"
+                :type="showPassword ? 'text' : 'password'"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                @click="showPassword = !showPassword"
+              >
+                {{ showPassword ? "Slēpt" : "Rādīt" }}
+              </button>
+            </div>
             <p v-if="passwordError" class="error">{{ passwordError }}</p>
           </div>
         </div>
         <div class="row mb-1">
-          <label for="password" class="form-label col-4">Atkārtojiet paroli</label>
+          <label for="password2" class="form-label col-4">Atkārtojiet paroli</label>
           <div class="col">
-            <input
-              id="password2"
-              v-model="confirmPassword"
-              class="form-control"
-              type="password"
-              autocomplete="current-password"
-            />
+            <div class="input-group">
+              <input
+                id="password2"
+                v-model="confirmPassword"
+                class="form-control"
+                :type="showConfirmPassword ? 'text' : 'password'"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                @click="showConfirmPassword = !showConfirmPassword"
+              >
+                {{ showConfirmPassword ? "Slēpt" : "Rādīt" }}
+              </button>
+            </div>
             <p v-if="confirmPasswordError" class="error">{{ confirmPasswordError }}</p>
           </div>
         </div>
@@ -134,5 +154,10 @@ onMounted(() => {
 
 .text-danger {
   font-size: 0.875rem;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
 }
 </style>

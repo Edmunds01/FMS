@@ -4,7 +4,12 @@ import ModalWindow, { transactionListModalId } from "@/components/global/ModalWi
 import { computed, inject, ref, watch } from "vue";
 import FaIcon from "@/components/global/FaIcon.vue";
 import { formatLatvianDate } from "../TheDateSelect.vue";
-import { addEditTransactionKey, selectedDatesKey, transactionListKey } from "@/utils/keys";
+import {
+  accountsKey,
+  addEditTransactionKey,
+  selectedDatesKey,
+  transactionListKey,
+} from "@/utils/keys";
 
 const { category, close } = inject(transactionListKey)!;
 const { openAdd: openAddTransactionModal, openEdit: openEditTransactionModal } =
@@ -19,7 +24,7 @@ function openEditTransaction(transaction: Transaction) {
 const transactions = ref<Transaction[]>();
 
 type TransactionSortMode = {
-  mode: 0 | 1 | 2;
+  mode: 0 | 1 | 2 | 3;
   order: "asc" | "desc";
 };
 
@@ -29,6 +34,7 @@ const transactionClass = computed(() =>
 );
 
 const dates = inject(selectedDatesKey)!;
+const { accounts } = inject(accountsKey)!;
 
 async function fetchTransactions() {
   transactions.value = await api.categoryTransactions(
@@ -37,6 +43,11 @@ async function fetchTransactions() {
     dates.endDate.value,
   );
   sortByDate(false);
+}
+
+function getAccountName(accountId: number) {
+  const account = accounts.value?.find((account) => account.accountId === accountId);
+  return account ? account.name : "";
 }
 
 function sortByDate(isAscending: boolean) {
@@ -89,6 +100,17 @@ watch(
       case 2:
         sortByDate(isAscending);
         break;
+
+      case 3:
+        transactions.value.sort((a, b) => {
+          const accountNameA = getAccountName(a.accountId) ?? "";
+          const accountNameB = getAccountName(b.accountId) ?? "";
+
+          return isAscending
+            ? accountNameA.localeCompare(accountNameB)
+            : accountNameB.localeCompare(accountNameA);
+        });
+        break;
     }
   },
   { immediate: true },
@@ -133,12 +155,23 @@ watch(
                   class="position-sticky user-select-none"
                   @click="
                     sortMode = {
+                      mode: 3,
+                      order: sortMode.order === 'desc' ? 'asc' : 'desc',
+                    }
+                  "
+                >
+                  Konts
+                </th>
+                <th
+                  class="position-sticky user-select-none"
+                  @click="
+                    sortMode = {
                       mode: 1,
                       order: sortMode.order === 'desc' ? 'asc' : 'desc',
                     }
                   "
                 >
-                  Kategorija
+                  Komentārs
                 </th>
                 <th
                   class="position-sticky user-select-none"
@@ -165,6 +198,14 @@ watch(
                 <td
                   :class="transactionClass"
                   class="clickable"
+                  @click="openEditTransaction(transaction)"
+                >
+                  {{ getAccountName(transaction.accountId) }}
+                </td>
+                <td
+                  :title="transaction.comment"
+                  :class="transactionClass"
+                  class="clickable overflow-hidden"
                   @click="openEditTransaction(transaction)"
                 >
                   {{ transaction.comment }}
@@ -251,5 +292,11 @@ td {
 
 .clickable {
   cursor: pointer;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

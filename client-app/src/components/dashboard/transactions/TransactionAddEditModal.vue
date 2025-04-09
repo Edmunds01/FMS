@@ -67,6 +67,19 @@ const secondCategories = computed(() => {
   return categories?.value.filter((category) => category.type !== firstCategoryType.value);
 });
 
+const errorAmount = ref<string>();
+
+function validateAmount(): boolean {
+  const number = amount.value.toNumberFromEurFormat();
+  if (number < 0.01) {
+    errorAmount.value = "Summai jābūt vismaz 0.01";
+    return false;
+  } else {
+    errorAmount.value = undefined;
+    return true;
+  }
+}
+
 function validateComment(): boolean {
   if ((transaction.value.comment?.length ?? 0) > 50) {
     errorComment.value = "Komentārs nedrīkst pārsniegt 50 rakstzīmes.";
@@ -78,15 +91,15 @@ function validateComment(): boolean {
 }
 
 async function save() {
-  if (!validateComment()) {
+  if (!validateComment() || !validateAmount()) {
     return;
   }
 
   transaction.value.amount = amount.value.toNumberFromEurFormat();
 
-  const affectedCategory = categories?.value.filter(
+  const affectedCategory = categories?.value.find(
     (c) => c.categoryId === transaction.value.categoryId,
-  )[0];
+  );
   if (affectedCategory) {
     affectedCategory.sumOfTransactions += transaction.value.amount;
   }
@@ -111,6 +124,13 @@ async function deleteTransaction() {
   );
 
   if (result) {
+    const affectedCategory = categories?.value.find(
+      (c) => c.categoryId === transaction.value.categoryId,
+    );
+    if (affectedCategory) {
+      affectedCategory.sumOfTransactions -= transaction.value.amount;
+    }
+
     setTimeout(async () => {
       await api.deleteTransaction(transaction.value.transactionId!);
       fetchData();
@@ -136,6 +156,12 @@ watch(
   () => transaction.value.comment,
   () => {
     validateComment();
+  },
+);
+watch(
+  () => amount.value,
+  () => {
+    validateAmount();
   },
 );
 
@@ -243,11 +269,15 @@ function onKey(e: KeyboardEvent) {
       <div class="row">
         <div class="row">
           <div class="col-8">
+            <div v-if="errorAmount" class="text-danger mt-1">
+              {{ errorAmount }}
+            </div>
             <input
               ref="amountInput"
               v-model="amount"
               type="text"
               class="sum-input"
+              :class="{ 'is-invalid': errorAmount }"
               @focusout="onFocusLost"
               @focusin="onFocus"
               @keyup="onKey"
