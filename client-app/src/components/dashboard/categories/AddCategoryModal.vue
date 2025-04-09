@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { api, type Category, type NewCategory } from "@/api/auto-generated-client";
-import { inject, ref } from "vue";
+import { inject, ref, watch } from "vue";
 import SelectIconDropdown from "@/components/global/SelectIconDropdown.vue";
 import SaveOrCloseInModal from "@/components/global/SaveOrCloseInModal.vue";
 import ModalWindow, { addCategoryModalId } from "@/components/global/ModalWindow.vue";
@@ -18,11 +18,28 @@ const defaultCategory = {
 } as NewCategory;
 
 const newCategory = ref({ ...defaultCategory });
+const errorName = ref<string>();
 
 const { close } = inject(addCategoryKey)!;
 
-// TODO: do not allow to save with empty name
+function validateCategoryName(): boolean {
+  if (!newCategory.value.name) {
+    errorName.value = "Kategorijas nosaukums ir obligāts.";
+    return false;
+  } else if ((newCategory.value.name?.length ?? 0) > 15) {
+    errorName.value = "Kategorijas nosaukums nedrīkst pārsniegt 15 rakstzīmes.";
+    return false;
+  } else {
+    errorName.value = undefined;
+    return true;
+  }
+}
+
 async function save() {
+  if (!validateCategoryName()) {
+    return;
+  }
+
   categories.value.push({
     ...newCategory.value,
     sumOfTransactions: 0,
@@ -44,6 +61,13 @@ async function save() {
 
   close();
 }
+
+watch(
+  () => newCategory.value.name,
+  () => {
+    validateCategoryName();
+  },
+);
 </script>
 
 <template>
@@ -56,13 +80,19 @@ async function save() {
         />
         <div class="row flex-grow-1">
           <div class="col d-flex align-items-center justify-content-center">
-            <input
-              v-model="newCategory.name"
-              placeholder="Kategorijas nosaukums"
-              type="text"
-              class="form-control form-control-sm me-4"
-              style="width: 30rem"
-            />
+            <div>
+              <input
+                v-model="newCategory.name"
+                placeholder="Kategorijas nosaukums"
+                type="text"
+                class="form-control form-control-sm me-4"
+                :class="{ 'is-invalid': errorName }"
+                style="width: 30rem"
+              />
+              <div v-if="errorName" class="text-danger mt-1">
+                {{ errorName }}
+              </div>
+            </div>
           </div>
         </div>
         <SaveOrCloseInModal @save="save" />
@@ -70,3 +100,14 @@ async function save() {
     </template>
   </ModalWindow>
 </template>
+
+<style scoped>
+.is-invalid {
+  border-color: red;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+}
+
+.text-danger {
+  font-size: 0.875rem;
+}
+</style>

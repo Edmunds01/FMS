@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { api } from "@/api/auto-generated-client";
-import { inject, ref } from "vue";
+import { inject, ref, watch } from "vue";
 import SelectIconDropdown from "@/components/global/SelectIconDropdown.vue";
 import FaIcon from "@/components/global/FaIcon.vue";
 import ModalWindow, { editCategoryModalId } from "@/components/global/ModalWindow.vue";
@@ -13,6 +13,7 @@ const { categories, fetchCategories } = inject(categoriesKey)!;
 
 const isEditMode = ref(false);
 const newName = ref(category.value?.name ?? "");
+const errorName = ref<string>();
 
 async function deleteCategory() {
   const result = await openConfirmModal(`Vēlaties izdzēst kategoriju "${category.value!.name}?"`);
@@ -48,7 +49,24 @@ async function iconChanged(icon: string) {
   });
 }
 
+function validateName(): boolean {
+  if (!newName.value) {
+    errorName.value = "Kategorijas nosaukums ir obligāts.";
+    return false;
+  } else if ((newName.value?.length ?? 0) > 15) {
+    errorName.value = "Kategorijas nosaukums nedrīkst pārsniegt 15 rakstzīmes.";
+    return false;
+  } else {
+    errorName.value = undefined;
+    return true;
+  }
+}
+
 async function nameChanged() {
+  if (!validateName()) {
+    return;
+  }
+
   isEditMode.value = false;
   category.value!.name = newName.value;
   await api.saveCategoryName(category.value!.categoryId, newName.value);
@@ -60,6 +78,13 @@ async function nameChanged() {
     type: "success",
   });
 }
+
+watch(
+  () => newName.value,
+  () => {
+    validateName();
+  },
+);
 </script>
 
 <template>
@@ -72,12 +97,18 @@ async function nameChanged() {
         />
         <div class="row flex-grow-1">
           <div v-if="isEditMode" class="col d-flex align-items-center justify-content-center">
-            <input
-              v-model="newName"
-              type="text"
-              class="form-control form-control-sm me-4"
-              style="width: 30rem"
-            />
+            <div>
+              <input
+                v-model="newName"
+                type="text"
+                class="form-control form-control-sm me-4"
+                :class="{ 'is-invalid': errorName }"
+                style="width: 30rem"
+              />
+              <div v-if="errorName" class="text-danger mt-1">
+                {{ errorName }}
+              </div>
+            </div>
             <button class="p-0" @click="nameChanged()">
               <FaIcon icon-name="floppy-disk" size="lg" />
             </button>
@@ -86,6 +117,7 @@ async function nameChanged() {
               @click="
                 isEditMode = false;
                 newName = category!.name ?? '';
+                errorName = undefined;
               "
             >
               <FaIcon icon-name="xmark" size="lg" />
@@ -113,3 +145,14 @@ async function nameChanged() {
     </template>
   </ModalWindow>
 </template>
+
+<style scoped>
+.is-invalid {
+  border-color: red;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+}
+
+.text-danger {
+  font-size: 0.875rem;
+}
+</style>

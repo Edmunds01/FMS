@@ -3,7 +3,7 @@ import { api, CategoryType, type Transaction } from "@/api/auto-generated-client
 import ModalWindow, {
   transactionAddModalId as transactionAddEditModalId,
 } from "@/components/global/ModalWindow.vue";
-import { computed, inject, onMounted, ref } from "vue";
+import { computed, inject, onMounted, ref, watch } from "vue";
 import {
   accountsKey,
   addEditTransactionKey,
@@ -39,6 +39,8 @@ const amountInput = ref<HTMLElement>();
 const amount = ref((0).toEurFormat());
 const firstCategoryType = ref<CategoryType>(CategoryType.Expense);
 
+const errorComment = ref<string>();
+
 const selectedCategory = computed(() => {
   return categories?.value.find((category) => category.categoryId === transaction.value.categoryId);
 });
@@ -65,7 +67,21 @@ const secondCategories = computed(() => {
   return categories?.value.filter((category) => category.type !== firstCategoryType.value);
 });
 
+function validateComment(): boolean {
+  if ((transaction.value.comment?.length ?? 0) > 50) {
+    errorComment.value = "Komentārs nedrīkst pārsniegt 50 rakstzīmes.";
+    return false;
+  } else {
+    errorComment.value = undefined;
+    return true;
+  }
+}
+
 async function save() {
+  if (!validateComment()) {
+    return;
+  }
+
   transaction.value.amount = amount.value.toNumberFromEurFormat();
 
   const affectedCategory = categories?.value.filter(
@@ -115,6 +131,13 @@ onMounted(() => {
   amount.value = transaction.value.amount.toString();
   onFocusLost();
 });
+
+watch(
+  () => transaction.value.comment,
+  () => {
+    validateComment();
+  },
+);
 
 // #region Focus
 function onFocusLost() {
@@ -241,12 +264,13 @@ function onKey(e: KeyboardEvent) {
             />
           </div>
         </div>
-        <div class="col-8">
+        <div class="col-8" :class="{ 'comment-row-height': errorComment }">
           <input
             v-model="transaction.comment"
             placeholder="Komentārs..."
             type="text"
             class="comment-input"
+            :class="{ 'is-invalid': errorComment, 'comment-input-height': errorComment }"
             @keyup="
               (event) =>
                 (event as KeyboardEvent).key === 'Enter'
@@ -254,6 +278,9 @@ function onKey(e: KeyboardEvent) {
                   : null
             "
           />
+          <div v-if="errorComment" class="text-danger mt-1">
+            {{ errorComment }}
+          </div>
         </div>
         <div class="col">
           <div class="row">
@@ -359,5 +386,22 @@ function onKey(e: KeyboardEvent) {
   width: 100%;
   padding-left: 0;
   padding-right: 0;
+}
+
+.comment-row-height {
+  height: 5rem;
+}
+
+.comment-input-height {
+  height: 50%;
+}
+
+.is-invalid {
+  border-color: red;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+}
+
+.text-danger {
+  font-size: 0.875rem;
 }
 </style>
