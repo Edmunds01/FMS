@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using web_api.Attributes;
 using web_api.Dtos;
 using web_api.Helper;
 using web_api.Helper.Interfaces;
@@ -19,6 +20,7 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
     private readonly IRecoverHelper _recoverHelper = recoverHelper;
 
     [HttpPost("login")]
+    [AuditLog("Login action")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Login([FromBody] LoginRegisterDto loginDto)
     {
@@ -80,11 +82,11 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
             return BadRequest("User with this email does not exist");
         }
 
-        _recoverHelper.SendRecoveryEmail(email);
+        await _recoverHelper.SendRecoveryEmailAsync(email);
 
         return Ok();
     }
-    
+
     [HttpPost("recover-change-password")]
     public async Task<IActionResult> RecoverChangePassword(Guid token, string password)
     {

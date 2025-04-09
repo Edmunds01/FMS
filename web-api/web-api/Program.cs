@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
-using web_api.Controllers;
 using web_api.Helper;
 using web_api.Helper.Interfaces;
 using web_api.Middleware;
@@ -26,8 +25,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var foo = "Server=localhost\\SQLEXPRESS;Database=FMS;Trusted_Connection=True;TrustServerCertificate=True;";
-builder.Services.AddDbContext<FMSContext>(options => options.UseSqlServer(foo)
+builder.Services.AddDbContext<FMSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
         .EnableSensitiveDataLogging());
 
 builder.Services.AddCors(options => options.AddPolicy(CorsPolicyName, policy =>
@@ -86,6 +84,7 @@ void RegisterRepositoriesAndServices(IServiceCollection services)
     services.AddScoped<IAccountRepository, AccountRepository>();
     services.AddScoped<ITransactionRepository, TransactionRepository>();
     services.AddScoped<ICategoryRepository, CategoryRepository>();
+    services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 
     services.AddScoped<IAccountService, AccountService>();
     services.AddScoped<ITransactionService, TransactionService>();
@@ -95,6 +94,8 @@ void RegisterRepositoriesAndServices(IServiceCollection services)
     services.AddSingleton<ITokenHelper, TokenHelper>();
 
     services.AddHttpContextAccessor();
+
+    EmailHelper.Initialize(builder.Configuration);
 
     services.AddAutoMapper(typeof(Program));
 }
