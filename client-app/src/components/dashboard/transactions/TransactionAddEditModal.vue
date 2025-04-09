@@ -146,7 +146,9 @@ function onFocusLost() {
     .replace(/(\..*?)\./g, "$1") // Remove all dots except first one
     .replace(/[a-zA-Z]/g, "");
 
-  const number = Number(amount.value);
+  let number = Number(amount.value);
+
+  number = number > 10_000_000 ? 10_000_000 : number;
 
   amount.value = (number || 0).toEurFormat();
 }
@@ -182,7 +184,9 @@ function onKey(e: KeyboardEvent) {
 
               <ul class="dropdown-menu style-dropdown-menu dd-overflow">
                 <li>
-                  <span class="dropdown-header text-center" style="font-size: 1.6rem"> Konts </span>
+                  <span class="dropdown-header text-center" style="font-size: 1.6rem">
+                    Konts
+                  </span>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li v-for="account in accounts" :key="account.accountId">
