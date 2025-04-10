@@ -12,10 +12,18 @@ namespace web_api.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(IConfiguration configuration, IUserRepository userRepository, ITokenHelper tokenHelper, IRecoverHelper recoverHelper) : ControllerBase
+public class AuthController
+    (
+        IConfiguration configuration,
+        IUserRepository userRepository,
+        ITokenHelper tokenHelper,
+        IRecoverHelper recoverHelper,
+        ICategoryRepository categoryRepository
+    ) : ControllerBase
 {
     private readonly IConfiguration _configuration = configuration;
     private readonly IUserRepository _userRepository = userRepository;
+    private readonly ICategoryRepository _categoryRepository = categoryRepository;
     private readonly ITokenHelper _tokenHelper = tokenHelper;
     private readonly IRecoverHelper _recoverHelper = recoverHelper;
 
@@ -37,12 +45,9 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
     }
 
     [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [AuditLog("Register action")]
     public async Task<IActionResult> Register([FromBody] LoginRegisterDto loginDto)
     {
-        // TODO: Add data validation
-
         if (await _userRepository.GetUserAsync(loginDto.Username) != null)
         {
             return Conflict("User with this email already exists");
@@ -56,11 +61,40 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
 
         SetTokenCookie(user);
 
+        await SetDefaultUserValues();
+
         return Ok();
+
+        async Task SetDefaultUserValues()
+        {
+            await _categoryRepository.InsertAsync(new Models.Category
+            {
+                UserId = user.UserId,
+                Name = "Pārtika",
+                Icon = "pizza-slice",
+                Type = 2,
+            });
+            
+            await _categoryRepository.InsertAsync(new Models.Category
+            {
+                UserId = user.UserId,
+                Name = "Īre",
+                Icon = "house",
+                Type = 2,
+            });
+            
+            await _categoryRepository.InsertAsync(new Models.Category
+            {
+                UserId = user.UserId,
+                Name = "Alga",
+                Icon = "sack-dollar",
+                Type = 1,
+            });
+        }
     }
 
+    [AuditLog("Logout action")]
     [HttpPost("logout")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Logout()
     {
         Response.Cookies.Delete(_tokenHelper.JwtCookieName);
@@ -69,11 +103,12 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
     }
 
     [HttpGet("validate-session")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [AuditLog("Validate session action")]
     public ActionResult<bool> ValidateSession() =>
         HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated ? Ok(true) : Ok(false);
 
     [HttpPost("recover")]
+    [AuditLog("Recover action")]
     public async Task<IActionResult> Recover([EmailAddress] string email)
     {
         var user = await _userRepository.GetUserAsync(email);
@@ -88,6 +123,7 @@ public class AuthController(IConfiguration configuration, IUserRepository userRe
     }
 
     [HttpPost("recover-change-password")]
+    [AuditLog("Recover change password")]
     public async Task<IActionResult> RecoverChangePassword(Guid token, string password)
     {
         var isValid = _recoverHelper.ValidateRecoveryToken(token, out var email);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using web_api.Attributes;
 using web_api.Dtos;
 using web_api.Services.Interfaces;
 
@@ -11,6 +12,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     private readonly ICategoryService _categoryService = categoryService;
 
     [HttpPost("add-category")]
+    [AuditLog("Add category action")]
     public async Task<IActionResult> AddCategory([FromBody] Dtos.NewCategory transaction)
     {
         await _categoryService.CreateNewCategoryAsync(transaction);
@@ -18,11 +20,12 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
         return Ok();
     }
 
-    // TODO: add start and end date
     [HttpGet("categories")]
+    [AuditLog("Get categories action")]
     public ActionResult<IEnumerable<Category>> GetCategories(DateTime startDate, DateTime endDate) => Ok(_categoryService.GetUserCategories(startDate, endDate));
 
     [HttpPost("save-category-icon")]
+    [AuditLog("Save category icon action")]
     public async Task<IActionResult> SaveCategoryIcon(long categoryId, string icon)
     {
         await _categoryService.SaveCategoryIconAsync(categoryId, icon);
@@ -31,6 +34,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     }
 
     [HttpPost("save-category-name")]
+    [AuditLog("Save category name action")]
     public async Task<IActionResult> SaveCategoryName(long categoryId, string name)
     {
         await _categoryService.SaveCategoryNameAsync(categoryId, name);
@@ -39,6 +43,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     }
 
     [HttpDelete("delete-category")]
+    [AuditLog("Delete category action")]
     public async Task<IActionResult> DeleteCategory(long categoryId)
     {
         await _categoryService.DeleteCategoryAsync(categoryId);

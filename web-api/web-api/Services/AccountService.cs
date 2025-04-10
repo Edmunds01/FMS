@@ -30,7 +30,7 @@ public class AccountService(
             AccountId = a.AccountId,
             Name = a.Name,
             Icon = a.Icon,
-            Balance = transactions.Where(t => t.AccountId == a.AccountId).Sum(t => categories.First(c => c.CategoryId == t.CategoryId).Type == 1 ? t.Amount : (-1 * t.Amount)) + a.InitialBalance,
+            Balance = transactions.Where(t => t.AccountId == a.AccountId).Sum(t => categories.Single(c => c.CategoryId == t.CategoryId).Type == 1 ? t.Amount : (-1 * t.Amount)) + a.InitialBalance,
             ShowDeleteButton = !transactions.Any(t => t.AccountId == a.AccountId)
         });
     }
@@ -43,6 +43,7 @@ public class AccountService(
     {
         var account = _mapper.Map<Models.Account>(accountRaw);
         account.UserId = UserId;
+        account.AccountId = 0;
 
         return _accountRepository.InsertAsync(account);
     }
