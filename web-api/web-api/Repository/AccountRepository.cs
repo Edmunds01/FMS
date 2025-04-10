@@ -12,7 +12,7 @@ public class AccountRepository(FMSContext context) : BaseRepository<Account>(con
 
     public async Task DeleteAsync(long accountId)
     {
-        var account = await GetByIdAsync(accountId) ?? throw new NotSupportedException("Account does not exists");
+        var account = await GetByIdAsync(accountId) ?? throw new NotSupportedException("Account does not exist");
 
         if (await _context.Transactions.AnyAsync(t => t.AccountId == accountId))
         {
