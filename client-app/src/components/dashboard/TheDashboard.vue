@@ -162,7 +162,10 @@ const series = computed(() => [expenseSum.value, incomeSum.value, difference.val
                   <div>Statistika</div>
                 </div>
               </div>
-              <ApexCharts width="90%" :series :options="options"></ApexCharts>
+              <ApexCharts v-if="incomeSum || expenseSum" width="90%" :series :options="options" />
+              <div v-else class="text-center mt-5">
+                <p>Nav tranzakciju izvēlētajā periodā</p>
+              </div>
             </div>
           </div>
         </div>
