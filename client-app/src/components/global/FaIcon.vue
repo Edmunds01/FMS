@@ -12,6 +12,7 @@ export const icons = [
   "plus",
   "credit-card",
   "money-bill",
+  "user",
   "sack-dollar",
   "money-bills",
   "floppy-disk",

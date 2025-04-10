@@ -29,7 +29,6 @@ public class AuthController
 
     [HttpPost("login")]
     [AuditLog("Login action")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Login([FromBody] LoginRegisterDto loginDto)
     {
         var user = await _userRepository.GetUserAsync(loginDto.Username);
@@ -74,7 +73,7 @@ public class AuthController
                 Icon = "pizza-slice",
                 Type = 2,
             });
-            
+
             await _categoryRepository.InsertAsync(new Models.Category
             {
                 UserId = user.UserId,
@@ -82,7 +81,7 @@ public class AuthController
                 Icon = "house",
                 Type = 2,
             });
-            
+
             await _categoryRepository.InsertAsync(new Models.Category
             {
                 UserId = user.UserId,

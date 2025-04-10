@@ -34,6 +34,15 @@ export const addCategoryKey = Symbol() as InjectionKey<{
 /**
  * [Implementation](../components/dashboard/modals.ts)
  */
+export const profileKey = Symbol() as InjectionKey<{
+  isOpened: Ref<boolean>;
+  open: () => void;
+  close: () => void;
+}>;
+
+/**
+ * [Implementation](../components/dashboard/modals.ts)
+ */
 export const editCategoryKey = Symbol() as InjectionKey<{
   category: Ref<Category | undefined>;
   open: (categoryRaw: Category) => void;

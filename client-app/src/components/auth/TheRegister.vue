@@ -30,7 +30,7 @@ export function validatePassword(passwordRaw: string) {
 
 import { api } from "@/api/auto-generated-client";
 import { useNotification } from "@kyvg/vue3-notification";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import FaIcon from "@/components/global/FaIcon.vue";
 
@@ -40,6 +40,9 @@ const router = useRouter();
 
 const passwordError = ref("");
 const confirmPasswordError = ref("");
+
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 
 const username = ref("");
 const password = ref("");
@@ -54,12 +57,30 @@ const validateConfirmPassword = () => {
 };
 
 const validateForm = async () => {
-  validatePassword(password.value);
+  passwordError.value = validatePassword(password.value);
   validateConfirmPassword();
   if (!passwordError.value && !confirmPasswordError.value) {
     await handleRegister();
   }
 };
+
+watch(
+  () => password.value,
+  () => {
+    if (passwordError.value) {
+      passwordError.value = validatePassword(password.value);
+    }
+  },
+);
+
+watch(
+  () => confirmPassword.value,
+  () => {
+    if (confirmPasswordError.value) {
+      validateConfirmPassword();
+    }
+  },
+);
 
 const handleRegister = async () => {
   try {
@@ -112,29 +133,47 @@ const handleRegister = async () => {
         </div>
         <div class="row mb-1">
           <label for="password" class="form-label col-4">Parole</label>
-          <div class="col">
+          <div class="col input-group">
             <input
-              id="password"
               v-model="password"
               class="form-control"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               autocomplete="current-password"
             />
-            <p v-if="passwordError" class="error">{{ passwordError }}</p>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              @click="showPassword = !showPassword"
+            >
+              {{ showPassword ? "Slēpt" : "Rādīt" }}
+            </button>
+          </div>
+          <div class="row">
+            <p v-if="passwordError" class="col-4"></p>
+            <p v-if="passwordError" class="error col">{{ passwordError }}</p>
           </div>
         </div>
         <div class="row mb-1">
           <label for="password" class="form-label col-4">Atkārtojiet paroli</label>
-          <div class="col">
+          <div class="col input-group">
             <input
-              id="password2"
               v-model="confirmPassword"
               class="form-control"
-              type="password"
+              :type="showConfirmPassword ? 'text' : 'password'"
               autocomplete="current-password"
             />
-            <p v-if="confirmPasswordError" class="error">{{ confirmPasswordError }}</p>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              @click="showConfirmPassword = !showConfirmPassword"
+            >
+              {{ showConfirmPassword ? "Slēpt" : "Rādīt" }}
+            </button>
           </div>
+        </div>
+        <div class="row">
+          <p v-if="passwordError" class="col-4"></p>
+          <p v-if="passwordError" class="error col">{{ confirmPasswordError }}</p>
         </div>
         <div class="row">
           <div class="col-4"></div>

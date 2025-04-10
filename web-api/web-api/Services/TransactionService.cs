@@ -25,6 +25,7 @@ public class TransactionService(
 
         return _mapper.Map<IEnumerable<Dtos.Transaction>>(transactions);
     }
+
     public async Task UpsertTransactionAsync(Dtos.Transaction transactionRaw)
     {
         await _accountService.ValidateIsUserAccountAsync(transactionRaw.AccountId);
