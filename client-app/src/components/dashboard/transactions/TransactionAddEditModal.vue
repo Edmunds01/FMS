@@ -16,7 +16,7 @@ import FaIcon from "@/components/global/FaIcon.vue";
 import { useNotification } from "@kyvg/vue3-notification";
 
 const notification = useNotification();
-const { categories } = inject(categoriesKey)!;
+const { categories, fetchCategories } = inject(categoriesKey)!;
 const { accounts } = inject(accountsKey)!;
 const {
   transaction: editTransaction,
@@ -133,6 +133,7 @@ async function deleteTransaction() {
 
     setTimeout(async () => {
       await api.deleteTransaction(transaction.value.transactionId!);
+      await fetchCategories();
       fetchData();
       notification.notify({
         title: "Transakcija izdzēsta",

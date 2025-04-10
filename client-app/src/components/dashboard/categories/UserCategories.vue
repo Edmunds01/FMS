@@ -41,9 +41,9 @@ const { openAdd: openAddTransaction } = inject(addEditTransactionKey)!;
 <template>
   <div class="container-fluid transaction-container">
     <div class="row sticky-header second-row-height border-bottom border-end text-center">
-      <div class="col text-center full-center-text fs-5">
+      <div class="col text-center full-center-text fs-4">
         <div>{{ mapCategoryTypeName(categoryType) }}</div>
-        <div>{{ transactionSum.toEurFormat() }}</div>
+        <div class="fs-5">{{ transactionSum.toEurFormat() }}</div>
       </div>
     </div>
     <div class="row flex-grow-1 border-end">

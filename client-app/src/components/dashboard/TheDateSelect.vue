@@ -63,7 +63,7 @@ const rangeConfig: RangeConfig = {
   align-items: center;
   display: flex;
   height: 100%;
-  width: 20%;
+  width: 50%;
 }
 </style>
 

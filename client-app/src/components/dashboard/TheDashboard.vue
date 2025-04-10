@@ -15,6 +15,8 @@ import {
 } from "./modals";
 import { useNotification } from "@kyvg/vue3-notification";
 import router from "@/router";
+import ApexCharts from "vue3-apexcharts";
+import type { ApexOptions } from "apexcharts";
 
 const notification = useNotification();
 
@@ -68,6 +70,52 @@ onMounted(() => {
 watch([startDate, endDate], () => {
   fetchCategories();
 });
+
+interface Opts {
+  seriesIndex: number;
+}
+
+const options = {
+  chart: {
+    type: "pie",
+  },
+  labels: ["Izdevumi", "Ienakumi", "Starpība"],
+  colors: ["#FF4560", "#00E396", "#008FFB"],
+  legend: {
+    position: "bottom",
+  },
+  dataLabels: {
+    enabled: true,
+    formatter: (val: number, opts?: Opts) => {
+      switch (opts?.seriesIndex) {
+        case 0:
+          return ((expenseSum.value / totalSum.value) * 100).toFixed(0) + " %";
+        case 1:
+          return ((incomeSum.value / totalSum.value) * 100).toFixed(0) + " %";
+        case 2:
+          return `Starpība: ${Number((incomeSum.value - expenseSum.value).toFixed(2)).toEurFormat()}`;
+      }
+
+      return val.toEurFormat();
+    },
+  },
+} as ApexOptions;
+
+const totalSum = computed(() => expenseSum.value + incomeSum.value);
+
+const expenseSum = computed(() =>
+  categories.value
+    .filter((category) => category.type === CategoryType.Expense)
+    .reduce((sum, category) => sum + category.sumOfTransactions, 0),
+);
+const incomeSum = computed(() =>
+  categories.value
+    .filter((category) => category.type === CategoryType.Income)
+    .reduce((sum, category) => sum + category.sumOfTransactions, 0),
+);
+const difference = computed(() => Number(Math.abs(incomeSum.value - expenseSum.value).toFixed(2)));
+
+const series = computed(() => [expenseSum.value, incomeSum.value, difference.value]);
 </script>
 
 <template>
@@ -99,7 +147,14 @@ watch([startDate, endDate], () => {
             <div class="col-3 p-0 bg-income categories-columns">
               <UserCategories :category-type="CategoryType.Income" :categories="income" />
             </div>
-            <div class="col p-0 bf-neutral categories-columns">Stats</div>
+            <div class="col p-0 bf-neutral categories-columns">
+              <div class="row sticky-header second-row-height border-bottom border-end text-center">
+                <div class="col text-center full-center-text fs-3">
+                  <div>Statistika</div>
+                </div>
+              </div>
+              <ApexCharts width="99%" :series :options="options"></ApexCharts>
+            </div>
           </div>
         </div>
       </div>

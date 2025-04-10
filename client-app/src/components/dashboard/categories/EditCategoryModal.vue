@@ -16,7 +16,7 @@ const newName = ref(category.value?.name ?? "");
 const errorName = ref<string>();
 
 async function deleteCategory() {
-  const result = await openConfirmModal(`Vēlaties izdzēst kategoriju "${category.value!.name}?"`);
+  const result = await openConfirmModal(`Vēlaties izdzēst kategoriju "${category.value!.name}"?`);
 
   if (result) {
     categories.value = categories.value.filter((c) => c.categoryId !== category.value!.categoryId);
