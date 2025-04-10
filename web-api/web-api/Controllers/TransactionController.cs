@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using web_api.Attributes;
 using web_api.Dtos;
 using web_api.Services.Interfaces;
 
@@ -10,11 +11,12 @@ public class TransactionController(ITransactionService transactionService) : Con
 {
     private readonly ITransactionService _transactionService = transactionService;
 
-    // TODO: Add startDate and endDate to filter transactions by date
     [HttpGet("category-transactions")]
+    [AuditLog("Get transaction action")]
     public ActionResult<IEnumerable<Transaction>> GetTransactions(long categoryId, DateTime startDate, DateTime endDate) => Ok(_transactionService.GetUserTransactions(categoryId, startDate, endDate));
 
     [HttpPost("upsert-transaction")]
+    [AuditLog("Upsert transaction action")]
     public async Task<IActionResult> UpsertTransaction([FromBody] Transaction transaction)
     {
         await _transactionService.UpsertTransactionAsync(transaction);
@@ -23,6 +25,7 @@ public class TransactionController(ITransactionService transactionService) : Con
     }
 
     [HttpDelete("delete-transaction")]
+    [AuditLog("Delete transaction action")]
     public async Task<IActionResult> DeleteTransaction(long transactionId)
     {
         await _transactionService.DeleteTransactionAsync(transactionId);

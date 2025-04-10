@@ -29,6 +29,7 @@ h1 {
 .app-container {
   @media (max-width: 1200px) {
     width: 1920px;
+    height: auto;
     overflow: auto;
   }
 }

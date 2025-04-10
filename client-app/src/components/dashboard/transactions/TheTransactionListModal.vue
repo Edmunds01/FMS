@@ -221,7 +221,7 @@ watch(
             </tbody>
             <tbody v-else>
               <tr>
-                <td colspan="3">Tranzakciju pagaidām nav</td>
+                <td colspan="4">Tranzakciju pagaidām nav</td>
               </tr>
             </tbody>
           </table>

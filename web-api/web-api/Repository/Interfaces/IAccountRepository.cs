@@ -5,4 +5,6 @@ namespace web_api.Repository.Interfaces;
 public interface IAccountRepository : IBaseRepository<Account>
 {
     IEnumerable<Account> GetUserAccounts(int userId);
+
+    Task DeleteAsync(long accountId);
 }
