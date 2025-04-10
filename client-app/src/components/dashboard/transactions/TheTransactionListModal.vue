@@ -134,6 +134,9 @@ watch(
             >
               <FaIcon icon-name="plus" size="sm" class="add-icon" />
             </button>
+            <button title="Aizvērt" class="close-button" @click="close()">
+              <FaIcon icon-name="xmark" size="sm" />
+            </button>
           </div>
         </div>
         <div class="table-responsive d-block">
@@ -277,6 +280,13 @@ td {
   top: 50%;
   right: 15%;
   transform: translateY(-42%);
+}
+
+.close-button {
+  position: absolute;
+  top: 50%;
+  right: 3%;
+  transform: translateY(-50%);
 }
 
 .add-icon {
