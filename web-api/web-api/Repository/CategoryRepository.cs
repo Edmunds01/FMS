@@ -12,7 +12,7 @@ public class CategoryRepository(FMSContext context) : BaseRepository<Category>(c
 
     public async Task DeleteAsync(long categoryId)
     {
-        var category = await GetByIdAsync(categoryId) ?? throw new NotSupportedException("Category does not exists");
+        var category = await GetByIdAsync(categoryId) ?? throw new NotSupportedException("Category does not exist");
 
         if (await _context.Transactions.AnyAsync(t => t.CategoryId == categoryId))
         {
