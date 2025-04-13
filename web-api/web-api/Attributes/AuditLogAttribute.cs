@@ -11,22 +11,28 @@ public class AuditLogAttribute(string message) : ActionFilterAttribute
 
     public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        var auditLogRepository = context.HttpContext.RequestServices.GetService<IAuditLogRepository>();
-
-        if (auditLogRepository == null)
+        _ = Task.Run(async () =>
         {
-            throw new InvalidOperationException("IAuditLogRepository is not registered in the DI container.");
-        }
+            using var scope = context.HttpContext.RequestServices.CreateScope();
+            var auditLogRepository = scope.ServiceProvider.GetRequiredService<IAuditLogRepository>();
 
-        var ipAddress = context.HttpContext.Connection.RemoteIpAddress?.ToString();
-        var userId = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+            var ipAddress = context.HttpContext.Connection.RemoteIpAddress?.ToString();
+            var userId = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
 
-        await auditLogRepository.InsertAsync(new AuditLog
-        {
-            Action = _message,
-            IpAdress = ipAddress,
-            UserId = userId != null ? int.Parse(userId) : null,
-            ActionDttm = DateTime.UtcNow
+            try
+            {
+                await auditLogRepository.InsertAsync(new AuditLog
+                {
+                    Action = _message,
+                    IpAdress = ipAddress,
+                    UserId = userId != null ? int.Parse(userId) : null,
+                    ActionDttm = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error logging audit: {ex.Message}");
+            }
         });
 
         await next();
