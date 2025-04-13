@@ -10,10 +10,8 @@ public class TransactionService(
     IAccountService accountService,
     ICategoryService categoryService,
     IHttpContextAccessor httpContextAccessor,
-    IConfiguration configuration,
-    IHostEnvironment env,
     IMapper mapper
-    ) : BaseService(httpContextAccessor, mapper, configuration, env), ITransactionService
+    ) : BaseService(httpContextAccessor, mapper), ITransactionService
 {
     private readonly ITransactionRepository _transactionRepository = transactionRepository;
     private readonly IAccountService _accountService = accountService;

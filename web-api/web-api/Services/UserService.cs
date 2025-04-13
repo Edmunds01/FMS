@@ -7,10 +7,8 @@ namespace web_api.Services;
 public class UserService(
     IUserRepository userRepository,
     IHttpContextAccessor httpContextAccessor,
-    IConfiguration configuration,
-    IHostEnvironment env,
     IMapper mapper
-    ) : BaseService(httpContextAccessor, mapper, configuration, env), IUserService
+    ) : BaseService(httpContextAccessor, mapper), IUserService
 {
     private readonly IUserRepository _userRepository = userRepository;
 

@@ -9,10 +9,8 @@ public class CategoryService(
     ITransactionRepository transactionRepository,
     ICategoryRepository categoryRepository,
     IHttpContextAccessor httpContextAccessor,
-    IConfiguration configuration,
-    IHostEnvironment env,
     IMapper mapper
-    ) : BaseService(httpContextAccessor, mapper, configuration, env), ICategoryService
+    ) : BaseService(httpContextAccessor, mapper), ICategoryService
 {
     private readonly ITransactionRepository _transactionRepository = transactionRepository;
     private readonly ICategoryRepository _categoryRepository = categoryRepository;
