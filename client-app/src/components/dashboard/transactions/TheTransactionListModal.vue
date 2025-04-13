@@ -125,7 +125,7 @@ watch(
           <div class="text-center h1 category-name">
             {{ category?.name }}
             <button
-              title="Pievienot tranzakciju"
+              title="Pievienot transakciju"
               class="add-button"
               @click="
                 close();
@@ -224,7 +224,7 @@ watch(
             </tbody>
             <tbody v-else>
               <tr>
-                <td colspan="4">Tranzakciju pagaidām nav</td>
+                <td colspan="4">Transakciju pagaidām nav</td>
               </tr>
             </tbody>
           </table>

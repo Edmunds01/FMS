@@ -89,6 +89,7 @@ void RegisterRepositoriesAndServices(IServiceCollection services)
     services.AddScoped<IAccountService, AccountService>();
     services.AddScoped<ITransactionService, TransactionService>();
     services.AddScoped<ICategoryService, CategoryService>();
+    services.AddScoped<IUserService, UserService>();
 
     services.AddSingleton<IRecoverHelper, RecoverHelper>();
     services.AddSingleton<ITokenHelper, TokenHelper>();

@@ -31,7 +31,7 @@ async function sendEmail() {
 
   notification.notify({
     title: "Paroles atjaunošana",
-    text: "Ja lietotājs ar tādu e-pastu ekstistē e-pasts ir nosūtīts.",
+    text: "Ja lietotājs ar šādu e-pastu eksistē, e-pasts ir nosūtīts.",
     duration: 5000,
     type: "success",
   });

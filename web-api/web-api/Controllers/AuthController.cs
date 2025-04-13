@@ -12,6 +12,8 @@ namespace web_api.Controllers;
 
 [ApiController]
 [Route("api/auth")]
+[NotAuthorizedExceptionFilter]
+[GlobalExceptionFilter]
 public class AuthController
     (
         IConfiguration configuration,
@@ -45,6 +47,7 @@ public class AuthController
 
     [HttpPost("register")]
     [AuditLog("Register action")]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register([FromBody] LoginRegisterDto loginDto)
     {
         if (await _userRepository.GetUserAsync(loginDto.Username) != null)
@@ -113,7 +116,7 @@ public class AuthController
         var user = await _userRepository.GetUserAsync(email);
         if (user == null)
         {
-            return BadRequest("User with this email does not exist");
+            return Ok();
         }
 
         await _recoverHelper.SendRecoveryEmailAsync(email);

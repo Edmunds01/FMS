@@ -269,10 +269,6 @@ export class Client extends AuthorizedApiBase {
         return Promise.resolve<void>(null as any);
     }
 
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
     register(body: LoginRegisterDto | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/auth/register";
         url_ = url_.replace(/[?&]$/, "");
@@ -297,9 +293,11 @@ export class Client extends AuthorizedApiBase {
     protected processRegister(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
+        if (status === 409) {
             return response.text().then((_responseText) => {
-            return;
+            let result409: any = null;
+            result409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Conflict", status, _responseText, _headers, result409);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -939,6 +937,16 @@ export interface NewCategory {
     name: string | undefined;
     icon: string | undefined;
     type: CategoryType;
+}
+
+export interface ProblemDetails {
+    type: string | undefined;
+    title: string | undefined;
+    status: number | undefined;
+    detail: string | undefined;
+    instance: string | undefined;
+
+    [key: string]: any;
 }
 
 export interface Transaction {

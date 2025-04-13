@@ -7,6 +7,8 @@ namespace web_api.Controllers;
 
 [ApiController]
 [Route("api/user")]
+[NotAuthorizedExceptionFilter]
+[GlobalExceptionFilter]
 public class UserController(IUserService userService) : ControllerBase
 {
     private readonly IUserService _userService = userService;
@@ -17,8 +19,9 @@ public class UserController(IUserService userService) : ControllerBase
 
     [HttpPost("change-password")]
     [AuditLog("Change user password action")]
-    public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword) {
+    public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword)
+    {
         await _userService.ChangeUserPasswordAsync(oldPassword, newPassword);
-    return Ok();
+        return Ok();
     }
 }

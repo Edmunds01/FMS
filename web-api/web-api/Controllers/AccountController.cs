@@ -8,6 +8,7 @@ namespace web_api.Controllers;
 [ApiController]
 [Route("api/account")]
 [NotAuthorizedExceptionFilter]
+[GlobalExceptionFilter]
 public class AccountController(IAccountService accountService) : ControllerBase
 {
     private readonly IAccountService _accountService = accountService;
