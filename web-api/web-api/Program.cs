@@ -25,7 +25,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<FMSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+builder.Services.AddDbContext<FMSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddCors(options => options.AddPolicy(CorsPolicyName, policy =>
     {
