@@ -70,7 +70,7 @@ watch(
     if (passwordError.value) {
       passwordError.value = validatePassword(password.value);
     }
-  },
+  }
 );
 
 watch(
@@ -79,7 +79,7 @@ watch(
     if (confirmPasswordError.value) {
       validateConfirmPassword();
     }
-  },
+  }
 );
 
 const handleRegister = async () => {
@@ -126,10 +126,9 @@ const handleRegister = async () => {
       </div>
       <form class="container" @submit.prevent="validateForm">
         <div class="row mb-1 mt-2">
-          <label for="username" class="form-label col-4">E-pasts</label>
+          <label class="form-label col-4">E-pasts</label>
           <div class="col">
             <input
-              id="username"
               v-model="username"
               type="email"
               class="form-control"
@@ -139,7 +138,7 @@ const handleRegister = async () => {
           </div>
         </div>
         <div class="row mb-1">
-          <label for="password" class="form-label col-4">Parole</label>
+          <label class="form-label col-4">Parole</label>
           <div class="col input-group">
             <input
               v-model="password"
@@ -161,7 +160,7 @@ const handleRegister = async () => {
           </div>
         </div>
         <div class="row mb-1">
-          <label for="password" class="form-label col-4">Atkārtojiet paroli</label>
+          <label class="form-label col-4">Atkārtojiet paroli</label>
           <div class="col input-group">
             <input
               v-model="confirmPassword"

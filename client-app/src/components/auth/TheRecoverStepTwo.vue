@@ -70,11 +70,10 @@ onMounted(() => {
           <div class="col mb-2">Jūsu e-pasts: {{ route.query.email }}</div>
         </div>
         <div class="row mb-1">
-          <label for="password" class="form-label col-4">Parole</label>
+          <label class="form-label col-4">Parole</label>
           <div class="col">
             <div class="input-group">
               <input
-                id="password"
                 v-model="password"
                 class="form-control"
                 :type="showPassword ? 'text' : 'password'"
@@ -92,11 +91,10 @@ onMounted(() => {
           </div>
         </div>
         <div class="row mb-1">
-          <label for="password2" class="form-label col-4">Atkārtojiet paroli</label>
+          <label class="form-label col-4">Atkārtojiet paroli</label>
           <div class="col">
             <div class="input-group">
               <input
-                id="password2"
                 v-model="confirmPassword"
                 class="form-control"
                 :type="showConfirmPassword ? 'text' : 'password'"
@@ -116,7 +114,9 @@ onMounted(() => {
         <div class="row">
           <div class="col-4"></div>
           <div class="col">
-            <button class="btn btn-primary" @click.prevent="savePassword">Atjaunot paroli</button>
+            <button class="btn btn-primary" @click.prevent="savePassword">
+              Atjaunot paroli
+            </button>
           </div>
         </div>
       </form>

@@ -59,10 +59,9 @@ async function sendEmail() {
           Ievadiet savu e-pastu un mēs atsutīsim jums saiti uz paroles atjaunošanu.
         </div>
         <div class="row mb-1 mt-2">
-          <label for="username" class="form-label col-2">E-pasts</label>
+          <label class="form-label col-2">E-pasts</label>
           <div class="col">
             <input
-              id="username"
               v-model="username"
               type="email"
               class="form-control"

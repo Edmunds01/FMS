@@ -82,7 +82,7 @@ const emit = defineEmits<{
         />
         <div class="flex-grow-1 pe-3 account-details">
           <div class="mb-1 row">
-            <label for="staticEmail" class="col-5 col-form-label text-start align-bottom">
+            <label class="col-5 col-form-label text-start align-bottom">
               Konta nosaukums:
             </label>
             <div class="col-7">
@@ -98,7 +98,7 @@ const emit = defineEmits<{
             </div>
           </div>
           <div class="row">
-            <label for="inputPassword" class="col-5 col-form-label text-start align-bottom">
+            <label class="col-5 col-form-label text-start align-bottom">
               Konta sakotnēja summa:
             </label>
             <div class="col-7">
