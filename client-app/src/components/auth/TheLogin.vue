@@ -63,7 +63,7 @@ onMounted(() => {
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               class="form-control"
-              autocomplete="current-password"
+              autocomplete="password"
             />
             <button
               type="button"
