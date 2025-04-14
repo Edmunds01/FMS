@@ -98,17 +98,6 @@ async function sendEmail() {
   width: 40%;
 }
 
-.cross {
-  width: 1.3rem;
-  height: 1.3rem;
-}
-
-.error {
-  color: red;
-  font-size: 0.7rem;
-  margin-bottom: 0rem;
-}
-
 .is-invalid {
   border-color: red;
   box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);

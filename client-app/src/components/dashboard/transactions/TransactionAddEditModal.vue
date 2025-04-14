@@ -4,12 +4,7 @@ import ModalWindow, {
   transactionAddModalId as transactionAddEditModalId,
 } from "@/components/global/ModalWindow.vue";
 import { computed, inject, onMounted, ref, watch } from "vue";
-import {
-  accountsKey,
-  addEditTransactionKey,
-  categoriesKey,
-  transactionListKey,
-} from "@/utils/keys";
+import { accountsKey, addEditTransactionKey, categoriesKey } from "@/utils/keys";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import { formatLatvianDate } from "../TheDateSelect.vue";
 import FaIcon from "@/components/global/FaIcon.vue";
@@ -17,14 +12,13 @@ import { useNotification } from "@kyvg/vue3-notification";
 
 const notification = useNotification();
 const { categories, fetchCategories } = inject(categoriesKey)!;
-const { accounts } = inject(accountsKey)!;
+const { accounts, fetchAccounts } = inject(accountsKey)!;
 const {
   transaction: editTransaction,
   category,
   close,
   openConfirmModal,
 } = inject(addEditTransactionKey)!;
-const { fetchData } = inject(transactionListKey)!;
 
 const transaction = ref<Transaction>({
   transactionId: editTransaction.value?.transactionId ?? undefined,
@@ -97,25 +91,36 @@ async function save() {
 
   transaction.value.amount = amount.value.toNumberFromEurFormat();
 
-  const affectedCategory = categories?.value.find(
-    (c) => c.categoryId === transaction.value.categoryId,
-  );
-  if (affectedCategory) {
-    affectedCategory.sumOfTransactions += transaction.value.amount;
-  }
+  updateAccountAndCategory();
 
-  setTimeout(async () => {
-    await api.upsertTransaction(transaction.value);
-    fetchData();
-    notification.notify({
-      title: isEdit.value ? "Transakcija labota" : "Transakcija pievienota",
-      text: `Transakcija ${isEdit.value ? "labota" : "pievienota"} veiksmīgi.`,
-      duration: 4000,
-      type: "success",
-    });
+  await api.upsertTransaction(transaction.value);
+  notification.notify({
+    title: isEdit.value ? "Transakcija labota" : "Transakcija pievienota",
+    text: `Transakcija ${isEdit.value ? "labota" : "pievienota"} veiksmīgi.`,
+    duration: 4000,
+    type: "success",
   });
 
+  setTimeout(async () => {
+    fetchCategories();
+    fetchAccounts();
+  }, 0);
+
   close();
+}
+
+function updateAccountAndCategory() {
+  const affectedCategory = categories!.value.find(
+    (c) => c.categoryId === transaction.value.categoryId,
+  )!;
+  affectedCategory.sumOfTransactions -= transaction.value.amount;
+
+  const affectedAccount = accounts.value.find((c) => c.accountId === transaction.value.accountId)!;
+  if (affectedCategory.type === CategoryType.Expense) {
+    affectedAccount.balance -= transaction.value.amount;
+  } else {
+    affectedAccount.balance += transaction.value.amount;
+  }
 }
 
 async function deleteTransaction() {
@@ -124,17 +129,11 @@ async function deleteTransaction() {
   );
 
   if (result) {
-    const affectedCategory = categories?.value.find(
-      (c) => c.categoryId === transaction.value.categoryId,
-    );
-    if (affectedCategory) {
-      affectedCategory.sumOfTransactions -= transaction.value.amount;
-    }
+    updateAccountAndCategory();
 
     setTimeout(async () => {
       await api.deleteTransaction(transaction.value.transactionId!);
       await fetchCategories();
-      fetchData();
       notification.notify({
         title: "Transakcija izdzēsta",
         text: `Transakcija izdzēsta veiksmīgi.`,
@@ -211,7 +210,9 @@ function onKey(e: KeyboardEvent) {
 
               <ul class="dropdown-menu style-dropdown-menu dd-overflow">
                 <li>
-                  <span class="dropdown-header text-center" style="font-size: 1.6rem"> Konts </span>
+                  <span class="dropdown-header text-center" style="font-size: 1.6rem">
+                    Konts
+                  </span>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li v-for="account in accounts" :key="account.accountId">

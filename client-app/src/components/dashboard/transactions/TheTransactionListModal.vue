@@ -36,13 +36,19 @@ const transactionClass = computed(() =>
 const dates = inject(selectedDatesKey)!;
 const { accounts } = inject(accountsKey)!;
 
+const loading = ref(false);
+
 async function fetchTransactions() {
-  transactions.value = await api.categoryTransactions(
-    category.value!.categoryId,
-    dates.startDate.value,
-    dates.endDate.value,
-  );
-  sortByDate(false);
+  loading.value = true;
+  setTimeout(async () => {
+    transactions.value = await api.categoryTransactions(
+      category.value!.categoryId,
+      dates.startDate.value,
+      dates.endDate.value,
+    );
+    sortByDate(false);
+    loading.value = false;
+  }, 0);
 }
 
 function getAccountName(accountId: number) {
@@ -129,7 +135,7 @@ watch(
               class="add-button"
               @click="
                 close();
-                openAddTransactionModal(category!, openTransactionList);
+                openAddTransactionModal(category!, accounts.length > 0, openTransactionList);
               "
             >
               <FaIcon icon-name="plus" size="sm" class="add-icon" />
@@ -189,7 +195,16 @@ watch(
                 </th>
               </tr>
             </thead>
-            <tbody v-if="transactions && transactions.length > 0">
+            <tbody v-if="loading">
+              <tr>
+                <td colspan="4">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tbody v-else-if="transactions && transactions.length > 0">
               <tr v-for="transaction in transactions" :key="transaction.transactionId">
                 <td
                   :class="transactionClass"

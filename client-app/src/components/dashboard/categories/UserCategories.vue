@@ -4,6 +4,7 @@ import AddCategoryButton from "@/components/dashboard/categories/AddCategoryButt
 import { computed, inject } from "vue";
 import { CategoryType, type Category } from "@/api/auto-generated-client";
 import {
+  accountsKey,
   addCategoryKey,
   addEditTransactionKey,
   editCategoryKey,
@@ -32,6 +33,8 @@ function mapCategoryTypeName(category: CategoryType): string {
   }
 }
 
+const account = inject(accountsKey)!;
+
 const { open: openAddCategory } = inject(addCategoryKey)!;
 const { open: openEditCategory } = inject(editCategoryKey)!;
 const { open: openTransactionList } = inject(transactionListKey)!;
@@ -56,7 +59,7 @@ const { openAdd: openAddTransaction } = inject(addEditTransactionKey)!;
             class="category-width user-select-none"
             @left-click="openTransactionList(category)"
             @right-click="openEditCategory(category)"
-            @double-click="openAddTransaction(category)"
+            @double-click="openAddTransaction(category, account.accounts.value.length > 0)"
           />
           <AddCategoryButton
             :type="categoryType"

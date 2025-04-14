@@ -52,7 +52,7 @@ public class AuthController
     {
         if (await _userRepository.GetUserAsync(loginDto.Username) != null)
         {
-            return Conflict("User with this email already exists");
+            return Conflict(JsonSerializer.Serialize("User with this email already exists"));
         }
 
         var user = await _userRepository.AddUserAsync(new User

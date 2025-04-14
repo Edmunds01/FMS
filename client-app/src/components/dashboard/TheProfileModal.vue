@@ -5,6 +5,7 @@ import { inject, onMounted, ref, watch } from "vue";
 import { validatePassword } from "@/components/auth/TheRegister.vue";
 import { useNotification } from "@kyvg/vue3-notification";
 import { profileKey } from "@/utils/keys";
+import FaIcon from "@/components/global/FaIcon.vue";
 
 const notification = useNotification();
 const email = ref("");
@@ -83,14 +84,19 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ModalWindow :id="userProfileModalId" remove-bottom-border-radius>
+  <ModalWindow :id="userProfileModalId">
     <template #header>
-      <h1 class="modal-title">Profils</h1>
+      <div class="row p-0 m-0 w-100">
+        <h1 class="col-11 p-0 m-0 text-start">Profils</h1>
+        <button class="col-1 p-0 m-0" @click="close">
+          <FaIcon icon="fa-solid fa-xmark" size="2xl" />
+        </button>
+      </div>
     </template>
     <template #body>
       <div class="row p-0 m-0 mb-4 mt-2">
         <div class="col-3 text-start ms-2">E-pasts</div>
-        <div class="col-7">
+        <div class="col-7 p-0">
           <input type="text" class="form-control" :placeholder="email" disabled />
         </div>
       </div>

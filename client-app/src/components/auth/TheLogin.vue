@@ -77,19 +77,14 @@ onMounted(() => {
         <div class="row text-center">
           <div class="col-3"></div>
           <div class="col"></div>
-          <a
-            class="recover link-primary ms-2 col"
-            @click.prevent="$router.push('/recover')"
-          >
+          <a class="recover link-primary ms-2 col" @click.prevent="$router.push('/recover')">
             Atjaunot paroli
           </a>
         </div>
         <div class="row">
           <div class="col-3"></div>
           <button type="submit" class="btn btn-primary col">Ieiet</button>
-          <a type="button" href="register" class="btn btn-primary ms-2 col">
-            Registrēties
-          </a>
+          <a type="button" href="register" class="btn btn-primary ms-2 col"> Registrēties </a>
         </div>
       </form>
     </div>

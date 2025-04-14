@@ -17,6 +17,8 @@ public class TransactionService(
     private readonly IAccountService _accountService = accountService;
     private readonly ICategoryService _categoryService = categoryService;
 
+    private const int _maxTransactionAmount = 10_000_000;
+
     public IEnumerable<Dtos.Transaction> GetUserTransactions(long categoryId, DateTime startDate, DateTime endDate)
     {
         var transactions = _transactionRepository.GetUserTransactions(UserId, categoryId, startDate, endDate);
@@ -26,6 +28,11 @@ public class TransactionService(
 
     public async Task UpsertTransactionAsync(Dtos.Transaction transactionRaw)
     {
+        if (transactionRaw.Amount > _maxTransactionAmount)
+        { 
+             throw new NotAuthorizedException($"create {nameof(Dtos.Transaction)} with balance greater then {_maxTransactionAmount}");
+        }
+
         await _accountService.ValidateIsUserAccountAsync(transactionRaw.AccountId);
         await _categoryService.ValidateIsUserCategoryAsync(transactionRaw.CategoryId);
 

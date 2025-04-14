@@ -70,7 +70,7 @@ watch(
     if (passwordError.value) {
       passwordError.value = validatePassword(password.value);
     }
-  }
+  },
 );
 
 watch(
@@ -79,7 +79,7 @@ watch(
     if (confirmPasswordError.value) {
       validateConfirmPassword();
     }
-  }
+  },
 );
 
 const handleRegister = async () => {
@@ -96,6 +96,13 @@ const handleRegister = async () => {
     });
     router.push("/");
   } catch {
+    notification.notify({
+      title: "Reģistrācija",
+      text: "Lietotājs ar šādu e-pastu jau eksistē.",
+      duration: 4000,
+      type: "error",
+    });
+
     username.value = "";
     password.value = "";
     confirmPassword.value = "";
@@ -196,11 +203,6 @@ const handleRegister = async () => {
 
 .register-form {
   width: 40%;
-}
-
-.cross {
-  width: 1.3rem;
-  height: 1.3rem;
 }
 
 .error {
