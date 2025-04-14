@@ -116,7 +116,9 @@ onMounted(() => {
         <div class="row">
           <div class="col-4"></div>
           <div class="col">
-            <button class="btn btn-primary" @click.prevent="savePassword">Atjaunot paroli</button>
+            <button class="btn btn-primary" @click.prevent="savePassword">
+              Atjaunot paroli
+            </button>
           </div>
         </div>
       </form>
@@ -133,7 +135,7 @@ onMounted(() => {
 }
 
 .recover-form {
-  width: 20%;
+  width: 40%;
 }
 
 .cross {

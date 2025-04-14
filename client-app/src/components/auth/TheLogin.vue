@@ -43,7 +43,7 @@ onMounted(() => {
   <div class="login">
     <title>Ieiet</title>
 
-    <div class="border p-4 w-25">
+    <div class="border p-4 login-form">
       <h1 class="border-bottom">Ieiet</h1>
       <form class="container" @submit.prevent="handleLogin">
         <div class="row mb-1 mt-4">
@@ -77,14 +77,19 @@ onMounted(() => {
         <div class="row text-center">
           <div class="col-3"></div>
           <div class="col"></div>
-          <a class="recover link-primary ms-2 col" @click.prevent="$router.push('/recover')">
+          <a
+            class="recover link-primary ms-2 col"
+            @click.prevent="$router.push('/recover')"
+          >
             Atjaunot paroli
           </a>
         </div>
         <div class="row">
           <div class="col-3"></div>
           <button type="submit" class="btn btn-primary col">Ieiet</button>
-          <a type="button" href="register" class="btn btn-primary ms-2 col"> Registrēties </a>
+          <a type="button" href="register" class="btn btn-primary ms-2 col">
+            Registrēties
+          </a>
         </div>
       </form>
     </div>
@@ -102,6 +107,10 @@ onMounted(() => {
 .recover {
   font-size: 0.8rem;
   cursor: pointer;
+}
+
+.login-form {
+  width: 40%;
 }
 
 .input-group {

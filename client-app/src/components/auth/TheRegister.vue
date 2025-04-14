@@ -70,7 +70,7 @@ watch(
     if (passwordError.value) {
       passwordError.value = validatePassword(password.value);
     }
-  },
+  }
 );
 
 watch(
@@ -79,7 +79,7 @@ watch(
     if (confirmPasswordError.value) {
       validateConfirmPassword();
     }
-  },
+  }
 );
 
 const handleRegister = async () => {
@@ -195,7 +195,7 @@ const handleRegister = async () => {
 }
 
 .register-form {
-  width: 26%;
+  width: 40%;
 }
 
 .cross {

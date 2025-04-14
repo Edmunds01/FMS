@@ -95,7 +95,7 @@ async function sendEmail() {
 }
 
 .recover-form {
-  width: 20%;
+  width: 40%;
 }
 
 .cross {
