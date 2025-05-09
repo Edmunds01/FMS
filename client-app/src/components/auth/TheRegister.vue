@@ -25,9 +25,6 @@ export function validatePassword(passwordRaw: string) {
 </script>
 
 <script setup lang="ts">
-// TODO: Add unsuccessful register alert
-// TODO: Change redirection link
-
 import { api } from "@/api/auto-generated-client";
 import { useNotification } from "@kyvg/vue3-notification";
 import { ref, watch } from "vue";

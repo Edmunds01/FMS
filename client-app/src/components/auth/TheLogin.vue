@@ -13,7 +13,6 @@ const showPassword = ref(false);
 
 const loading = ref(false);
 
-// TODO: Add error handling
 const handleLogin = async () => {
   if (loading.value) return;
 
