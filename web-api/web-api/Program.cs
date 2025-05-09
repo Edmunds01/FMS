@@ -68,9 +68,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
 
-// TODO: check if this will work on deploy
-//app.UseHttpsRedirection();
-
 app.MapControllers();
 
 GenerateTypeScriptClientApi();

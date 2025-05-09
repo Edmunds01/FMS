@@ -82,9 +82,7 @@ const emit = defineEmits<{
         />
         <div class="flex-grow-1 pe-3 account-details">
           <div class="mb-1 row">
-            <label class="col-5 col-form-label text-start align-bottom">
-              Konta nosaukums:
-            </label>
+            <label class="col-5 col-form-label text-start align-bottom"> Konta nosaukums: </label>
             <div class="col-7">
               <div v-if="errorName" class="text-danger mt-1 error">
                 {{ errorName }}

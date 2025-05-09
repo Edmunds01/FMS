@@ -4,7 +4,12 @@ import ModalWindow, {
   transactionAddModalId as transactionAddEditModalId,
 } from "@/components/global/ModalWindow.vue";
 import { computed, inject, onMounted, ref, watch } from "vue";
-import { accountsKey, addEditTransactionKey, categoriesKey } from "@/utils/keys";
+import {
+  accountsKey,
+  addEditTransactionKey,
+  categoriesKey,
+  transactionListKey,
+} from "@/utils/keys";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import { formatLatvianDate } from "../TheDateSelect.vue";
 import FaIcon from "@/components/global/FaIcon.vue";
@@ -19,6 +24,7 @@ const {
   close,
   openConfirmModal,
 } = inject(addEditTransactionKey)!;
+const { boolForWatch } = inject(transactionListKey)!;
 
 const transaction = ref<Transaction>({
   transactionId: editTransaction.value?.transactionId ?? undefined,
@@ -125,7 +131,7 @@ function updateAccountAndCategory() {
 
 async function deleteTransaction() {
   const result = await openConfirmModal(
-    `Vēlaties izdzēst traszakciju uz summu ${transaction.value.amount.toEurFormat()}?`,
+    `Vēlaties izdzēst trasakciju uz summu ${transaction.value.amount.toEurFormat()}?`,
   );
 
   if (result) {
@@ -134,6 +140,7 @@ async function deleteTransaction() {
     setTimeout(async () => {
       await api.deleteTransaction(transaction.value.transactionId!);
       await fetchCategories();
+      boolForWatch.value = !boolForWatch.value;
       notification.notify({
         title: "Transakcija izdzēsta",
         text: `Transakcija izdzēsta veiksmīgi.`,
@@ -210,9 +217,7 @@ function onKey(e: KeyboardEvent) {
 
               <ul class="dropdown-menu style-dropdown-menu dd-overflow">
                 <li>
-                  <span class="dropdown-header text-center" style="font-size: 1.6rem">
-                    Konts
-                  </span>
+                  <span class="dropdown-header text-center" style="font-size: 1.6rem"> Konts </span>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li v-for="account in accounts" :key="account.accountId">
