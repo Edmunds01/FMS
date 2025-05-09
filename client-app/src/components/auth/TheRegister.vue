@@ -178,8 +178,8 @@ const handleRegister = async () => {
           </div>
         </div>
         <div class="row">
-          <p v-if="passwordError" class="col-4"></p>
-          <p v-if="passwordError" class="error col">{{ confirmPasswordError }}</p>
+          <p v-if="confirmPasswordError" class="col-4"></p>
+          <p v-if="confirmPasswordError" class="error col">{{ confirmPasswordError }}</p>
         </div>
         <div class="row">
           <div class="col-4"></div>
