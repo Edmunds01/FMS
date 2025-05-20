@@ -3,6 +3,7 @@ import {
   addCategoryKey,
   addEditTransactionKey,
   editCategoryKey,
+  profileKey,
   transactionListKey,
 } from "@/utils/keys";
 import { provide, ref } from "vue";
@@ -13,12 +14,46 @@ import {
   openModal,
   transactionAddModalId as transactionAddEditModalId,
   transactionListModalId,
+  userProfileModalId,
 } from "../global/ModalWindow.vue";
 
 import { useConfirm } from "@/utils/confirm";
 import { isConfirmModal } from "../global/ConfirmAction.vue";
+import { useNotification } from "@kyvg/vue3-notification";
 
 const confirm = useConfirm();
+
+const notification = useNotification();
+
+export function useProfileModal() {
+  const isOpened = ref(false);
+
+  function openProfile() {
+    isOpened.value = true;
+
+    const onModalHidden = () => {
+      closeProfile();
+    };
+
+    openModal(userProfileModalId, onModalHidden);
+  }
+
+  function closeProfile() {
+    closeModal(userProfileModalId);
+
+    setTimeout(() => {
+      isOpened.value = false;
+    }, 0);
+  }
+
+  provide(profileKey, {
+    isOpened,
+    open: openProfile,
+    close: closeProfile,
+  });
+
+  return openProfile;
+}
 
 export function useAddCategoryModal() {
   const isOpened = ref(false);
@@ -128,8 +163,17 @@ export function useAddEditTransactionListModal() {
 
   function openTransactionList(
     categoryRaw: Category,
+    accountExists: boolean,
     reopenFunction?: (categoryRaw: Category) => void,
   ) {
+    if (!accountExists) {
+      notification.notify({
+        title: "Kļūda",
+        text: "Pievienojie kontu pirms pievienot darījumu",
+        type: "error",
+      });
+      return;
+    }
     category.value = categoryRaw;
 
     const onModalHidden = () => {

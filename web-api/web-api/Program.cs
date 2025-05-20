@@ -25,8 +25,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<FMSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-        .EnableSensitiveDataLogging());
+builder.Services.AddDbContext<FMSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddCors(options => options.AddPolicy(CorsPolicyName, policy =>
     {
@@ -69,9 +68,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
 
-// TODO: check if this will work on deploy
-//app.UseHttpsRedirection();
-
 app.MapControllers();
 
 GenerateTypeScriptClientApi();
@@ -89,6 +85,7 @@ void RegisterRepositoriesAndServices(IServiceCollection services)
     services.AddScoped<IAccountService, AccountService>();
     services.AddScoped<ITransactionService, TransactionService>();
     services.AddScoped<ICategoryService, CategoryService>();
+    services.AddScoped<IUserService, UserService>();
 
     services.AddSingleton<IRecoverHelper, RecoverHelper>();
     services.AddSingleton<ITokenHelper, TokenHelper>();

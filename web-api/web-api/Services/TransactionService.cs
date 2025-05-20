@@ -10,14 +10,14 @@ public class TransactionService(
     IAccountService accountService,
     ICategoryService categoryService,
     IHttpContextAccessor httpContextAccessor,
-    IConfiguration configuration,
-    IHostEnvironment env,
     IMapper mapper
-    ) : BaseService(httpContextAccessor, mapper, configuration, env), ITransactionService
+    ) : BaseService(httpContextAccessor, mapper), ITransactionService
 {
     private readonly ITransactionRepository _transactionRepository = transactionRepository;
     private readonly IAccountService _accountService = accountService;
     private readonly ICategoryService _categoryService = categoryService;
+
+    private const int _maxTransactionAmount = 10_000_000;
 
     public IEnumerable<Dtos.Transaction> GetUserTransactions(long categoryId, DateTime startDate, DateTime endDate)
     {
@@ -25,8 +25,14 @@ public class TransactionService(
 
         return _mapper.Map<IEnumerable<Dtos.Transaction>>(transactions);
     }
+
     public async Task UpsertTransactionAsync(Dtos.Transaction transactionRaw)
     {
+        if (transactionRaw.Amount > _maxTransactionAmount)
+        { 
+             throw new NotAuthorizedException($"create {nameof(Dtos.Transaction)} with balance greater then {_maxTransactionAmount}");
+        }
+
         await _accountService.ValidateIsUserAccountAsync(transactionRaw.AccountId);
         await _categoryService.ValidateIsUserCategoryAsync(transactionRaw.CategoryId);
 

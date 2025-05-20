@@ -67,8 +67,8 @@ if (internal) {
       <div class="confirm-modal">
         <p class="confirm-message">{{ message }}</p>
         <div class="confirm-actions">
-          <button class="btn btn-secondary" @click="cancel">Cancel</button>
-          <button class="btn btn-danger" @click="confirm">Confirm</button>
+          <button class="btn btn-secondary" @click="cancel">Nē</button>
+          <button class="btn btn-danger" @click="confirm">Jā</button>
         </div>
       </div>
     </template>

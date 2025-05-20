@@ -269,10 +269,6 @@ export class Client extends AuthorizedApiBase {
         return Promise.resolve<void>(null as any);
     }
 
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
     register(body: LoginRegisterDto | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/auth/register";
         url_ = url_.replace(/[?&]$/, "");
@@ -297,9 +293,11 @@ export class Client extends AuthorizedApiBase {
     protected processRegister(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
+        if (status === 409) {
             return response.text().then((_responseText) => {
-            return;
+            let result409: any = null;
+            result409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Conflict", status, _responseText, _headers, result409);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -817,6 +815,89 @@ export class Client extends AuthorizedApiBase {
         }
         return Promise.resolve<void>(null as any);
     }
+
+    /**
+     * @return Success
+     */
+    userEmail(): Promise<string> {
+        let url_ = this.baseUrl + "/api/user/user-email";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processUserEmail(_response);
+        });
+    }
+
+    protected processUserEmail(response: Response): Promise<string> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<string>(null as any);
+    }
+
+    /**
+     * @param oldPassword (optional) 
+     * @param newPassword (optional) 
+     * @return Success
+     */
+    changePassword(oldPassword: string | undefined, newPassword: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/user/change-password?";
+        if (oldPassword === null)
+            throw new Error("The parameter 'oldPassword' cannot be null.");
+        else if (oldPassword !== undefined)
+            url_ += "oldPassword=" + encodeURIComponent("" + oldPassword) + "&";
+        if (newPassword === null)
+            throw new Error("The parameter 'newPassword' cannot be null.");
+        else if (newPassword !== undefined)
+            url_ += "newPassword=" + encodeURIComponent("" + newPassword) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processChangePassword(_response);
+        });
+    }
+
+    protected processChangePassword(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export interface Account {
@@ -856,6 +937,16 @@ export interface NewCategory {
     name: string | undefined;
     icon: string | undefined;
     type: CategoryType;
+}
+
+export interface ProblemDetails {
+    type: string | undefined;
+    title: string | undefined;
+    status: number | undefined;
+    detail: string | undefined;
+    instance: string | undefined;
+
+    [key: string]: any;
 }
 
 export interface Transaction {

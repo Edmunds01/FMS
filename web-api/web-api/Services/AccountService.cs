@@ -10,14 +10,14 @@ public class AccountService(
     ITransactionRepository transactionRepository,
     ICategoryRepository categoryRepository,
     IHttpContextAccessor httpContextAccessor,
-    IHostEnvironment env,
-    IConfiguration configuration,
     IMapper mapper
-    ) : BaseService(httpContextAccessor, mapper, configuration, env), IAccountService
+    ) : BaseService(httpContextAccessor, mapper), IAccountService
 {
     private readonly IAccountRepository _accountRepository = accountRepository;
     private readonly ITransactionRepository _transactionRepository = transactionRepository;
     private readonly ICategoryRepository _categoryRepository = categoryRepository;
+
+    private const int _maxAccountInitialBalance = 10_000_000;
 
     public IEnumerable<Dtos.Account> GetUserAccounts()
     {
@@ -41,6 +41,11 @@ public class AccountService(
 
     public Task CreateNewAccountAsync(Dtos.NewAccount accountRaw)
     {
+        if (accountRaw.Balance > _maxAccountInitialBalance)
+        {
+            throw new NotAuthorizedException($"create {nameof(Models.Account)} with balance greater then {_maxAccountInitialBalance}");
+        }
+
         var account = _mapper.Map<Models.Account>(accountRaw);
         account.UserId = UserId;
         account.AccountId = 0;

@@ -12,7 +12,6 @@ import Notifications from "@kyvg/vue3-notification";
 import VueApexCharts from "vue3-apexcharts";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
-
 import { fas } from "@fortawesome/free-solid-svg-icons";
 
 library.add(fas);

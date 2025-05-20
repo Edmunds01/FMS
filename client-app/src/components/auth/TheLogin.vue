@@ -9,11 +9,10 @@ const router = useRouter();
 
 const username = ref("");
 const password = ref("");
-const showPassword = ref(false); // New state for toggling password visibility
+const showPassword = ref(false);
 
 const loading = ref(false);
 
-// TODO: Add error handling
 const handleLogin = async () => {
   if (loading.value) return;
 
@@ -43,11 +42,11 @@ onMounted(() => {
   <div class="login">
     <title>Ieiet</title>
 
-    <div class="border p-4 w-25">
+    <div class="border p-4 login-form">
       <h1 class="border-bottom">Ieiet</h1>
       <form class="container" @submit.prevent="handleLogin">
         <div class="row mb-1 mt-4">
-          <label for="username" class="form-label col-3">E-pasts</label>
+          <label class="form-label col-3">E-pasts</label>
           <input
             v-model="username"
             type="email"
@@ -57,13 +56,13 @@ onMounted(() => {
           />
         </div>
         <div class="row mb-1">
-          <label for="password" class="form-label col-3">Parole</label>
+          <label class="form-label col-3">Parole</label>
           <div class="input-group col p-0">
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               class="form-control"
-              autocomplete="current-password"
+              autocomplete="password"
             />
             <button
               type="button"
@@ -77,9 +76,9 @@ onMounted(() => {
         <div class="row text-center">
           <div class="col-3"></div>
           <div class="col"></div>
-          <a class="recover link-primary ms-2 col" @click.prevent="$router.push('/recover')"
-            >Atjaunot paroli</a
-          >
+          <a class="recover link-primary ms-2 col" @click.prevent="$router.push('/recover')">
+            Atjaunot paroli
+          </a>
         </div>
         <div class="row">
           <div class="col-3"></div>
@@ -102,6 +101,10 @@ onMounted(() => {
 .recover {
   font-size: 0.8rem;
   cursor: pointer;
+}
+
+.login-form {
+  width: 40%;
 }
 
 .input-group {

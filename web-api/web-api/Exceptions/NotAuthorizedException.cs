@@ -11,4 +11,9 @@ public class NotAuthorizedException : Exception
         : base($"You are not authorized to manipulate {objName} with id: {objId}")
     {
     }
+    
+    public NotAuthorizedException(string message)
+        : base($"You are not authorized to {message}")
+    {
+    }
 }

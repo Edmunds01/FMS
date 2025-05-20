@@ -3,6 +3,7 @@ export const addCategoryModalId = "addCategoryModal";
 export const editCategoryModalId = "editCategoryModal";
 export const transactionListModalId = "transactionListModal";
 export const transactionAddModalId = "transactionAddModal";
+export const userProfileModalId = "userProfileModal";
 
 export function openModal(id: string, onModalHidden: (() => void) | undefined = undefined) {
   setTimeout(() => {

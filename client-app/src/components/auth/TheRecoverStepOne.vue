@@ -31,7 +31,7 @@ async function sendEmail() {
 
   notification.notify({
     title: "Paroles atjaunošana",
-    text: "Ja lietotājs ar tādu e-pastu ekstistē e-pasts ir nosūtīts.",
+    text: "Ja lietotājs ar šādu e-pastu eksistē, e-pasts ir nosūtīts.",
     duration: 5000,
     type: "success",
   });
@@ -59,10 +59,9 @@ async function sendEmail() {
           Ievadiet savu e-pastu un mēs atsutīsim jums saiti uz paroles atjaunošanu.
         </div>
         <div class="row mb-1 mt-2">
-          <label for="username" class="form-label col-2">E-pasts</label>
+          <label class="form-label col-2">E-pasts</label>
           <div class="col">
             <input
-              id="username"
               v-model="username"
               type="email"
               class="form-control"
@@ -95,18 +94,7 @@ async function sendEmail() {
 }
 
 .recover-form {
-  width: 20%;
-}
-
-.cross {
-  width: 1.3rem;
-  height: 1.3rem;
-}
-
-.error {
-  color: red;
-  font-size: 0.7rem;
-  margin-bottom: 0rem;
+  width: 40%;
 }
 
 .is-invalid {

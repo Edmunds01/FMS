@@ -7,6 +7,8 @@ namespace web_api.Controllers;
 
 [ApiController]
 [Route("api/category")]
+[NotAuthorizedExceptionFilter]
+[GlobalExceptionFilter]
 public class CategoryController(ICategoryService categoryService) : ControllerBase
 {
     private readonly ICategoryService _categoryService = categoryService;

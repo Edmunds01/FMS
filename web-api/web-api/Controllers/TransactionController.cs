@@ -7,6 +7,8 @@ namespace web_api.Controllers;
 
 [ApiController]
 [Route("api/transaction")]
+[NotAuthorizedExceptionFilter]
+[GlobalExceptionFilter]
 public class TransactionController(ITransactionService transactionService) : ControllerBase
 {
     private readonly ITransactionService _transactionService = transactionService;

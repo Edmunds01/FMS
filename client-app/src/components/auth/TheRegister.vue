@@ -25,12 +25,9 @@ export function validatePassword(passwordRaw: string) {
 </script>
 
 <script setup lang="ts">
-// TODO: Add unsuccessful register alert
-// TODO: Change redirection link
-
 import { api } from "@/api/auto-generated-client";
 import { useNotification } from "@kyvg/vue3-notification";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import FaIcon from "@/components/global/FaIcon.vue";
 
@@ -40,6 +37,9 @@ const router = useRouter();
 
 const passwordError = ref("");
 const confirmPasswordError = ref("");
+
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 
 const username = ref("");
 const password = ref("");
@@ -54,12 +54,30 @@ const validateConfirmPassword = () => {
 };
 
 const validateForm = async () => {
-  validatePassword(password.value);
+  passwordError.value = validatePassword(password.value);
   validateConfirmPassword();
   if (!passwordError.value && !confirmPasswordError.value) {
     await handleRegister();
   }
 };
+
+watch(
+  () => password.value,
+  () => {
+    if (passwordError.value) {
+      passwordError.value = validatePassword(password.value);
+    }
+  },
+);
+
+watch(
+  () => confirmPassword.value,
+  () => {
+    if (confirmPasswordError.value) {
+      validateConfirmPassword();
+    }
+  },
+);
 
 const handleRegister = async () => {
   try {
@@ -75,6 +93,13 @@ const handleRegister = async () => {
     });
     router.push("/");
   } catch {
+    notification.notify({
+      title: "Reģistrācija",
+      text: "Lietotājs ar šādu e-pastu jau eksistē.",
+      duration: 4000,
+      type: "error",
+    });
+
     username.value = "";
     password.value = "";
     confirmPassword.value = "";
@@ -98,10 +123,9 @@ const handleRegister = async () => {
       </div>
       <form class="container" @submit.prevent="validateForm">
         <div class="row mb-1 mt-2">
-          <label for="username" class="form-label col-4">E-pasts</label>
+          <label class="form-label col-4">E-pasts</label>
           <div class="col">
             <input
-              id="username"
               v-model="username"
               type="email"
               class="form-control"
@@ -111,30 +135,48 @@ const handleRegister = async () => {
           </div>
         </div>
         <div class="row mb-1">
-          <label for="password" class="form-label col-4">Parole</label>
-          <div class="col">
+          <label class="form-label col-4">Parole</label>
+          <div class="col input-group">
             <input
-              id="password"
               v-model="password"
               class="form-control"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               autocomplete="current-password"
             />
-            <p v-if="passwordError" class="error">{{ passwordError }}</p>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              @click="showPassword = !showPassword"
+            >
+              {{ showPassword ? "Slēpt" : "Rādīt" }}
+            </button>
+          </div>
+          <div class="row">
+            <p v-if="passwordError" class="col-4"></p>
+            <p v-if="passwordError" class="error col">{{ passwordError }}</p>
           </div>
         </div>
         <div class="row mb-1">
-          <label for="password" class="form-label col-4">Atkārtojiet paroli</label>
-          <div class="col">
+          <label class="form-label col-4">Atkārtojiet paroli</label>
+          <div class="col input-group">
             <input
-              id="password2"
               v-model="confirmPassword"
               class="form-control"
-              type="password"
+              :type="showConfirmPassword ? 'text' : 'password'"
               autocomplete="current-password"
             />
-            <p v-if="confirmPasswordError" class="error">{{ confirmPasswordError }}</p>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              @click="showConfirmPassword = !showConfirmPassword"
+            >
+              {{ showConfirmPassword ? "Slēpt" : "Rādīt" }}
+            </button>
           </div>
+        </div>
+        <div class="row">
+          <p v-if="confirmPasswordError" class="col-4"></p>
+          <p v-if="confirmPasswordError" class="error col">{{ confirmPasswordError }}</p>
         </div>
         <div class="row">
           <div class="col-4"></div>
@@ -156,12 +198,7 @@ const handleRegister = async () => {
 }
 
 .register-form {
-  width: 26%;
-}
-
-.cross {
-  width: 1.3rem;
-  height: 1.3rem;
+  width: 40%;
 }
 
 .error {

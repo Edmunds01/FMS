@@ -17,14 +17,14 @@ import { useNotification } from "@kyvg/vue3-notification";
 
 const notification = useNotification();
 const { categories, fetchCategories } = inject(categoriesKey)!;
-const { accounts } = inject(accountsKey)!;
+const { accounts, fetchAccounts } = inject(accountsKey)!;
 const {
   transaction: editTransaction,
   category,
   close,
   openConfirmModal,
 } = inject(addEditTransactionKey)!;
-const { fetchData } = inject(transactionListKey)!;
+const { boolForWatch } = inject(transactionListKey)!;
 
 const transaction = ref<Transaction>({
   transactionId: editTransaction.value?.transactionId ?? undefined,
@@ -97,44 +97,50 @@ async function save() {
 
   transaction.value.amount = amount.value.toNumberFromEurFormat();
 
-  const affectedCategory = categories?.value.find(
-    (c) => c.categoryId === transaction.value.categoryId,
-  );
-  if (affectedCategory) {
-    affectedCategory.sumOfTransactions += transaction.value.amount;
-  }
+  updateAccountAndCategory();
+
+  await api.upsertTransaction(transaction.value);
+  notification.notify({
+    title: isEdit.value ? "Transakcija labota" : "Transakcija pievienota",
+    text: `Transakcija ${isEdit.value ? "labota" : "pievienota"} veiksmīgi.`,
+    duration: 4000,
+    type: "success",
+  });
 
   setTimeout(async () => {
-    await api.upsertTransaction(transaction.value);
-    fetchData();
-    notification.notify({
-      title: isEdit.value ? "Transakcija labota" : "Transakcija pievienota",
-      text: `Transakcija ${isEdit.value ? "labota" : "pievienota"} veiksmīgi.`,
-      duration: 4000,
-      type: "success",
-    });
-  });
+    fetchCategories();
+    fetchAccounts();
+  }, 0);
 
   close();
 }
 
+function updateAccountAndCategory() {
+  const affectedCategory = categories!.value.find(
+    (c) => c.categoryId === transaction.value.categoryId,
+  )!;
+  affectedCategory.sumOfTransactions -= transaction.value.amount;
+
+  const affectedAccount = accounts.value.find((c) => c.accountId === transaction.value.accountId)!;
+  if (affectedCategory.type === CategoryType.Expense) {
+    affectedAccount.balance -= transaction.value.amount;
+  } else {
+    affectedAccount.balance += transaction.value.amount;
+  }
+}
+
 async function deleteTransaction() {
   const result = await openConfirmModal(
-    `Vēlaties izdzēst traszakciju uz summu ${transaction.value.amount.toEurFormat()}?`,
+    `Vēlaties izdzēst trasakciju uz summu ${transaction.value.amount.toEurFormat()}?`,
   );
 
   if (result) {
-    const affectedCategory = categories?.value.find(
-      (c) => c.categoryId === transaction.value.categoryId,
-    );
-    if (affectedCategory) {
-      affectedCategory.sumOfTransactions -= transaction.value.amount;
-    }
+    updateAccountAndCategory();
 
     setTimeout(async () => {
       await api.deleteTransaction(transaction.value.transactionId!);
       await fetchCategories();
-      fetchData();
+      boolForWatch.value = !boolForWatch.value;
       notification.notify({
         title: "Transakcija izdzēsta",
         text: `Transakcija izdzēsta veiksmīgi.`,

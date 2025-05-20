@@ -12,6 +12,8 @@ namespace web_api.Controllers;
 
 [ApiController]
 [Route("api/auth")]
+[NotAuthorizedExceptionFilter]
+[GlobalExceptionFilter]
 public class AuthController
     (
         IConfiguration configuration,
@@ -29,7 +31,6 @@ public class AuthController
 
     [HttpPost("login")]
     [AuditLog("Login action")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Login([FromBody] LoginRegisterDto loginDto)
     {
         var user = await _userRepository.GetUserAsync(loginDto.Username);
@@ -46,11 +47,12 @@ public class AuthController
 
     [HttpPost("register")]
     [AuditLog("Register action")]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register([FromBody] LoginRegisterDto loginDto)
     {
         if (await _userRepository.GetUserAsync(loginDto.Username) != null)
         {
-            return Conflict("User with this email already exists");
+            return Conflict(JsonSerializer.Serialize("User with this email already exists"));
         }
 
         var user = await _userRepository.AddUserAsync(new User
@@ -74,7 +76,7 @@ public class AuthController
                 Icon = "pizza-slice",
                 Type = 2,
             });
-            
+
             await _categoryRepository.InsertAsync(new Models.Category
             {
                 UserId = user.UserId,
@@ -82,7 +84,7 @@ public class AuthController
                 Icon = "house",
                 Type = 2,
             });
-            
+
             await _categoryRepository.InsertAsync(new Models.Category
             {
                 UserId = user.UserId,
@@ -114,7 +116,7 @@ public class AuthController
         var user = await _userRepository.GetUserAsync(email);
         if (user == null)
         {
-            return BadRequest("User with this email does not exist");
+            return Ok();
         }
 
         await _recoverHelper.SendRecoveryEmailAsync(email);

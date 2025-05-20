@@ -14,6 +14,6 @@ export default defineConfig({
   server: {
     port: parseInt(process.env.PORT || "5173"),
     host: true,
-    allowedHosts: ["fms-frontend-4gn1.onrender.com"],
+    allowedHosts: [process.env.ALLOWED_HOST?.toString() ?? ""],
   },
 });

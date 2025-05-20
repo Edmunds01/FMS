@@ -11,6 +11,7 @@ import {
   useAddCategoryModal,
   useAddEditTransactionListModal,
   useEditCategoryModal,
+  useProfileModal,
   useTransactionListModal,
 } from "./modals";
 import { useNotification } from "@kyvg/vue3-notification";
@@ -57,6 +58,7 @@ provide(selectedDatesKey, { startDate, endDate });
 provide(accountsKey, { accounts, fetchAccounts });
 provide(categoriesKey, { categories, fetchCategories });
 
+const openProfile = useProfileModal();
 useAddCategoryModal();
 useEditCategoryModal();
 useTransactionListModal();
@@ -133,11 +135,18 @@ const series = computed(() => [expenseSum.value, incomeSum.value, difference.val
               <TheDateSelect :start-date="startDate" :end-date="endDate" />
             </div>
             <div
-              class="col-1 p-0 border-bottom border-top d-flex align-items-center justify-content-end"
+              class="col-1 p-0 border-bottom border-top d-flex align-items-center border-end justify-content-end"
             >
-              <button title="Iziet" class="btn" @click="logout">
-                <FaIcon icon-name="right-from-bracket" size="2x" class="me-3" />
-              </button>
+              <div class="me-3">
+                <button title="Profils" class="btn" @click="openProfile">
+                  <FaIcon icon-name="user" size="2x" />
+                </button>
+              </div>
+              <div class="me-3">
+                <button title="Iziet" class="btn" @click="logout">
+                  <FaIcon icon-name="right-from-bracket" size="2x" />
+                </button>
+              </div>
             </div>
           </div>
           <div class="row categories-columns">
@@ -147,13 +156,16 @@ const series = computed(() => [expenseSum.value, incomeSum.value, difference.val
             <div class="col-3 p-0 bg-income categories-columns">
               <UserCategories :category-type="CategoryType.Income" :categories="income" />
             </div>
-            <div class="col p-0 bf-neutral categories-columns">
-              <div class="row sticky-header second-row-height border-bottom border-end text-center">
-                <div class="col text-center full-center-text fs-3">
+            <div class="col p-0 bf-neutral categories-columns border-end">
+              <div class="row second-row-height border-bottom m-0">
+                <div class="col text-center full-center-text fs-3 p-0">
                   <div>Statistika</div>
                 </div>
               </div>
-              <ApexCharts width="99%" :series :options="options"></ApexCharts>
+              <ApexCharts v-if="incomeSum || expenseSum" width="95%" :series :options="options" />
+              <div v-else class="text-center mt-5">
+                <p>Nav transakciju izvēlētajā periodā</p>
+              </div>
             </div>
           </div>
         </div>
